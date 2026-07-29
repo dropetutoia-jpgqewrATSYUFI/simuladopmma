@@ -88,7 +88,6 @@ function SimuladoPmmaPage() {
   const [blocked, setBlocked] = useState(false);
   const [resume, setResume] = useState<Persisted | null>(null);
   const [milestoneText, setMilestoneText] = useState<string | null>(null);
-  const [firstName, setFirstName] = useState<string | null>(null);
   const [attemptsCount, setAttemptsCount] = useState<number | null>(null);
   const questionStartedAt = useRef<number>(Date.now());
 
@@ -278,7 +277,7 @@ function SimuladoPmmaPage() {
     const milestone = MILESTONES[nextIndex];
     if (milestone) {
       setMilestoneText(
-        firstName && nextIndex === 7 ? `${firstName}, você chegou à metade.` : milestone,
+        milestone,
       );
       setStage("milestone");
       window.setTimeout(() => {
@@ -335,7 +334,7 @@ function SimuladoPmmaPage() {
     );
   }
 
-  if (stage === "intro") {
+  if (stage === "intro" && !blocked) {
     return (
       <PmmaShell>
         <div className="space-y-6">

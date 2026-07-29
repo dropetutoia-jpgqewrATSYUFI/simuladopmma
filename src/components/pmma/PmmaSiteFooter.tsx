@@ -10,20 +10,6 @@ export function PmmaSiteFooter() {
         clara, útil e confiável.
       </p>
 
-      <nav className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-        {LINKS.map((link) => (
-          <a
-            key={link.href}
-            href={link.href}
-            target="_blank"
-            rel="noreferrer"
-            className="text-[12px] font-medium text-foreground/80 underline-offset-4 transition hover:text-accent hover:underline"
-          >
-            {link.label}
-          </a>
-        ))}
-      </nav>
-
       <div className="mt-5 space-y-1 text-[11px] leading-relaxed text-muted-foreground/80">
         <p className="font-medium text-foreground/90">
           CONNEX TECNOLOGIA E SERVIÇOS DIGITAIS INOVA SIMPLES (I.S.)

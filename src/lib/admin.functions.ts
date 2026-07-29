@@ -40,7 +40,7 @@ export const listLeads = createServerFn({ method: "GET" })
 
 export const listAttempts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(z.object({ limit: z.number().int().min(1).max(100).default(50) }))
+  .validator({ parse: (input) => z.object({ limit: z.number().int().min(1).max(100).default(50) }).parse(input) })
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
     await requireAdmin(supabase, userId);

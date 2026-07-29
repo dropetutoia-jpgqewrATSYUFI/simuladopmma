@@ -12,9 +12,9 @@ import { MessageCircle, ArrowRight, RotateCcw } from "lucide-react";
 import type { PmmaResult } from "@/lib/pmma.types";
 
 const STATE_LABEL = {
-  prioridade: { label: "Prioridade", className: "bg-destructive/15 text-destructive" },
-  atencao: { label: "Atenção", className: "bg-warning/20 text-warning-foreground" },
-  ponto_forte: { label: "Ponto forte", className: "bg-success/15 text-success" },
+  prioridade: { label: "Prioridade", className: "bg-destructive/20 text-destructive" },
+  atencao: { label: "Atenção", className: "bg-accent/20 text-accent" },
+  ponto_forte: { label: "Ponto forte", className: "bg-[#22c55e]/20 text-[#4ade80]" },
 } as const;
 
 const OFFER_TEXT: Record<string, string> = {
@@ -212,7 +212,7 @@ export function PmmaResultView({
           <li>• Banco de provas e simulados no estilo da banca</li>
         </ul>
 
-        <Button asChild size="lg" className="mt-5 w-full">
+        <Button asChild size="lg" className="mt-5 w-full rounded-xl bg-accent font-semibold text-accent-foreground shadow-[0_16px_40px_-16px_var(--color-accent)] hover:bg-accent/90">
           <a href={offerHref} target="_blank" rel="noopener noreferrer" onClick={onOfferClick}>
             {ctaVariant === "A" ? "CONHECER O PREPARATÓRIO PMMA" : "VER COMO ORGANIZAR MEUS ESTUDOS"}
             <ArrowRight className="ml-1 size-4" aria-hidden />
@@ -220,7 +220,7 @@ export function PmmaResultView({
         </Button>
 
         {whatsappHref ? (
-          <Button asChild variant="outline" size="lg" className="mt-3 w-full">
+          <Button asChild variant="outline" size="lg" className="mt-3 w-full rounded-xl border-white/15 bg-white/5">
             <a
               href={whatsappHref}
               target="_blank"

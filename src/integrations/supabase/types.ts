@@ -79,6 +79,392 @@ export type Database = {
           },
         ]
       }
+      pmma_attempt_questions: {
+        Row: {
+          answered_at: string | null
+          attempt_id: string
+          created_at: string
+          display_order: number
+          id: string
+          is_bonus: boolean
+          is_correct: boolean | null
+          question_id: string
+          response_time_seconds: number | null
+          selected_answer: boolean | null
+        }
+        Insert: {
+          answered_at?: string | null
+          attempt_id: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_bonus?: boolean
+          is_correct?: boolean | null
+          question_id: string
+          response_time_seconds?: number | null
+          selected_answer?: boolean | null
+        }
+        Update: {
+          answered_at?: string | null
+          attempt_id?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_bonus?: boolean
+          is_correct?: boolean | null
+          question_id?: string
+          response_time_seconds?: number | null
+          selected_answer?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pmma_attempt_questions_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pmma_attempt_questions_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pmma_attempts: {
+        Row: {
+          anonymous_session_id: string | null
+          best_streak: number
+          bonus_answered: boolean
+          bonus_correct: boolean | null
+          campaign_id: string | null
+          completed_at: string | null
+          correct_count: number
+          created_at: string
+          cta_variant: string | null
+          current_question_index: number
+          device_type: string | null
+          duration_seconds: number | null
+          headline_variant: string | null
+          id: string
+          lead_captured_at: string | null
+          lead_id: string | null
+          partner_code: string | null
+          percentage: number
+          referrer: string | null
+          started_at: string
+          status: string
+          total_questions: number
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          wrong_count: number
+        }
+        Insert: {
+          anonymous_session_id?: string | null
+          best_streak?: number
+          bonus_answered?: boolean
+          bonus_correct?: boolean | null
+          campaign_id?: string | null
+          completed_at?: string | null
+          correct_count?: number
+          created_at?: string
+          cta_variant?: string | null
+          current_question_index?: number
+          device_type?: string | null
+          duration_seconds?: number | null
+          headline_variant?: string | null
+          id?: string
+          lead_captured_at?: string | null
+          lead_id?: string | null
+          partner_code?: string | null
+          percentage?: number
+          referrer?: string | null
+          started_at?: string
+          status?: string
+          total_questions?: number
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          wrong_count?: number
+        }
+        Update: {
+          anonymous_session_id?: string | null
+          best_streak?: number
+          bonus_answered?: boolean
+          bonus_correct?: boolean | null
+          campaign_id?: string | null
+          completed_at?: string | null
+          correct_count?: number
+          created_at?: string
+          cta_variant?: string | null
+          current_question_index?: number
+          device_type?: string | null
+          duration_seconds?: number | null
+          headline_variant?: string | null
+          id?: string
+          lead_captured_at?: string | null
+          lead_id?: string | null
+          partner_code?: string | null
+          percentage?: number
+          referrer?: string | null
+          started_at?: string
+          status?: string
+          total_questions?: number
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          wrong_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pmma_attempts_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pmma_attempts_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pmma_campaigns: {
+        Row: {
+          bonus_enabled: boolean
+          created_at: string
+          end_at: string | null
+          id: string
+          lead_capture_after_question: number
+          name: string
+          offer_url: string
+          paused_message: string | null
+          product_id: string | null
+          questions_per_attempt: number
+          questions_per_discipline: number
+          settings_json: Json
+          slug: string
+          start_at: string | null
+          status: string
+          updated_at: string
+          whatsapp_number: string | null
+        }
+        Insert: {
+          bonus_enabled?: boolean
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          lead_capture_after_question?: number
+          name: string
+          offer_url?: string
+          paused_message?: string | null
+          product_id?: string | null
+          questions_per_attempt?: number
+          questions_per_discipline?: number
+          settings_json?: Json
+          slug: string
+          start_at?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Update: {
+          bonus_enabled?: boolean
+          created_at?: string
+          end_at?: string | null
+          id?: string
+          lead_capture_after_question?: number
+          name?: string
+          offer_url?: string
+          paused_message?: string | null
+          product_id?: string | null
+          questions_per_attempt?: number
+          questions_per_discipline?: number
+          settings_json?: Json
+          slug?: string
+          start_at?: string | null
+          status?: string
+          updated_at?: string
+          whatsapp_number?: string | null
+        }
+        Relationships: []
+      }
+      pmma_events: {
+        Row: {
+          attempt_id: string | null
+          created_at: string
+          event_data_json: Json
+          event_name: string
+          id: string
+          lead_id: string | null
+          session_id: string | null
+        }
+        Insert: {
+          attempt_id?: string | null
+          created_at?: string
+          event_data_json?: Json
+          event_name: string
+          id?: string
+          lead_id?: string | null
+          session_id?: string | null
+        }
+        Update: {
+          attempt_id?: string | null
+          created_at?: string
+          event_data_json?: Json
+          event_name?: string
+          id?: string
+          lead_id?: string | null
+          session_id?: string | null
+        }
+        Relationships: []
+      }
+      pmma_leads: {
+        Row: {
+          consent: boolean
+          consent_at: string | null
+          consent_text: string | null
+          consent_text_version: string | null
+          created_at: string
+          email: string | null
+          first_name: string
+          id: string
+          partner_code: string | null
+          source: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          whatsapp_e164: string
+        }
+        Insert: {
+          consent?: boolean
+          consent_at?: string | null
+          consent_text?: string | null
+          consent_text_version?: string | null
+          created_at?: string
+          email?: string | null
+          first_name: string
+          id?: string
+          partner_code?: string | null
+          source?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          whatsapp_e164: string
+        }
+        Update: {
+          consent?: boolean
+          consent_at?: string | null
+          consent_text?: string | null
+          consent_text_version?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string
+          id?: string
+          partner_code?: string | null
+          source?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          whatsapp_e164?: string
+        }
+        Relationships: []
+      }
+      pmma_questions: {
+        Row: {
+          campaign_id: string | null
+          correct_answer: boolean
+          created_at: string
+          created_by: string | null
+          difficulty: string
+          discipline: string
+          feedback_correct: string
+          feedback_wrong: string
+          id: string
+          is_active: boolean
+          key_point: string
+          legal_review_status: string | null
+          original_reference: string | null
+          pedagogical_review_status: string
+          public_code: string
+          sort_order: number
+          source_name: string | null
+          source_type: string | null
+          statement: string
+          topic: string | null
+          updated_at: string
+        }
+        Insert: {
+          campaign_id?: string | null
+          correct_answer: boolean
+          created_at?: string
+          created_by?: string | null
+          difficulty?: string
+          discipline: string
+          feedback_correct: string
+          feedback_wrong: string
+          id?: string
+          is_active?: boolean
+          key_point: string
+          legal_review_status?: string | null
+          original_reference?: string | null
+          pedagogical_review_status?: string
+          public_code: string
+          sort_order?: number
+          source_name?: string | null
+          source_type?: string | null
+          statement: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string | null
+          correct_answer?: boolean
+          created_at?: string
+          created_by?: string | null
+          difficulty?: string
+          discipline?: string
+          feedback_correct?: string
+          feedback_wrong?: string
+          id?: string
+          is_active?: boolean
+          key_point?: string
+          legal_review_status?: string | null
+          original_reference?: string | null
+          pedagogical_review_status?: string
+          public_code?: string
+          sort_order?: number
+          source_name?: string | null
+          source_type?: string | null
+          statement?: string
+          topic?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pmma_questions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -249,7 +249,7 @@ function HomePage() {
                 </Button>
               </form>
 
-              <div className="relative py-6">
+              <div className="relative py-5 sm:py-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/10" />
                 </div>
@@ -267,10 +267,11 @@ function HomePage() {
                   setError(null);
                   setMessage(null);
                 }}
-                className="h-13 w-full rounded-xl border border-primary/30 py-4 font-display text-sm font-semibold text-foreground transition hover:bg-primary/10"
+                className="h-12 w-full rounded-xl border border-primary/30 font-display text-sm font-semibold text-foreground transition hover:bg-primary/10 active:scale-[0.99]"
               >
                 {mode === "signup" ? "Entrar com minha conta" : "Criar conta gratuita"}
               </button>
+
             </div>
           </section>
         </main>

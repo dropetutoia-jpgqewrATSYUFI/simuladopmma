@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DiagnosticoPmmaIndexRouteImport } from './routes/diagnostico-pmma/index'
+import { Route as AdminDiagnosticoPmmaIndexRouteImport } from './routes/admin/diagnostico-pmma/index'
 import { Route as DiagnosticoPmmaResultadoTokenRouteImport } from './routes/diagnostico-pmma/resultado/$token'
 
 const AuthRoute = AuthRouteImport.update({
@@ -29,6 +30,12 @@ const DiagnosticoPmmaIndexRoute = DiagnosticoPmmaIndexRouteImport.update({
   path: '/diagnostico-pmma/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminDiagnosticoPmmaIndexRoute =
+  AdminDiagnosticoPmmaIndexRouteImport.update({
+    id: '/admin/diagnostico-pmma/',
+    path: '/admin/diagnostico-pmma/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DiagnosticoPmmaResultadoTokenRoute =
   DiagnosticoPmmaResultadoTokenRouteImport.update({
     id: '/diagnostico-pmma/resultado/$token',
@@ -41,12 +48,14 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
   '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
+  '/admin/diagnostico-pmma/': typeof AdminDiagnosticoPmmaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/diagnostico-pmma': typeof DiagnosticoPmmaIndexRoute
   '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
+  '/admin/diagnostico-pmma': typeof AdminDiagnosticoPmmaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -54,6 +63,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
   '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
+  '/admin/diagnostico-pmma/': typeof AdminDiagnosticoPmmaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -62,14 +72,21 @@ export interface FileRouteTypes {
     | '/auth'
     | '/diagnostico-pmma/'
     | '/diagnostico-pmma/resultado/$token'
+    | '/admin/diagnostico-pmma/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/diagnostico-pmma' | '/diagnostico-pmma/resultado/$token'
+  to:
+    | '/'
+    | '/auth'
+    | '/diagnostico-pmma'
+    | '/diagnostico-pmma/resultado/$token'
+    | '/admin/diagnostico-pmma'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/diagnostico-pmma/'
     | '/diagnostico-pmma/resultado/$token'
+    | '/admin/diagnostico-pmma/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +94,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   DiagnosticoPmmaIndexRoute: typeof DiagnosticoPmmaIndexRoute
   DiagnosticoPmmaResultadoTokenRoute: typeof DiagnosticoPmmaResultadoTokenRoute
+  AdminDiagnosticoPmmaIndexRoute: typeof AdminDiagnosticoPmmaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -102,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiagnosticoPmmaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/diagnostico-pmma/': {
+      id: '/admin/diagnostico-pmma/'
+      path: '/admin/diagnostico-pmma'
+      fullPath: '/admin/diagnostico-pmma/'
+      preLoaderRoute: typeof AdminDiagnosticoPmmaIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/diagnostico-pmma/resultado/$token': {
       id: '/diagnostico-pmma/resultado/$token'
       path: '/diagnostico-pmma/resultado/$token'
@@ -117,6 +142,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   DiagnosticoPmmaIndexRoute: DiagnosticoPmmaIndexRoute,
   DiagnosticoPmmaResultadoTokenRoute: DiagnosticoPmmaResultadoTokenRoute,
+  AdminDiagnosticoPmmaIndexRoute: AdminDiagnosticoPmmaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

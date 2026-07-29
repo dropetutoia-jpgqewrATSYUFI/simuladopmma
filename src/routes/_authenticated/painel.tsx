@@ -104,7 +104,13 @@ function PainelPage() {
     setAttempts(data.attempts as Attempt[]);
     setLoading(false);
 
-  }, [loadDashboard]);
+    const sessionId = localStorage.getItem("pmma:session:v1");
+    if (sessionId && sessionId.length >= 8) {
+      const status = await accessStatus({ data: { sessionId } }).catch(() => null);
+      setFreeBlocked(Boolean(status?.blocked));
+    }
+  }, [accessStatus, loadDashboard]);
+
 
   useEffect(() => {
     void refresh().catch(() => setLoading(false));

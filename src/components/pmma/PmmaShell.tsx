@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
+import { PmmaSiteFooter } from "@/components/pmma/PmmaSiteFooter";
+import { PmmaWhatsAppBubble } from "@/components/pmma/PmmaWhatsAppBubble";
 
 export function PmmaShell({
   progress,
@@ -50,12 +52,11 @@ export function PmmaShell({
         {children}
       </main>
 
-      <footer className="mx-auto w-full max-w-2xl px-4 pb-10">
-        <p className="text-center text-[11px] leading-relaxed text-muted-foreground/80">
-          A Edital360 é uma plataforma independente de preparação para concursos e não possui
-          vínculo oficial com a PMMA, o Governo do Maranhão ou a banca organizadora.
-        </p>
+      <footer className="mx-auto w-full max-w-2xl px-4 pb-[max(6rem,calc(env(safe-area-inset-bottom)+5rem))]">
+        <PmmaSiteFooter />
       </footer>
+
+      <PmmaWhatsAppBubble />
     </div>
   );
 }

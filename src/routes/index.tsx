@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
+import { PmmaSiteFooter } from "@/components/pmma/PmmaSiteFooter";
+import { PmmaWhatsAppBubble } from "@/components/pmma/PmmaWhatsAppBubble";
 import { supabase } from "@/integrations/supabase/client";
 
 const TITLE = "Simulados para PMMA — Concurso 2026 | Edital360";
@@ -273,13 +275,12 @@ function HomePage() {
           </section>
         </main>
 
-        <footer className="pb-4">
-          <p className="text-center text-[11px] leading-relaxed text-muted-foreground/80">
-            A Edital360 é uma plataforma independente de preparação para concursos e não possui
-            vínculo oficial com a PMMA, o Governo do Maranhão ou a banca organizadora.
-          </p>
+        <footer className="pb-[max(5rem,calc(env(safe-area-inset-bottom)+4.5rem))]">
+          <PmmaSiteFooter />
         </footer>
       </div>
+
+      <PmmaWhatsAppBubble />
     </div>
   );
 }

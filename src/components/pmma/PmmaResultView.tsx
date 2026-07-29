@@ -146,7 +146,7 @@ export function PmmaResultView({
         </ul>
       </Card>
 
-      <Card className="p-2 sm:p-3">
+      <Card className="pmma-glass rounded-2xl p-2 sm:p-3">
         <Accordion
           type="single"
           collapsible
@@ -188,7 +188,7 @@ export function PmmaResultView({
         </Accordion>
       </Card>
 
-      <Card className="border-primary/30 bg-primary/5 p-5 sm:p-6">
+      <Card className="animate-fade-in rounded-2xl border border-accent/30 bg-linear-to-br from-primary/15 to-accent/10 p-5 sm:p-6 backdrop-blur-xl">
         <h2 className="text-xl font-bold">Agora transforme seus erros em um plano de estudo</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           O mini simulado mostrou onde você precisa melhorar. No Preparatório Online PMMA da

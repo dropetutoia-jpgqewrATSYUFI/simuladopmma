@@ -11,7 +11,6 @@ import { PmmaDonationGate } from "@/components/pmma/PmmaDonationGate";
 import { PmmaQuestionCard } from "@/components/pmma/PmmaQuestionCard";
 import { PmmaResultView } from "@/components/pmma/PmmaResultView";
 import {
-  pmmaStart,
   pmmaStartOwned,
   pmmaAnswer,
   pmmaFinish,
@@ -57,7 +56,6 @@ export function PmmaQuizRunner({
   subtitle: string;
 }) {
   const storageKey = `pmma:run:${campaignSlug}`;
-  const startFree = useServerFn(pmmaStart);
   const startOwned = useServerFn(pmmaStartOwned);
   const answer = useServerFn(pmmaAnswer);
   const finish = useServerFn(pmmaFinish);
@@ -143,10 +141,10 @@ export function PmmaQuizRunner({
         referrer: document.referrer || null,
         seenQuestionCodes: paid ? [] : readSeen(),
       };
-      // Usuários logados (inclusive admins) iniciam pela via autenticada.
+      // Todo simulado exige conta: o bloqueio anti-refazer é vinculado ao usuário.
       const { data: session } = await supabase.auth.getSession();
-      const useOwned = paid || Boolean(session.session);
-      const started = useOwned ? await startOwned({ data: payload }) : await startFree({ data: payload });
+      if (!session.session) throw new Error("LOGIN_REQUIRED");
+      const started = await startOwned({ data: payload });
 
       const next: Persisted = {
         attemptId: started.attemptId,
@@ -172,7 +170,7 @@ export function PmmaQuizRunner({
     } finally {
       setLoading(false);
     }
-  }, [campaignSlug, emit, paid, params, persist, sessionId, startFree, startOwned]);
+  }, [campaignSlug, emit, paid, params, persist, sessionId, startOwned]);
 
   // Simulado começa direto: o convite de início acontece na página anterior.
   useEffect(() => {

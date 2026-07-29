@@ -54,18 +54,19 @@ export const Route = createFileRoute("/simulado/$slug")({
 function SimuladoRunPage() {
   const { simulado } = Route.useLoaderData();
   const checkAccess = useServerFn(mySimuladoAccess);
-  const [state, setState] = useState<"checking" | "released" | "blocked" | "anon">(
-    simulado.isPaid ? "checking" : "released",
-  );
+  const [state, setState] = useState<"checking" | "released" | "blocked" | "anon">("checking");
 
   useEffect(() => {
-    if (!simulado.isPaid) return;
     let alive = true;
     void (async () => {
       const { data: session } = await supabase.auth.getSession();
       if (!alive) return;
       if (!session.session) {
         setState("anon");
+        return;
+      }
+      if (!simulado.isPaid) {
+        setState("released");
         return;
       }
       try {
@@ -100,7 +101,7 @@ function SimuladoRunPage() {
           <h1 className="mt-4 font-display text-xl font-bold">{simulado.name}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Este simulado é vinculado à sua conta. Entre ou cadastre-se para ver a situação do seu
-            acesso e liberar por Pix.
+            acesso.
           </p>
           <Button asChild size="lg" className="mt-5 w-full">
             <Link to="/">ENTRAR NA MINHA CONTA</Link>

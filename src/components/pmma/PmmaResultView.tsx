@@ -44,6 +44,8 @@ export function PmmaResultView({
   onWhatsappClick,
   onCorrectionsOpen,
   onRetake,
+  canRetake = true,
+  backHref = "/",
 }: {
   result: PmmaResult;
   offerHref: string;
@@ -52,7 +54,11 @@ export function PmmaResultView({
   onWhatsappClick: () => void;
   onCorrectionsOpen: () => void;
   onRetake: () => void;
+  /** Simulado gratuito conclui uma única vez: sem refazer, só voltar ao início. */
+  canRetake?: boolean;
+  backHref?: string;
 }) {
+
   const [correctionsOpened, setCorrectionsOpened] = useState(false);
   const worst = result.worstDisciplines[0];
   const whatsappHref = result.whatsappNumber

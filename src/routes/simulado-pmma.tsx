@@ -352,7 +352,7 @@ function SimuladoPmmaPage() {
     return (
       <PmmaShell>
         <div className="space-y-5">
-          <Badge className="bg-accent text-accent-foreground">MINI SIMULADO GRATUITO</Badge>
+          <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-accent">MINI SIMULADO GRATUITO</Badge>
           <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
             {headlineVariant === "A"
               ? "Você está realmente preparado para as questões da PMMA?"
@@ -363,7 +363,7 @@ function SimuladoPmmaPage() {
             resposta e descubra quais matérias precisam de mais atenção.
           </p>
 
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-2 text-sm text-foreground/90">
             <li>• 14 questões por tentativa</li>
             <li>• 7 matérias diferentes</li>
             <li>• Correção explicada na hora</li>
@@ -379,7 +379,7 @@ function SimuladoPmmaPage() {
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-          <Button size="lg" className="h-14 w-full text-base" disabled={loading} onClick={handleStart}>
+          <Button size="lg" className="h-14 w-full rounded-xl bg-linear-to-r from-primary to-[#2563eb] text-base font-semibold shadow-[0_18px_40px_-16px_var(--color-primary)] transition-transform hover:scale-[1.01]" disabled={loading} onClick={handleStart}>
             {loading ? "PREPARANDO..." : "COMEÇAR O DESAFIO"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">

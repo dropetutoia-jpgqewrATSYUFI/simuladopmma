@@ -130,7 +130,11 @@ function SimuladoPmmaPage() {
         localStorage.removeItem(STORAGE_KEY);
       }
     }
-  }, []);
+
+    void countAttempts({ data: undefined })
+      .then((count) => setAttemptsCount(count))
+      .catch(() => setAttemptsCount(null));
+  }, [countAttempts]);
 
   useEffect(() => {
     if (sessionId) emit("quiz_view");

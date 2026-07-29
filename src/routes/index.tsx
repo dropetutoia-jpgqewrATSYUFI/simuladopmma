@@ -111,33 +111,32 @@ function HomePage() {
           </span>
         </header>
 
-        <main className="grid flex-1 grid-cols-1 items-center gap-8 py-7 sm:gap-12 sm:py-10 lg:grid-cols-2 lg:gap-16">
+        <main className="grid flex-1 grid-cols-1 items-center gap-6 py-5 sm:gap-10 sm:py-8 lg:grid-cols-2 lg:gap-14">
           {/* Apresentação */}
-          <section className="pmma-rise space-y-6 sm:space-y-9">
-            <div className="space-y-4 sm:space-y-5">
-              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.16em] text-accent sm:text-[10px] sm:tracking-[0.2em]">
+          <section className="pmma-rise space-y-4 sm:space-y-5">
+            <div className="space-y-3 sm:space-y-4">
+              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[9px] font-bold uppercase leading-tight tracking-[0.16em] text-accent sm:text-[10px] sm:tracking-[0.2em]">
                 Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
-              <h1 className="font-display text-[30px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                Sua aprovação na
-                <br />
-                <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
-                  PM-MA começa aqui
-                </span>
+              <h1 className="font-display text-[26px] font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                Sua aprovação na PM-MA começa aqui
               </h1>
-              <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-lg">
-                Plataforma de simulados de alto nível, com correção comentada e diagnóstico por
-                matéria. Treine no mesmo formato da banca, do primeiro item ao gabarito.
+              <p className="max-w-md text-[14px] leading-relaxed text-muted-foreground sm:text-base">
+                Simulados de alto nível com correção comentada e diagnóstico por matéria. Treine no
+                mesmo formato da banca.
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-5 sm:gap-6 sm:pt-6">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 border-t border-white/10 pt-4">
               {STATS.map((stat) => (
-                <div key={stat.label} className="min-w-0 space-y-1">
-                  <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">
+                <div
+                  key={stat.label}
+                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 sm:px-4 sm:py-2.5"
+                >
+                  <p className="font-display text-xl font-bold text-accent sm:text-2xl">
                     {stat.value}
                   </p>
-                  <p className="text-[9px] font-semibold uppercase leading-tight tracking-[0.12em] text-primary sm:text-[10px] sm:tracking-[0.16em]">
+                  <p className="max-w-[5.5rem] text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] text-muted-foreground sm:text-[11px]">
                     {stat.label}
                   </p>
                 </div>

@@ -137,7 +137,11 @@ export function PmmaQuizRunner({
         referrer: document.referrer || null,
         seenQuestionCodes: paid ? [] : readSeen(),
       };
-      const started = paid ? await startOwned({ data: payload }) : await startFree({ data: payload });
+      // Usuários logados (inclusive admins) iniciam pela via autenticada.
+      const { data: session } = await supabase.auth.getSession();
+      const useOwned = paid || Boolean(session.session);
+      const started = useOwned ? await startOwned({ data: payload }) : await startFree({ data: payload });
+
       const next: Persisted = {
         attemptId: started.attemptId,
         index: 0,

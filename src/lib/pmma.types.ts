@@ -3,6 +3,7 @@ export type PmmaPublicQuestion = {
   publicCode: string;
   discipline: string;
   topic: string | null;
+  baseText?: string | null;
   statement: string;
   difficulty: string;
   displayOrder: number;

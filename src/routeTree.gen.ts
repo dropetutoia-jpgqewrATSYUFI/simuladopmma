@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SimuladoPmmaRouteImport } from './routes/simulado-pmma'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DiagnosticoPmmaIndexRouteImport } from './routes/diagnostico-pmma/index'
 import { Route as AdminDiagnosticoPmmaIndexRouteImport } from './routes/admin/diagnostico-pmma/index'
 import { Route as DiagnosticoPmmaResultadoTokenRouteImport } from './routes/diagnostico-pmma/resultado/$token'
 
+const SimuladoPmmaRoute = SimuladoPmmaRouteImport.update({
+  id: '/simulado-pmma',
+  path: '/simulado-pmma',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -46,6 +52,7 @@ const DiagnosticoPmmaResultadoTokenRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/simulado-pmma': typeof SimuladoPmmaRoute
   '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
   '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
   '/admin/diagnostico-pmma/': typeof AdminDiagnosticoPmmaIndexRoute
@@ -53,6 +60,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/simulado-pmma': typeof SimuladoPmmaRoute
   '/diagnostico-pmma': typeof DiagnosticoPmmaIndexRoute
   '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
   '/admin/diagnostico-pmma': typeof AdminDiagnosticoPmmaIndexRoute
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/simulado-pmma': typeof SimuladoPmmaRoute
   '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
   '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
   '/admin/diagnostico-pmma/': typeof AdminDiagnosticoPmmaIndexRoute
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/simulado-pmma'
     | '/diagnostico-pmma/'
     | '/diagnostico-pmma/resultado/$token'
     | '/admin/diagnostico-pmma/'
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/simulado-pmma'
     | '/diagnostico-pmma'
     | '/diagnostico-pmma/resultado/$token'
     | '/admin/diagnostico-pmma'
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/simulado-pmma'
     | '/diagnostico-pmma/'
     | '/diagnostico-pmma/resultado/$token'
     | '/admin/diagnostico-pmma/'
@@ -92,6 +104,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  SimuladoPmmaRoute: typeof SimuladoPmmaRoute
   DiagnosticoPmmaIndexRoute: typeof DiagnosticoPmmaIndexRoute
   DiagnosticoPmmaResultadoTokenRoute: typeof DiagnosticoPmmaResultadoTokenRoute
   AdminDiagnosticoPmmaIndexRoute: typeof AdminDiagnosticoPmmaIndexRoute
@@ -99,6 +112,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/simulado-pmma': {
+      id: '/simulado-pmma'
+      path: '/simulado-pmma'
+      fullPath: '/simulado-pmma'
+      preLoaderRoute: typeof SimuladoPmmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -140,6 +160,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  SimuladoPmmaRoute: SimuladoPmmaRoute,
   DiagnosticoPmmaIndexRoute: DiagnosticoPmmaIndexRoute,
   DiagnosticoPmmaResultadoTokenRoute: DiagnosticoPmmaResultadoTokenRoute,
   AdminDiagnosticoPmmaIndexRoute: AdminDiagnosticoPmmaIndexRoute,

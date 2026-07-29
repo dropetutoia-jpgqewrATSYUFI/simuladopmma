@@ -69,12 +69,12 @@ function DiagnosticoPMMA() {
   });
 
   const handleStart = () => {
-    startMutation.mutate({ mode: modo });
+    startMutation.mutate({ data: { mode: modo } });
   };
 
   const handleAnswer = (questionId: string, optionId: string | null) => {
     if (!attemptId) return;
-    saveAnswerMutation.mutate({ attemptId, questionId, optionId });
+    saveAnswerMutation.mutate({ data: { attemptId, questionId, optionId } });
   };
 
   const handleFinishQuiz = () => {
@@ -91,7 +91,7 @@ function DiagnosticoPMMA() {
     consentMarketing: boolean;
   }) => {
     if (!attemptId) return;
-    finishMutation.mutate({ attemptId, lead });
+    finishMutation.mutate({ data: { attemptId, lead } });
   };
 
   return (

@@ -73,33 +73,83 @@ function isFilterSafe(value: string) {
   return /^[A-Za-z0-9_-]{1,64}$/.test(value);
 }
 
-/** Access is blocked when the session already finished a simulado and has no unused donation. */
-export async function getAccessStatus(
-  sessionId: string,
-  fingerprint?: string | null,
-): Promise<AccessStatus> {
-  const client = await db();
-  const useOr = Boolean(fingerprint) && isFilterSafe(sessionId) && isFilterSafe(fingerprint!);
+export type IdentityInput = {
+  sessionId: string;
+  fingerprint?: string | null;
+  userId?: string | null;
+};
 
-  const attemptsQuery = client
+/**
+ * Identidade do candidato no simulado gratuito. O bloqueio segue a pessoa mesmo
+ * que ela limpe o navegador ou crie outra conta de e-mail, porque combinamos
+ * sessão + impressão digital do dispositivo/rede + conta logada.
+ */
+function identityFilter(identity: IdentityInput, fields: {
+  session: string;
+  fingerprint: string;
+  user: string;
+}): string | null {
+  const parts: string[] = [];
+  if (isFilterSafe(identity.sessionId)) parts.push(`${fields.session}.eq.${identity.sessionId}`);
+  if (identity.fingerprint && isFilterSafe(identity.fingerprint)) {
+    parts.push(`${fields.fingerprint}.eq.${identity.fingerprint}`);
+  }
+  if (identity.userId && isFilterSafe(identity.userId)) {
+    parts.push(`${fields.user}.eq.${identity.userId}`);
+  }
+  return parts.length ? parts.join(",") : null;
+}
+
+/** id da campanha gratuita (a única sujeita ao bloqueio por doação). */
+async function freeCampaignId(): Promise<string | null> {
+  const client = await db();
+  const { data } = await client
+    .from("pmma_campaigns")
+    .select("id")
+    .eq("is_paid", false)
+    .order("display_order", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return data?.id ?? null;
+}
+
+/** Access is blocked when the person already finished the free simulado and has no unused donation. */
+export async function getAccessStatus(identity: IdentityInput): Promise<AccessStatus> {
+  const client = await db();
+  const attemptFilter = identityFilter(identity, {
+    session: "anonymous_session_id",
+    fingerprint: "device_fingerprint",
+    user: "user_id",
+  });
+  const donationFilter = identityFilter(identity, {
+    session: "session_id",
+    fingerprint: "device_fingerprint",
+    user: "user_id",
+  });
+
+  if (!attemptFilter || !donationFilter) {
+    return { blocked: false, hasCredit: false, completedAttempts: 0 };
+  }
+
+  const campaignId = await freeCampaignId();
+
+  let attemptsQuery = client
     .from("pmma_attempts")
     .select("id", { count: "exact", head: true })
-    .eq("status", "completed");
+    .eq("status", "completed")
+    .or(attemptFilter);
+  if (campaignId) attemptsQuery = attemptsQuery.eq("campaign_id", campaignId);
+
   const donationsQuery = client
     .from("donations")
     .select("id", { count: "exact", head: true })
     .eq("status", "approved")
-    .eq("consumed", false);
+    .eq("consumed", false)
+    .or(donationFilter);
 
   const [{ count: completed }, { count: credits }] = await Promise.all([
-    useOr
-      ? attemptsQuery.or(
-          `anonymous_session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`,
-        )
-      : attemptsQuery.eq("anonymous_session_id", sessionId),
-    useOr
-      ? donationsQuery.or(`session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`)
-      : donationsQuery.eq("session_id", sessionId),
+    attemptsQuery,
+    donationsQuery,
   ]);
 
   const completedAttempts = completed ?? 0;
@@ -108,32 +158,34 @@ export async function getAccessStatus(
 }
 
 /** Consumes one approved donation so a new attempt can be started. */
-export async function consumeDonationCredit(
-  sessionId: string,
-  fingerprint?: string | null,
-): Promise<boolean> {
+export async function consumeDonationCredit(identity: IdentityInput): Promise<boolean> {
   const client = await db();
-  const query = client
+  const filter = identityFilter(identity, {
+    session: "session_id",
+    fingerprint: "device_fingerprint",
+    user: "user_id",
+  });
+  if (!filter) return false;
+
+  const { data } = await client
     .from("donations")
     .select("id")
     .eq("status", "approved")
     .eq("consumed", false)
+    .or(filter)
     .order("created_at", { ascending: true })
-    .limit(1);
+    .limit(1)
+    .maybeSingle();
 
-  const useOr = Boolean(fingerprint) && isFilterSafe(sessionId) && isFilterSafe(fingerprint!);
-  const { data } = await (useOr
-    ? query.or(`session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`)
-    : query.eq("session_id", sessionId)
-  ).maybeSingle();
   if (!data) return false;
-  const { error } = await client
+  const { error, count } = await client
     .from("donations")
-    .update({ consumed: true, consumed_at: new Date().toISOString() })
+    .update({ consumed: true, consumed_at: new Date().toISOString() }, { count: "exact" })
     .eq("id", data.id)
     .eq("consumed", false);
-  return !error;
+  return !error && (count ?? 0) > 0;
 }
+
 
 function normalizeAmount(amount: number) {
   const value = Math.round(amount * 100) / 100;

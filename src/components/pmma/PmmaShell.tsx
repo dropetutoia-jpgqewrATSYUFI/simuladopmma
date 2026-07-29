@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
 
 export function PmmaShell({
   progress,
@@ -16,20 +17,7 @@ export function PmmaShell({
     <div className="pmma-theme min-h-[100dvh]">
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0b1220]/80 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-3">
-          <a
-            href="https://edital360.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-w-0 flex-col leading-none"
-            aria-label="Edital360 — Concursos Públicos"
-          >
-            <span className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl">
-              Edital<span className="text-accent">360</span>
-            </span>
-            <span className="mt-1 text-[9px] uppercase tracking-[0.28em] text-muted-foreground/80">
-              Concursos Públicos
-            </span>
-          </a>
+          <PmmaBrandMark />
           {progress && progress.total > 0 ? (
             <span className="ml-auto shrink-0 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-muted-foreground">
               {Math.min(progress.current + 1, progress.total)}/{progress.total}

@@ -9,7 +9,7 @@ export function PmmaShell({
 }) {
   return (
     <div className="pmma-theme min-h-screen">
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0f172a]/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0b1220]/85 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-3">
           <div className="flex items-baseline gap-1">
             <span className="text-lg font-extrabold tracking-tight text-foreground">EDITAL</span>

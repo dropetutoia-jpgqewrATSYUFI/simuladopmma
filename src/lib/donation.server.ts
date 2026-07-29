@@ -121,7 +121,8 @@ export async function consumeDonationCredit(
     .order("created_at", { ascending: true })
     .limit(1);
 
-  const { data } = await (fingerprint
+  const useOr = Boolean(fingerprint) && isFilterSafe(sessionId) && isFilterSafe(fingerprint!);
+  const { data } = await (useOr
     ? query.or(`session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`)
     : query.eq("session_id", sessionId)
   ).maybeSingle();

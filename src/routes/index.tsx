@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const TITLE = "Simulados para PMMA — Concurso 2026 | Edital360";
 const DESCRIPTION =
-  "Entre ou crie sua conta para acessar os simulados PM-MA no estilo Cebraspe: mini simulado gratuito de 40 questões e simulados completos de 120 questões.";
+  "Entre ou crie sua conta para acessar os simulados PM-MA no estilo Cebraspe: simulado gratuito de 40 questões e simulados completos de 120 questões.";
 
 export const Route = createFileRoute("/")({
   head: () => ({

@@ -78,11 +78,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Diagnóstico PMMA — Edital360" },
-      {
-        name: "description",
-        content:
-          "Descubra o seu nível de preparação para o concurso da PMMA com o diagnóstico gratuito da Edital360. Quiz e mini simulado com correção instantânea.",
-      },
+        {
+          name: "description",
+          content:
+            "Descubra o seu nível de preparação para o concurso da PMMA com o diagnóstico gratuito da Edital360. Simulado com correção instantânea.",
+        },
       { property: "og:title", content: "Diagnóstico PMMA — Edital360" },
       {
         property: "og:description",

@@ -48,11 +48,12 @@ export function PmmaLeadForm({
 
   return (
     <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
-      <h2 className="text-xl font-bold">Você já começou seu diagnóstico</h2>
+      <h2 className="text-xl font-bold">Fique por dentro de todas as novidades do concurso</h2>
       <p className="mt-2 text-sm text-muted-foreground">
-        Informe seus dados para salvar suas respostas e liberar a análise personalizada no final.
-        Não será criada nenhuma conta.
+        Informe seu WhatsApp para receber a análise do seu simulado e todas as novidades do
+        concurso da PMMA. Sem login e sem cobrança.
       </p>
+
 
       <form
         className="mt-5 space-y-4"

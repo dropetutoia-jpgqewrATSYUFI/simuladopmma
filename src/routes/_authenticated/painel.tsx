@@ -223,7 +223,8 @@ function PainelPage() {
               </h2>
               {simulados.map((s, i) => {
                 const delayClass = ["pmma-delay-1", "pmma-delay-2", "pmma-delay-3", "pmma-delay-4"][Math.min(i, 3)];
-                const unlocked = !s.isPaid || s.owned;
+                const donationLocked = !s.isPaid && freeBlocked;
+                const unlocked = (!s.isPaid || s.owned) && !donationLocked;
                 return (
                   <Card
                     key={s.id}
@@ -241,7 +242,9 @@ function PainelPage() {
                       <div className="min-w-0">
                         <h3 className="font-display text-lg font-bold leading-snug">{s.name}</h3>
                         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                          {s.description}
+                          {donationLocked
+                            ? "Você já concluiu este simulado. Para refazer, apoie o projeto com uma doação de qualquer valor (mínimo R$ 5) — a liberação é imediata após o Pix."
+                            : s.description}
                         </p>
                         <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                           {s.totalQuestions} questões
@@ -254,7 +257,7 @@ function PainelPage() {
                             : "bg-accent/15 text-accent"
                         }`}
                       >
-                        {unlocked ? "Liberado" : brl(s.priceCents)}
+                        {donationLocked ? "Concluído" : unlocked ? "Liberado" : brl(s.priceCents)}
                       </span>
                     </div>
 
@@ -268,6 +271,18 @@ function PainelPage() {
                           INICIAR AGORA
                         </Link>
                       </Button>
+                    ) : donationLocked ? (
+                      <Button
+                        asChild
+                        size="lg"
+                        variant="outline"
+                        className="mt-5 h-14 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-base font-bold text-accent hover:bg-accent/10"
+                      >
+                        <Link to="/simulado/$slug" params={{ slug: s.slug }}>
+                          <Lock className="h-4 w-4" aria-hidden="true" />
+                          APOIAR E REFAZER
+                        </Link>
+                      </Button>
                     ) : (
                       <Button
                         size="lg"
@@ -279,6 +294,8 @@ function PainelPage() {
                         DESBLOQUEAR POR {brl(s.priceCents)}
                       </Button>
                     )}
+                  </Card>
+
                   </Card>
                 );
               })}

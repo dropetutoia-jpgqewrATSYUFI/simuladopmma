@@ -240,17 +240,14 @@ function SimuladoPmmaPage() {
     }
 
     const nextIndex = state.index + 1;
-    const captureAt = state.start.campaign.leadCaptureAfterQuestion;
-
-    if (!state.leadCaptured && nextIndex === captureAt) {
-      persist({ ...state, index: nextIndex });
-      setStage("lead");
-      emit("lead_form_view", state.attemptId);
-      return;
-    }
 
     if (nextIndex >= total) {
       persist({ ...state, index: nextIndex });
+      if (!state.leadCaptured) {
+        setStage("lead");
+        emit("lead_form_view", state.attemptId);
+        return;
+      }
       if (state.start.bonusQuestion) {
         setStage("bonus_offer");
       } else {
@@ -258,6 +255,7 @@ function SimuladoPmmaPage() {
       }
       return;
     }
+
 
     persist({ ...state, index: nextIndex });
     const milestone = MILESTONES[nextIndex];

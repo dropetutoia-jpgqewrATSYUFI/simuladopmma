@@ -105,10 +105,14 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
   }
 
   // Anti-refazer: quem já concluiu o simulado precisa de uma doação aprovada.
+  // Além do sessionId (localStorage), usamos uma impressão digital do dispositivo,
+  // que continua reconhecendo a pessoa mesmo se ela limpar os dados do navegador.
+  const { getDeviceFingerprint } = await import("./fingerprint.server");
+  const fingerprint = await getDeviceFingerprint();
   const { getAccessStatus, consumeDonationCredit } = await import("./donation.server");
-  const access = await getAccessStatus(input.sessionId);
+  const access = await getAccessStatus(input.sessionId, fingerprint);
   if (access.completedAttempts > 0) {
-    const unlocked = await consumeDonationCredit(input.sessionId);
+    const unlocked = await consumeDonationCredit(input.sessionId, fingerprint);
     if (!unlocked) throw new Error("DONATION_REQUIRED");
   }
 
@@ -165,6 +169,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     .from("pmma_attempts")
     .insert({
       anonymous_session_id: input.sessionId,
+      device_fingerprint: fingerprint,
       campaign_id: campaign.id,
       status: "started",
       total_questions: questions.length,

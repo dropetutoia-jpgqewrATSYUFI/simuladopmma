@@ -41,6 +41,7 @@ export type Database = {
           consumed: boolean
           consumed_at: string | null
           created_at: string
+          device_fingerprint: string | null
           id: string
           paid_at: string | null
           payer_email: string | null
@@ -58,6 +59,7 @@ export type Database = {
           consumed?: boolean
           consumed_at?: string | null
           created_at?: string
+          device_fingerprint?: string | null
           id?: string
           paid_at?: string | null
           payer_email?: string | null
@@ -75,6 +77,7 @@ export type Database = {
           consumed?: boolean
           consumed_at?: string | null
           created_at?: string
+          device_fingerprint?: string | null
           id?: string
           paid_at?: string | null
           payer_email?: string | null
@@ -220,6 +223,7 @@ export type Database = {
           created_at: string
           cta_variant: string | null
           current_question_index: number
+          device_fingerprint: string | null
           device_type: string | null
           duration_seconds: number | null
           headline_variant: string | null
@@ -250,6 +254,7 @@ export type Database = {
           created_at?: string
           cta_variant?: string | null
           current_question_index?: number
+          device_fingerprint?: string | null
           device_type?: string | null
           duration_seconds?: number | null
           headline_variant?: string | null
@@ -280,6 +285,7 @@ export type Database = {
           created_at?: string
           cta_variant?: string | null
           current_question_index?: number
+          device_fingerprint?: string | null
           device_type?: string | null
           duration_seconds?: number | null
           headline_variant?: string | null

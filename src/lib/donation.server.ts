@@ -68,21 +68,38 @@ export async function getMercadoPagoStatus() {
   };
 }
 
+/** Evita que caracteres especiais quebrem/injetem no filtro `or()` do PostgREST. */
+function isFilterSafe(value: string) {
+  return /^[A-Za-z0-9_-]{1,64}$/.test(value);
+}
+
 /** Access is blocked when the session already finished a simulado and has no unused donation. */
-export async function getAccessStatus(sessionId: string): Promise<AccessStatus> {
+export async function getAccessStatus(
+  sessionId: string,
+  fingerprint?: string | null,
+): Promise<AccessStatus> {
   const client = await db();
+  const useOr = Boolean(fingerprint) && isFilterSafe(sessionId) && isFilterSafe(fingerprint!);
+
+  const attemptsQuery = client
+    .from("pmma_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "completed");
+  const donationsQuery = client
+    .from("donations")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "approved")
+    .eq("consumed", false);
+
   const [{ count: completed }, { count: credits }] = await Promise.all([
-    client
-      .from("pmma_attempts")
-      .select("id", { count: "exact", head: true })
-      .eq("anonymous_session_id", sessionId)
-      .eq("status", "completed"),
-    client
-      .from("donations")
-      .select("id", { count: "exact", head: true })
-      .eq("session_id", sessionId)
-      .eq("status", "approved")
-      .eq("consumed", false),
+    useOr
+      ? attemptsQuery.or(
+          `anonymous_session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`,
+        )
+      : attemptsQuery.eq("anonymous_session_id", sessionId),
+    useOr
+      ? donationsQuery.or(`session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`)
+      : donationsQuery.eq("session_id", sessionId),
   ]);
 
   const completedAttempts = completed ?? 0;
@@ -91,17 +108,24 @@ export async function getAccessStatus(sessionId: string): Promise<AccessStatus> 
 }
 
 /** Consumes one approved donation so a new attempt can be started. */
-export async function consumeDonationCredit(sessionId: string): Promise<boolean> {
+export async function consumeDonationCredit(
+  sessionId: string,
+  fingerprint?: string | null,
+): Promise<boolean> {
   const client = await db();
-  const { data } = await client
+  const query = client
     .from("donations")
     .select("id")
-    .eq("session_id", sessionId)
     .eq("status", "approved")
     .eq("consumed", false)
     .order("created_at", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
+
+  const useOr = Boolean(fingerprint) && isFilterSafe(sessionId) && isFilterSafe(fingerprint!);
+  const { data } = await (useOr
+    ? query.or(`session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`)
+    : query.eq("session_id", sessionId)
+  ).maybeSingle();
   if (!data) return false;
   const { error } = await client
     .from("donations")
@@ -130,11 +154,15 @@ export async function createPixDonation(input: {
     throw new Error("Pagamentos indisponíveis no momento. Tente novamente mais tarde.");
   }
 
+  const { getDeviceFingerprint } = await import("./fingerprint.server");
+  const fingerprint = await getDeviceFingerprint();
+
   const client = await db();
   const { data: row, error: insertError } = await client
     .from("donations")
     .insert({
       session_id: input.sessionId,
+      device_fingerprint: fingerprint,
       amount,
       payer_email: input.email,
       status: "pending",

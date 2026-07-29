@@ -22,7 +22,8 @@ export const pmmaAccessStatus = createServerFn({ method: "POST" })
   .validator({ parse: (input: unknown) => sessionSchema.parse(input) })
   .handler(async ({ data }): Promise<AccessStatus> => {
     const { getAccessStatus } = await import("./donation.server");
-    return getAccessStatus(data.sessionId);
+    const { getDeviceFingerprint } = await import("./fingerprint.server");
+    return getAccessStatus(data.sessionId, await getDeviceFingerprint());
   });
 
 export const donationCreatePix = createServerFn({ method: "POST" })

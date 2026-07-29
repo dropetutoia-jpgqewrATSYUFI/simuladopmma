@@ -134,39 +134,19 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     byDiscipline.set(q.discipline, list);
   }
 
-  const picked: PoolRow[] = [];
-  const leftovers: PoolRow[] = [];
-
-  for (const [, list] of shuffle([...byDiscipline.entries()])) {
-    // prioriza questões ainda não vistas neste dispositivo
-    const unseen = shuffle(list.filter((q) => !seen.has(q.public_code)));
-    const rest = shuffle(list.filter((q) => seen.has(q.public_code)));
-    const ordered = [...unseen, ...rest];
-    // procura equilibrar itens com gabarito CERTO e ERRADO
-    const certos = ordered.filter((q) => q.correct_answer);
-    const errados = ordered.filter((q) => !q.correct_answer);
-    const balanced: PoolRow[] = [];
-    while (balanced.length < campaign.questionsPerDiscipline && (certos.length || errados.length)) {
-      const source =
-        balanced.filter((q) => q.correct_answer).length <=
-        balanced.filter((q) => !q.correct_answer).length
-          ? certos.length
-            ? certos
-            : errados
-          : errados.length
-            ? errados
-            : certos;
-      const next = source.shift();
-      if (next) balanced.push(next);
+  // Aplica TODAS as questões ativas da campanha, intercalando as disciplinas
+  const orderedByDiscipline = shuffle([...byDiscipline.entries()]).map(([, list]) => shuffle(list));
+  const questions: PoolRow[] = [];
+  const maxLen = Math.max(0, ...orderedByDiscipline.map((l) => l.length));
+  for (let i = 0; i < maxLen; i++) {
+    for (const list of orderedByDiscipline) {
+      const item = list[i];
+      if (item) questions.push(item);
     }
-    picked.push(...balanced);
-    leftovers.push(...certos, ...errados);
   }
 
-  const questions = shuffle(picked).slice(0, campaign.questionsPerAttempt);
-  const usedIds = new Set(questions.map((q) => q.id));
-  const bonusPool = shuffle(leftovers.filter((q) => !usedIds.has(q.id)));
-  const bonus = campaign.bonusEnabled ? (bonusPool[0] ?? null) : null;
+  const bonus: PoolRow | null = null;
+
 
   const headlineVariant: "A" | "B" = Math.random() < 0.5 ? "A" : "B";
   const ctaVariant: "A" | "B" = Math.random() < 0.5 ? "A" : "B";

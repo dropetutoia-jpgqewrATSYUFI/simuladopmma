@@ -130,11 +130,39 @@ function AdminPage() {
     navigate({ to: "/auth", replace: true });
   }
 
+  function toggleLead(id: string) {
+    setSelectedLeads((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }
+
+  function toggleAllLeads() {
+    setSelectedLeads((prev) => (prev.length === leads.length ? [] : leads.map((l) => l.id)));
+  }
+
+  async function handleDeleteLeads() {
+    if (selectedLeads.length === 0) return;
+    if (!window.confirm(`Apagar ${selectedLeads.length} lead(s)? Esta ação não pode ser desfeita.`))
+      return;
+    setBusy(true);
+    try {
+      await deleteLeads({ data: { ids: selectedLeads } });
+      setLeads((prev) => prev.filter((l) => !selectedLeads.includes(l.id)));
+      setSelectedLeads([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao apagar leads.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function handleSearch(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
     try {
+      setSelectedLeads([]);
       setLeads(await loadLeads({ data: { search, limit: 200 } }));
+
     } finally {
       setBusy(false);
     }

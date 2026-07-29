@@ -395,10 +395,16 @@ export async function syncPayment(kind: "purchase" | "donation", id: string) {
   const client = await db();
   const table = kind === "purchase" ? "purchases" : "donations";
 
+  const columns =
+    kind === "purchase"
+      ? "id, status, provider_payment_id, user_id, campaign_id"
+      : "id, status, provider_payment_id, user_id";
+
   const { data: rawRow } = await (client.from(table) as any)
-    .select("id, status, provider_payment_id, user_id, campaign_id")
+    .select(columns)
     .eq("id", id)
     .maybeSingle();
+
 
   const row = rawRow as {
     id: string;

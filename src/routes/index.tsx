@@ -290,27 +290,27 @@ function HomePage() {
       </div>
 
       <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
-        <DialogContent className="max-w-lg border-white/10 bg-[#0f172a]">
-          <DialogHeader>
-            <DialogTitle className="font-display text-lg text-foreground">
-              Privacidade e proteção de dados (LGPD)
+        <DialogContent className="max-w-lg border border-white/20 bg-[#0B1220] p-0 shadow-2xl">
+          <DialogHeader className="space-y-3 border-b border-white/10 bg-[#111827] px-6 py-5">
+            <DialogTitle className="font-display text-xl text-white sm:text-2xl">
+              Privacidade e proteção de dados
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground">
-              Antes de finalizar seu cadastro, leia como tratamos seus dados.
+            <DialogDescription className="text-base text-white/80">
+              Antes de finalizar seu cadastro, leia com atenção como tratamos seus dados.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="max-h-[45vh] space-y-3 overflow-y-auto pr-1 text-sm leading-relaxed text-muted-foreground">
+          <div className="max-h-[42vh] space-y-4 overflow-y-auto px-6 py-2 text-base leading-relaxed text-white/85">
             <p>
-              Coletamos apenas <strong className="text-foreground">nome, e-mail e WhatsApp</strong>{" "}
+              Coletamos apenas <strong className="text-white">nome, e-mail e WhatsApp</strong>{" "}
               para criar sua conta, liberar o acesso aos simulados, registrar seu desempenho e enviar
               comunicados sobre a plataforma e o concurso.
             </p>
             <p>
               Seus dados são armazenados em ambiente seguro, com acesso restrito, e{" "}
-              <strong className="text-foreground">não são vendidos nem repassados</strong> a
-              terceiros para fins comerciais. Utilizamos apenas fornecedores necessários para o
-              funcionamento do serviço (hospedagem, banco de dados e pagamentos).
+              <strong className="text-white">não são vendidos nem repassados</strong> a terceiros
+              para fins comerciais. Utilizamos apenas fornecedores necessários para o funcionamento
+              do serviço (hospedagem, banco de dados e pagamentos).
             </p>
             <p>
               Conforme a Lei nº 13.709/2018 (LGPD), você pode solicitar a qualquer momento o acesso,
@@ -319,26 +319,42 @@ function HomePage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button
-              type="button"
-              variant="outline"
-              className="h-12 flex-1 rounded-xl border-white/15"
-              onClick={() => setPrivacyOpen(false)}
-            >
-              Voltar
-            </Button>
-            <Button
-              type="button"
-              disabled={loading}
-              className="h-12 flex-1 rounded-xl bg-linear-to-r from-accent to-[#d97706] font-display text-xs font-extrabold uppercase tracking-[0.12em] text-accent-foreground"
-              onClick={() => {
-                setPrivacyOpen(false);
-                void runSignUp();
-              }}
-            >
-              {loading ? "Aguarde..." : "Li e aceito — criar conta"}
-            </Button>
+          <div className="flex flex-col gap-4 border-t border-white/10 bg-[#111827] px-6 py-5">
+            <div className="flex items-start gap-3">
+              <input
+                id="privacy-accept"
+                type="checkbox"
+                checked={privacyAccepted}
+                onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                className="mt-1 h-5 w-5 shrink-0 accent-accent"
+              />
+              <label htmlFor="privacy-accept" className="cursor-pointer text-sm leading-snug text-white/90">
+                Declaro que li e concordo com o tratamento dos meus dados pessoais para os fins
+                descritos acima.
+              </label>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-12 flex-1 rounded-xl border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                onClick={() => setPrivacyOpen(false)}
+              >
+                Voltar
+              </Button>
+              <Button
+                type="button"
+                disabled={loading || !privacyAccepted}
+                className="h-12 flex-1 rounded-xl bg-linear-to-r from-accent to-[#d97706] font-display text-sm font-extrabold uppercase tracking-[0.12em] text-accent-foreground disabled:opacity-60"
+                onClick={() => {
+                  setPrivacyOpen(false);
+                  void runSignUp();
+                }}
+              >
+                {loading ? "Aguarde..." : "Li e aceito — criar conta"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

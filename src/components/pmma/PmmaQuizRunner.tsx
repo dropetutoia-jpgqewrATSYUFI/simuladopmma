@@ -71,6 +71,8 @@ export function PmmaQuizRunner({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+
   const [resume, setResume] = useState<Persisted | null>(null);
   const [milestoneText, setMilestoneText] = useState<string | null>(null);
   const questionStartedAt = useRef<number>(Date.now());

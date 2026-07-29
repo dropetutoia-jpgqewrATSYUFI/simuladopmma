@@ -381,10 +381,17 @@ function SimuladoPmmaPage() {
             </p>
           </div>
 
-          <div className="pmma-rise pmma-delay-1 grid grid-cols-2 gap-2.5">
+          <div className="pmma-rise pmma-delay-1 grid grid-cols-3 gap-2.5">
             {[
               { value: "40", label: "questões" },
               { value: "8", label: "matérias" },
+              {
+                value:
+                  attemptsCount == null
+                    ? "—"
+                    : attemptsCount.toLocaleString("pt-BR"),
+                label: attemptsCount == null ? "pessoas" : "pessoas já fizeram",
+              },
             ].map((stat) => (
               <div
                 key={stat.label}

@@ -43,11 +43,7 @@ const inputClass =
 
 const labelClass = "text-sm font-medium text-foreground/90";
 
-const STATS = [
-  { value: "40", label: "Questões grátis" },
-  { value: "120", label: "Por simulado" },
-  { value: "8", label: "Matérias" },
-];
+const SIMULADO_TAGLINE = "40 questões • 8 matérias • estilo Cebraspe";
 
 function HomePage() {
   const navigate = useNavigate();

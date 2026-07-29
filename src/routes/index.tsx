@@ -315,7 +315,7 @@ function SimuladoPmmaPage() {
   if (resume && stage === "intro") {
     return (
       <PmmaShell>
-        <Card className="pmma-glass animate-fade-in rounded-2xl p-6">
+        <Card className="pmma-glass pmma-rise rounded-2xl p-6">
           <h1 className="text-xl font-bold">Você parou na questão {resume.index + 1}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Deseja continuar de onde parou?</p>
           <div className="mt-5 space-y-3">
@@ -352,43 +352,80 @@ function SimuladoPmmaPage() {
   if (stage === "intro") {
     return (
       <PmmaShell>
-        <div className="space-y-5">
-          <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-accent">SIMULADO ESTILO CEBRASPE</Badge>
-          <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
-            {headlineVariant === "A"
-              ? "Você está realmente preparado para as questões da PMMA?"
-              : "Descubra agora quais matérias podem fazer você perder pontos na PMMA"}
-          </h1>
-          <p className="text-base leading-relaxed text-muted-foreground">
-            Responda ao simulado no formato Certo ou Errado, no estilo Cebraspe, receba uma
-            explicação após cada resposta e descubra quais matérias precisam de mais atenção.
-          </p>
+        <div className="space-y-6">
+          <div className="pmma-rise space-y-4">
+            <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-[11px] font-bold tracking-[0.14em] text-accent">
+              SIMULADO ESTILO CEBRASPE
+            </Badge>
+            <h1 className="text-[30px] font-black leading-[1.1] tracking-tight sm:text-[42px]">
+              {headlineVariant === "A"
+                ? "Você está realmente preparado para as questões da PMMA?"
+                : "Descubra agora quais matérias podem fazer você perder pontos na PMMA"}
+            </h1>
+            <p className="text-[15px] leading-relaxed text-muted-foreground sm:text-base">
+              Responda ao simulado no formato Certo ou Errado, no estilo Cebraspe, receba uma
+              explicação após cada resposta e descubra quais matérias precisam de mais atenção.
+            </p>
+          </div>
 
-          <ul className="space-y-2 text-sm text-foreground/90">
-            <li>• 40 questões por simulado</li>
-            <li>• 8 matérias diferentes</li>
-            <li>• Formato Certo ou Errado, estilo Cebraspe</li>
-            <li>• Correção explicada na hora</li>
-            <li>• Resultado personalizado</li>
-            <li>• Acesso público e sem login</li>
+          <div className="pmma-rise pmma-delay-1 grid grid-cols-3 gap-2.5">
+            {[
+              { value: "40", label: "questões" },
+              { value: "8", label: "matérias" },
+              { value: "0", label: "custo / login" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="pmma-glass rounded-2xl px-2 py-3 text-center"
+              >
+                <p className="text-2xl font-black tabular-nums text-primary sm:text-3xl">
+                  {stat.value}
+                </p>
+                <p className="mt-0.5 text-[11px] leading-tight text-muted-foreground">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <ul className="pmma-rise pmma-delay-2 grid gap-2 sm:grid-cols-2">
+            {[
+              "Formato Certo ou Errado, estilo Cebraspe",
+              "Correção explicada na hora",
+              "Resultado personalizado por matéria",
+              "Acesso público e sem login",
+            ].map((item) => (
+              <li
+                key={item}
+                className="flex items-start gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-[13px] leading-snug text-foreground/90 sm:text-sm"
+              >
+                <span className="mt-px shrink-0 font-bold text-accent" aria-hidden>
+                  ✓
+                </span>
+                {item}
+              </li>
+            ))}
           </ul>
 
-          <Card className="animate-fade-in rounded-2xl border border-dashed border-white/15 bg-white/5 p-4">
-            <p className="text-xs font-semibold text-muted-foreground">Questão 1 de 40</p>
-            <p className="mt-2 text-base font-semibold">Certo ou Errado?</p>
-            <p className="mt-1 text-sm text-muted-foreground">Responda e veja a explicação</p>
-          </Card>
+          {error ? (
+            <p className="rounded-xl border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </p>
+          ) : null}
 
-
-
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
-
-          <Button size="lg" className="h-14 w-full rounded-xl bg-linear-to-r from-primary to-[#2563eb] text-base font-semibold shadow-[0_18px_40px_-16px_var(--color-primary)] transition-transform hover:scale-[1.01]" disabled={loading} onClick={handleStart}>
-            {loading ? "PREPARANDO..." : "COMEÇAR O DESAFIO"}
-          </Button>
-          <p className="text-center text-xs text-muted-foreground">
-            Você começa agora. Não é necessário criar conta.
-          </p>
+          <div className="pmma-rise pmma-delay-3 space-y-2">
+            <Button
+              size="lg"
+              className="pmma-shine h-16 w-full rounded-2xl bg-linear-to-r from-primary to-[#2563eb] text-base font-black tracking-wide shadow-[0_18px_44px_-16px_var(--color-primary)] transition-transform hover:scale-[1.01] active:scale-[0.98]"
+              disabled={loading}
+              onClick={handleStart}
+            >
+              {loading ? "PREPARANDO..." : "COMEÇAR O DESAFIO"}
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              Você começa agora. Não é necessário criar conta.
+            </p>
+          </div>
         </div>
       </PmmaShell>
     );
@@ -397,8 +434,8 @@ function SimuladoPmmaPage() {
   if (stage === "milestone") {
     return (
       <PmmaShell progress={progress}>
-        <Card className="pmma-glass animate-fade-in rounded-2xl p-8 text-center">
-          <p className="text-lg font-semibold">{milestoneText}</p>
+        <Card className="pmma-glass pmma-pop rounded-2xl p-8 text-center">
+          <p className="text-lg font-bold sm:text-xl">{milestoneText}</p>
         </Card>
       </PmmaShell>
     );
@@ -415,7 +452,7 @@ function SimuladoPmmaPage() {
   if (stage === "bonus_offer" && state) {
     return (
       <PmmaShell>
-        <Card className="pmma-glass animate-fade-in rounded-2xl p-6 text-center">
+        <Card className="pmma-glass pmma-rise rounded-2xl p-6 text-center">
           <h2 className="text-xl font-bold">
             Quer responder uma questão bônus antes de ver o resultado?
           </h2>

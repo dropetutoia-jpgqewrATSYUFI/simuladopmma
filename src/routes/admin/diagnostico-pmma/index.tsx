@@ -183,9 +183,9 @@ function AdminPage() {
                       <tbody className="divide-y">
                         {attempts?.map((attempt) => (
                           <tr key={attempt.id}>
-                            <td className="py-2 capitalize">{attempt.mode}</td>
+                            <td className="py-2 capitalize">{attempt.type}</td>
                             <td className="py-2 capitalize">{attempt.status}</td>
-                            <td className="py-2">{attempt.score ?? "—"}</td>
+                            <td className="py-2">{attempt.finished_at ? "Finalizado" : "Em andamento"}</td>
                             <td className="py-2 font-mono text-xs">{attempt.public_token}</td>
                             <td className="py-2">
                               {new Date(attempt.created_at).toLocaleDateString("pt-BR")}

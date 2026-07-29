@@ -27,19 +27,10 @@ const startSchema = z.object({
   seenQuestionCodes: z.array(z.string().max(20)).max(200).optional(),
 });
 
-export const pmmaStart = createServerFn({ method: "POST" })
-  .validator({ parse: (input) => startSchema.parse(input) })
-  .handler(async ({ data }): Promise<PmmaStartResult> => {
-    const { startAttempt, logEvent } = await import("./pmma.server");
-    const result = await startAttempt(data);
-    await logEvent({
-      sessionId: data.sessionId,
-      attemptId: result.attemptId,
-      eventName: "quiz_start_click",
-      data: { headline: result.headlineVariant, cta: result.ctaVariant },
-    });
-    return result;
-  });
+// Todo início de simulado (grátis ou pago) exige conta: o bloqueio anti-refazer
+// é vinculado ao usuário + dispositivo, então não existe mais início anônimo.
+
+
 
 /** Início autenticado: exige compra nos simulados pagos, exceto para administradores. */
 export const pmmaStartOwned = createServerFn({ method: "POST" })

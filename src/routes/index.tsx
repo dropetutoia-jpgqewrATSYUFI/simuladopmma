@@ -288,6 +288,60 @@ function HomePage() {
           </p>
         </footer>
       </div>
+
+      <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
+        <DialogContent className="max-w-lg border-white/10 bg-[#0f172a]">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg text-foreground">
+              Privacidade e proteção de dados (LGPD)
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Antes de finalizar seu cadastro, leia como tratamos seus dados.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="max-h-[45vh] space-y-3 overflow-y-auto pr-1 text-sm leading-relaxed text-muted-foreground">
+            <p>
+              Coletamos apenas <strong className="text-foreground">nome, e-mail e WhatsApp</strong>{" "}
+              para criar sua conta, liberar o acesso aos simulados, registrar seu desempenho e enviar
+              comunicados sobre a plataforma e o concurso.
+            </p>
+            <p>
+              Seus dados são armazenados em ambiente seguro, com acesso restrito, e{" "}
+              <strong className="text-foreground">não são vendidos nem repassados</strong> a
+              terceiros para fins comerciais. Utilizamos apenas fornecedores necessários para o
+              funcionamento do serviço (hospedagem, banco de dados e pagamentos).
+            </p>
+            <p>
+              Conforme a Lei nº 13.709/2018 (LGPD), você pode solicitar a qualquer momento o acesso,
+              a correção ou a exclusão dos seus dados, bem como revogar este consentimento, pelo
+              nosso canal de atendimento.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-12 flex-1 rounded-xl border-white/15"
+              onClick={() => setPrivacyOpen(false)}
+            >
+              Voltar
+            </Button>
+            <Button
+              type="button"
+              disabled={loading}
+              className="h-12 flex-1 rounded-xl bg-linear-to-r from-accent to-[#d97706] font-display text-xs font-extrabold uppercase tracking-[0.12em] text-accent-foreground"
+              onClick={() => {
+                setPrivacyOpen(false);
+                void runSignUp();
+              }}
+            >
+              {loading ? "Aguarde..." : "Li e aceito — criar conta"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

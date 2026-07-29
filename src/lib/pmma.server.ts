@@ -145,7 +145,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     }
   }
 
-  const bonus = null;
+  const bonus: PoolRow | null = null;
 
 
   const headlineVariant: "A" | "B" = Math.random() < 0.5 ? "A" : "B";

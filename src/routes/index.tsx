@@ -123,21 +123,9 @@ function HomePage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3 border-t border-white/10 pt-4">
-              {STATS.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 sm:px-4 sm:py-2.5"
-                >
-                  <p className="font-display text-xl font-bold text-accent sm:text-2xl">
-                    {stat.value}
-                  </p>
-                  <p className="max-w-[5.5rem] text-[10px] font-semibold uppercase leading-tight tracking-[0.1em] text-muted-foreground sm:text-[11px]">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent/90 sm:text-sm">
+              {SIMULADO_TAGLINE}
+            </p>
           </section>
 
 

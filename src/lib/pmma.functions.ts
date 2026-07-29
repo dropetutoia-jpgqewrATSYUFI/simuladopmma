@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import type {
   PmmaAnswerFeedback,
@@ -13,23 +14,21 @@ export const pmmaCountAttempts = createServerFn({ method: "GET" }).handler(
   },
 );
 
+const startSchema = z.object({
+  sessionId: z.string().min(8).max(64),
+  campaignSlug: z.string().min(3).max(80).optional(),
+  utmSource: z.string().max(120).nullish(),
+  utmMedium: z.string().max(120).nullish(),
+  utmCampaign: z.string().max(120).nullish(),
+  utmContent: z.string().max(120).nullish(),
+  partnerCode: z.string().max(120).nullish(),
+  deviceType: z.enum(["mobile", "desktop"]).nullish(),
+  referrer: z.string().max(500).nullish(),
+  seenQuestionCodes: z.array(z.string().max(20)).max(200).optional(),
+});
+
 export const pmmaStart = createServerFn({ method: "POST" })
-  .validator({
-    parse: (input) =>
-      z
-        .object({
-          sessionId: z.string().min(8).max(64),
-          utmSource: z.string().max(120).nullish(),
-          utmMedium: z.string().max(120).nullish(),
-          utmCampaign: z.string().max(120).nullish(),
-          utmContent: z.string().max(120).nullish(),
-          partnerCode: z.string().max(120).nullish(),
-          deviceType: z.enum(["mobile", "desktop"]).nullish(),
-          referrer: z.string().max(500).nullish(),
-          seenQuestionCodes: z.array(z.string().max(20)).max(200).optional(),
-        })
-        .parse(input),
-  })
+  .validator({ parse: (input) => startSchema.parse(input) })
   .handler(async ({ data }): Promise<PmmaStartResult> => {
     const { startAttempt, logEvent } = await import("./pmma.server");
     const result = await startAttempt(data);
@@ -41,6 +40,23 @@ export const pmmaStart = createServerFn({ method: "POST" })
     });
     return result;
   });
+
+/** Início de simulados pagos: exige conta e compra aprovada. */
+export const pmmaStartOwned = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator({ parse: (input) => startSchema.parse(input) })
+  .handler(async ({ data, context }): Promise<PmmaStartResult> => {
+    const { startAttempt, logEvent } = await import("./pmma.server");
+    const result = await startAttempt({ ...data, userId: context.userId });
+    await logEvent({
+      sessionId: data.sessionId,
+      attemptId: result.attemptId,
+      eventName: "quiz_start_click",
+      data: { headline: result.headlineVariant, cta: result.ctaVariant },
+    });
+    return result;
+  });
+
 
 export const pmmaAnswer = createServerFn({ method: "POST" })
   .validator({

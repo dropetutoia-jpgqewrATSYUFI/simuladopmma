@@ -290,7 +290,13 @@ function HomePage() {
         </footer>
       </div>
 
-      <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
+      <Dialog
+        open={privacyOpen}
+        onOpenChange={(open) => {
+          setPrivacyOpen(open);
+          if (!open) setPrivacyAccepted(false);
+        }}
+      >
         <DialogContent className="max-w-lg border border-white/20 bg-[#0B1220] p-0 shadow-2xl">
           <DialogHeader className="space-y-3 border-b border-white/10 bg-[#111827] px-6 py-5">
             <DialogTitle className="font-display text-xl text-white sm:text-2xl">

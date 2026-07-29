@@ -69,6 +69,7 @@ function AdminPage() {
   const loadOverview = useServerFn(adminOverview);
   const loadLeads = useServerFn(adminLeads);
   const loadCsv = useServerFn(adminLeadsCsv);
+  const deleteLeads = useServerFn(adminDeleteLeads);
   const loadQuestions = useServerFn(adminQuestions);
   const toggleQuestion = useServerFn(adminToggleQuestion);
 
@@ -78,10 +79,12 @@ function AdminPage() {
   const [currentUserId, setCurrentUserId] = useState("");
   const [overview, setOverview] = useState<AdminOverview | null>(null);
   const [leads, setLeads] = useState<AdminLead[]>([]);
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [questions, setQuestions] = useState<AdminQuestion[]>([]);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
 
   const refresh = useCallback(async () => {
     setError(null);

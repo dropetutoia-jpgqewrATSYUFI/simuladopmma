@@ -6,6 +6,13 @@ import type {
   PmmaStartResult,
 } from "./pmma.types";
 
+export const pmmaCountAttempts = createServerFn({ method: "GET" }).handler(
+  async (): Promise<number> => {
+    const { countAttempts } = await import("./pmma.server");
+    return countAttempts();
+  },
+);
+
 export const pmmaStart = createServerFn({ method: "POST" })
   .validator({
     parse: (input) =>

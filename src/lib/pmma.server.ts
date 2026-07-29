@@ -512,6 +512,19 @@ export async function finishAttempt(attemptId: string): Promise<PmmaResult> {
   };
 }
 
+export async function countAttempts(): Promise<number> {
+  const { count, error } = await supabaseAdmin
+    .from("pmma_attempts")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "completed");
+
+  if (error) {
+    throw new Error("Não foi possível contar as tentativas.");
+  }
+
+  return count ?? 0;
+}
+
 export async function logEvent(params: {
   sessionId: string;
   attemptId?: string | null;

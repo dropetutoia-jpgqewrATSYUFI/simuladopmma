@@ -8,7 +8,14 @@ import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { PmmaLeadForm, type LeadFormValues } from "@/components/pmma/PmmaLeadForm";
 import { PmmaQuestionCard } from "@/components/pmma/PmmaQuestionCard";
 import { PmmaResultView } from "@/components/pmma/PmmaResultView";
-import { pmmaStart, pmmaAnswer, pmmaCaptureLead, pmmaFinish, pmmaTrack } from "@/lib/pmma.functions";
+import {
+  pmmaStart,
+  pmmaAnswer,
+  pmmaCaptureLead,
+  pmmaFinish,
+  pmmaTrack,
+  pmmaCountAttempts,
+} from "@/lib/pmma.functions";
 import type { PmmaAnswerFeedback, PmmaResult, PmmaStartResult } from "@/lib/pmma.types";
 
 const STORAGE_KEY = "pmma:desafio:v1";
@@ -70,6 +77,7 @@ function SimuladoPmmaPage() {
   const capture = useServerFn(pmmaCaptureLead);
   const finish = useServerFn(pmmaFinish);
   const track = useServerFn(pmmaTrack);
+  const countAttempts = useServerFn(pmmaCountAttempts);
 
   const [sessionId, setSessionId] = useState<string>("");
   const [stage, setStage] = useState<Stage>("intro");
@@ -82,6 +90,7 @@ function SimuladoPmmaPage() {
   const [resume, setResume] = useState<Persisted | null>(null);
   const [milestoneText, setMilestoneText] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
+  const [attemptsCount, setAttemptsCount] = useState<number | null>(null);
   const questionStartedAt = useRef<number>(Date.now());
 
   const params = useMemo(() => {
@@ -121,7 +130,11 @@ function SimuladoPmmaPage() {
         localStorage.removeItem(STORAGE_KEY);
       }
     }
-  }, []);
+
+    void countAttempts({ data: undefined })
+      .then((count) => setAttemptsCount(count))
+      .catch(() => setAttemptsCount(null));
+  }, [countAttempts]);
 
   useEffect(() => {
     if (sessionId) emit("quiz_view");
@@ -368,10 +381,17 @@ function SimuladoPmmaPage() {
             </p>
           </div>
 
-          <div className="pmma-rise pmma-delay-1 grid grid-cols-2 gap-2.5">
+          <div className="pmma-rise pmma-delay-1 grid grid-cols-3 gap-2.5">
             {[
               { value: "40", label: "questões" },
               { value: "8", label: "matérias" },
+              {
+                value:
+                  attemptsCount == null
+                    ? "—"
+                    : attemptsCount.toLocaleString("pt-BR"),
+                label: attemptsCount == null ? "pessoas" : "pessoas já fizeram",
+              },
             ].map((stat) => (
               <div
                 key={stat.label}

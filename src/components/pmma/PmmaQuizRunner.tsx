@@ -71,6 +71,8 @@ export function PmmaQuizRunner({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+
   const [resume, setResume] = useState<Persisted | null>(null);
   const [milestoneText, setMilestoneText] = useState<string | null>(null);
   const questionStartedAt = useRef<number>(Date.now());
@@ -108,7 +110,10 @@ export function PmmaQuizRunner({
         localStorage.removeItem(storageKey);
       }
     }
+
+    void supabase.auth.getSession().then(({ data }) => setIsAuthed(Boolean(data.session)));
   }, [storageKey]);
+
 
   const persist = useCallback(
     (next: Persisted) => {
@@ -355,17 +360,16 @@ export function PmmaQuizRunner({
           onOfferClick={() => emit("offer_click", state.attemptId)}
           onWhatsappClick={() => emit("whatsapp_click", state.attemptId)}
           onCorrectionsOpen={() => emit("corrections_open", state.attemptId)}
+          canRetake={paid}
+          backHref={isAuthed ? "/painel" : "/"}
           onRetake={() => {
             emit("retake_click", state.attemptId);
             setResult(null);
             setState(null);
-            if (paid) {
-              autoStarted.current = false;
-              setStage("intro");
-            } else {
-              setStage("donation");
-            }
+            autoStarted.current = false;
+            setStage("intro");
           }}
+
         />
       </PmmaShell>
     );

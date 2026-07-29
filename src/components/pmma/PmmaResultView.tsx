@@ -8,7 +8,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { MessageCircle, ArrowRight, RotateCcw } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { MessageCircle, ArrowRight, RotateCcw, Home } from "lucide-react";
+
 import type { PmmaResult } from "@/lib/pmma.types";
 
 const STATE_LABEL = {
@@ -44,6 +46,8 @@ export function PmmaResultView({
   onWhatsappClick,
   onCorrectionsOpen,
   onRetake,
+  canRetake = true,
+  backHref = "/",
 }: {
   result: PmmaResult;
   offerHref: string;
@@ -52,7 +56,11 @@ export function PmmaResultView({
   onWhatsappClick: () => void;
   onCorrectionsOpen: () => void;
   onRetake: () => void;
+  /** Simulado gratuito conclui uma única vez: sem refazer, só voltar ao início. */
+  canRetake?: boolean;
+  backHref?: string;
 }) {
+
   const [correctionsOpened, setCorrectionsOpened] = useState(false);
   const worst = result.worstDisciplines[0];
   const whatsappHref = result.whatsappNumber
@@ -261,10 +269,31 @@ export function PmmaResultView({
           </Button>
         ) : null}
 
-        <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={onRetake}>
-          <RotateCcw className="mr-1 size-4" aria-hidden />
-          Refazer o desafio
-        </Button>
+        {canRetake ? (
+          <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={onRetake}>
+            <RotateCcw className="mr-1 size-4" aria-hidden />
+            Refazer o desafio
+          </Button>
+        ) : (
+          <>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="mt-3 w-full rounded-xl border-white/15 bg-white/5"
+            >
+              <Link to={backHref}>
+                <Home className="mr-1 size-4" aria-hidden />
+                VOLTAR AO INÍCIO
+              </Link>
+            </Button>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              O simulado gratuito é liberado uma única vez. Para refazer, apoie o projeto com uma
+              doação de qualquer valor a partir de R$ 5.
+            </p>
+          </>
+        )}
+
       </Card>
     </div>
   );

@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { PmmaPurchaseGate } from "@/components/pmma/PmmaPurchaseGate";
 import { myDashboard } from "@/lib/purchase.functions";
+import { pmmaAccessStatus } from "@/lib/donation.functions";
+
 import { supabase } from "@/integrations/supabase/client";
 import type { SimuladoCatalogItem } from "@/lib/pmma.types";
 
@@ -87,18 +89,28 @@ function MiniStat({
 function PainelPage() {
   const navigate = useNavigate();
   const loadDashboard = useServerFn(myDashboard);
+  const accessStatus = useServerFn(pmmaAccessStatus);
   const [simulados, setSimulados] = useState<SimuladoCatalogItem[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState<SimuladoCatalogItem | null>(null);
   const [name, setName] = useState<string | null>(null);
+  /** Simulado gratuito já concluído: só refaz depois de uma doação aprovada. */
+  const [freeBlocked, setFreeBlocked] = useState(false);
 
   const refresh = useCallback(async () => {
     const data = await loadDashboard({ data: undefined });
     setSimulados(data.simulados);
     setAttempts(data.attempts as Attempt[]);
     setLoading(false);
-  }, [loadDashboard]);
+
+    const sessionId = localStorage.getItem("pmma:session:v1");
+    if (sessionId && sessionId.length >= 8) {
+      const status = await accessStatus({ data: { sessionId } }).catch(() => null);
+      setFreeBlocked(Boolean(status?.blocked));
+    }
+  }, [accessStatus, loadDashboard]);
+
 
   useEffect(() => {
     void refresh().catch(() => setLoading(false));
@@ -211,7 +223,8 @@ function PainelPage() {
               </h2>
               {simulados.map((s, i) => {
                 const delayClass = ["pmma-delay-1", "pmma-delay-2", "pmma-delay-3", "pmma-delay-4"][Math.min(i, 3)];
-                const unlocked = !s.isPaid || s.owned;
+                const donationLocked = !s.isPaid && freeBlocked;
+                const unlocked = (!s.isPaid || s.owned) && !donationLocked;
                 return (
                   <Card
                     key={s.id}
@@ -229,7 +242,9 @@ function PainelPage() {
                       <div className="min-w-0">
                         <h3 className="font-display text-lg font-bold leading-snug">{s.name}</h3>
                         <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                          {s.description}
+                          {donationLocked
+                            ? "Você já concluiu este simulado. Para refazer, apoie o projeto com uma doação de qualquer valor (mínimo R$ 5) — a liberação é imediata após o Pix."
+                            : s.description}
                         </p>
                         <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
                           {s.totalQuestions} questões
@@ -242,7 +257,7 @@ function PainelPage() {
                             : "bg-accent/15 text-accent"
                         }`}
                       >
-                        {unlocked ? "Liberado" : brl(s.priceCents)}
+                        {donationLocked ? "Concluído" : unlocked ? "Liberado" : brl(s.priceCents)}
                       </span>
                     </div>
 
@@ -254,6 +269,18 @@ function PainelPage() {
                       >
                         <Link to="/simulado/$slug" params={{ slug: s.slug }}>
                           INICIAR AGORA
+                        </Link>
+                      </Button>
+                    ) : donationLocked ? (
+                      <Button
+                        asChild
+                        size="lg"
+                        variant="outline"
+                        className="mt-5 h-14 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-base font-bold text-accent hover:bg-accent/10"
+                      >
+                        <Link to="/simulado/$slug" params={{ slug: s.slug }}>
+                          <Lock className="h-4 w-4" aria-hidden="true" />
+                          APOIAR E REFAZER
                         </Link>
                       </Button>
                     ) : (
@@ -268,6 +295,7 @@ function PainelPage() {
                       </Button>
                     )}
                   </Card>
+
                 );
               })}
             </section>

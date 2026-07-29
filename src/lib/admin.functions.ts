@@ -2,14 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 type LeadRow = Database["public"]["Tables"]["leads"]["Row"];
 type AttemptRow = Database["public"]["Tables"]["quiz_attempts"]["Row"];
 
-async function requireAdmin(
-  supabase: ReturnType<typeof import("@/integrations/supabase/client.server").createServerSupabaseClient> extends Promise<infer T> ? T : never,
-  userId: string
-) {
+async function requireAdmin(supabase: SupabaseClient<Database>, userId: string) {
   const { data: isAdmin, error } = await supabase.rpc("has_role", {
     _user_id: userId,
     _role: "admin",

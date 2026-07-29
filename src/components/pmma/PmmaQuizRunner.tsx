@@ -110,7 +110,10 @@ export function PmmaQuizRunner({
         localStorage.removeItem(storageKey);
       }
     }
+
+    void supabase.auth.getSession().then(({ data }) => setIsAuthed(Boolean(data.session)));
   }, [storageKey]);
+
 
   const persist = useCallback(
     (next: Persisted) => {

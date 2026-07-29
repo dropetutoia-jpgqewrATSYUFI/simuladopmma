@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { donationCheckPix, donationCreatePix } from "@/lib/donation.functions";
+import { PmmaPixApproved, PmmaPixWaiting, usePixPolling } from "./PmmaPixStatus";
 
 const PRESETS = [5, 10, 20, 50];
 
@@ -33,30 +34,21 @@ export function PmmaDonationGate({ sessionId, onUnlocked }: Props) {
   } | null>(null);
   const [paid, setPaid] = useState(false);
   const [copied, setCopied] = useState(false);
-  const pollRef = useRef<number | null>(null);
 
   const numericAmount = Number(amount.replace(",", "."));
 
-  useEffect(() => {
-    if (!pix || paid) return;
-    const tick = async () => {
-      try {
-        const status = await checkPix({ data: { donationId: pix.id, sessionId } });
-        if (status.paid) {
-          setPaid(true);
-          if (pollRef.current) window.clearInterval(pollRef.current);
-          window.setTimeout(onUnlocked, 1400);
-        }
-      } catch {
-        /* keeps polling */
-      }
-    };
-    pollRef.current = window.setInterval(tick, 4000);
-    void tick();
-    return () => {
-      if (pollRef.current) window.clearInterval(pollRef.current);
-    };
-  }, [pix, paid, checkPix, sessionId, onUnlocked]);
+  const polling = usePixPolling({
+    enabled: Boolean(pix) && !paid,
+    check: async () => {
+      if (!pix) return false;
+      const status = await checkPix({ data: { donationId: pix.id, sessionId } });
+      return Boolean(status.paid);
+    },
+    onApproved: () => {
+      setPaid(true);
+      window.setTimeout(onUnlocked, 1800);
+    },
+  });
 
   async function handleGenerate() {
     setError(null);
@@ -96,14 +88,8 @@ export function PmmaDonationGate({ sessionId, onUnlocked }: Props) {
 
   if (paid) {
     return (
-      <Card className="pmma-glass pmma-rise rounded-2xl p-6 text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-2xl">
-          ✅
-        </div>
-        <h2 className="mt-4 font-display text-xl font-bold">Pagamento confirmado!</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Muito obrigado por apoiar o conteúdo gratuito. Liberando seu novo simulado...
-        </p>
+      <Card className="pmma-glass pmma-rise rounded-2xl p-6">
+        <PmmaPixApproved subtitle="Obrigado por apoiar! Acesso liberado, abrindo seu simulado..." />
       </Card>
     );
   }
@@ -200,9 +186,12 @@ export function PmmaDonationGate({ sessionId, onUnlocked }: Props) {
             </>
           ) : null}
 
-          <p className="text-center text-xs text-muted-foreground">
-            Aguardando confirmação automática do pagamento...
-          </p>
+          <PmmaPixWaiting
+            checking={polling.checking}
+            attempts={polling.attempts}
+            elapsed={polling.elapsed}
+            onCheckNow={() => void polling.checkNow()}
+          />
 
           {pix.ticketUrl ? (
             <a

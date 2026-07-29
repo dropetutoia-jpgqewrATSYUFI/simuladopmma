@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { checkSimuladoPix, createSimuladoPix } from "@/lib/purchase.functions";
+import { PmmaPixApproved, PmmaPixWaiting, usePixPolling } from "./PmmaPixStatus";
 import type { SimuladoCatalogItem } from "@/lib/pmma.types";
 
 function brl(cents: number) {
@@ -31,28 +32,19 @@ export function PmmaPurchaseGate({
     ticketUrl: string | null;
     amount: number;
   } | null>(null);
-  const pollRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    if (!pix || paid) return;
-    const tick = async () => {
-      try {
-        const status = await checkPix({ data: { purchaseId: pix.id } });
-        if (status.paid) {
-          setPaid(true);
-          if (pollRef.current) window.clearInterval(pollRef.current);
-          window.setTimeout(onUnlocked, 1200);
-        }
-      } catch {
-        /* continua consultando */
-      }
-    };
-    pollRef.current = window.setInterval(tick, 4000);
-    void tick();
-    return () => {
-      if (pollRef.current) window.clearInterval(pollRef.current);
-    };
-  }, [pix, paid, checkPix, onUnlocked]);
+  const polling = usePixPolling({
+    enabled: Boolean(pix) && !paid,
+    check: async () => {
+      if (!pix) return false;
+      const status = await checkPix({ data: { purchaseId: pix.id } });
+      return Boolean(status.paid);
+    },
+    onApproved: () => {
+      setPaid(true);
+      window.setTimeout(onUnlocked, 1800);
+    },
+  });
 
   async function handleGenerate() {
     setLoading(true);
@@ -86,9 +78,8 @@ export function PmmaPurchaseGate({
 
   if (paid) {
     return (
-      <Card className="pmma-glass rounded-2xl p-6 text-center">
-        <p className="font-display text-lg font-bold">Pagamento confirmado ✅</p>
-        <p className="mt-2 text-sm text-muted-foreground">Liberando seu simulado...</p>
+      <Card className="pmma-glass rounded-2xl p-6">
+        <PmmaPixApproved subtitle="Acesso liberado. Abrindo seu simulado..." />
       </Card>
     );
   }
@@ -127,9 +118,12 @@ export function PmmaPurchaseGate({
               </Button>
             </>
           ) : null}
-          <p className="text-center text-xs text-muted-foreground">
-            Aguardando confirmação automática do pagamento...
-          </p>
+          <PmmaPixWaiting
+            checking={polling.checking}
+            attempts={polling.attempts}
+            elapsed={polling.elapsed}
+            onCheckNow={() => void polling.checkNow()}
+          />
           {pix.ticketUrl ? (
             <a
               href={pix.ticketUrl}

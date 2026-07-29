@@ -210,11 +210,12 @@ function PainelPage() {
                 Simulados disponíveis
               </h2>
               {simulados.map((s, i) => {
+                const delayClass = ["pmma-delay-1", "pmma-delay-2", "pmma-delay-3", "pmma-delay-4"][Math.min(i, 3)];
                 const unlocked = !s.isPaid || s.owned;
                 return (
                   <Card
                     key={s.id}
-                    className={`pmma-glass pmma-rise pmma-delay-${Math.min(i + 1, 4)} group relative overflow-hidden rounded-2xl p-5 transition-colors hover:border-white/20`}
+                    className={`pmma-glass pmma-rise ${delayClass} group relative overflow-hidden rounded-2xl p-5 transition-colors hover:border-white/20`}
                   >
                     <span
                       aria-hidden="true"

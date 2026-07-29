@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { getQuestions, saveAnswer } from "@/lib/quiz.functions";
+import { getQuestions } from "@/lib/quiz.functions";
 import { QuizLoading } from "./QuizLoading";
 
 interface QuizQuestionProps {
@@ -24,7 +24,6 @@ export function QuizQuestion({
   saving,
 }: QuizQuestionProps) {
   const getQuestionsFn = useServerFn(getQuestions);
-  const saveAnswerFn = useServerFn(saveAnswer);
 
   const { data, isLoading } = useQuery({
     queryKey: ["quiz-questions", attemptId],
@@ -45,12 +44,11 @@ export function QuizQuestion({
   const selectedAnswer = answers.find((a) => a.question_id === currentQuestion.id);
   const selectedOptionId = selectedAnswer?.option_id ?? undefined;
 
-  const handleSelect = async (optionId: string) => {
+  const handleSelect = (optionId: string) => {
     onAnswer(currentQuestion.id, optionId);
   };
 
-  const handleClear = async () => {
-    await saveAnswerFn({ data: { attemptId, questionId: currentQuestion.id, optionId: null } });
+  const handleClear = () => {
     onAnswer(currentQuestion.id, null);
   };
 

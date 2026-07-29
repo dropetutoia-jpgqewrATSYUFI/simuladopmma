@@ -103,18 +103,22 @@ export type StartInput = {
   deviceType?: string | null;
   referrer?: string | null;
   seenQuestionCodes?: string[];
+  /** Admins testam qualquer simulado sem compra e sem doação. */
+  isAdmin?: boolean;
 };
 
 export async function startAttempt(input: StartInput): Promise<PmmaStartResult> {
   const campaign = await loadCampaign(input.campaignSlug ?? CAMPAIGN_SLUG);
-  if (campaign.status !== "active") {
+  if (campaign.status !== "active" && !input.isAdmin) {
     throw new Error("PAUSED");
   }
 
   const { getDeviceFingerprint } = await import("./fingerprint.server");
   const fingerprint = await getDeviceFingerprint();
 
-  if (campaign.isPaid) {
+  if (input.isAdmin) {
+    // Acesso liberado para administradores testarem as provas.
+  } else if (campaign.isPaid) {
     // Simulados pagos exigem conta e compra aprovada.
     if (!input.userId) throw new Error("LOGIN_REQUIRED");
     const { hasApprovedPurchase } = await import("./purchase.server");
@@ -129,6 +133,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
       if (!unlocked) throw new Error("DONATION_REQUIRED");
     }
   }
+
 
 
 

@@ -11,24 +11,35 @@ export const listPublicSimulados = createServerFn({ method: "GET" }).handler(
   },
 );
 
+/** Admins têm acesso liberado a todos os simulados para teste, sem compra. */
+async function checkAdmin(context: { supabase: { rpc: Function }; userId: string }) {
+  const { data } = await context.supabase.rpc("has_role", {
+    _user_id: context.userId,
+    _role: "admin",
+  });
+  return data === true;
+}
+
 export const listMySimulados = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<SimuladoCatalogItem[]> => {
     const { listSimulados } = await import("./purchase.server");
-    return listSimulados(context.userId);
+    return listSimulados(context.userId, await checkAdmin(context));
   });
 
 export const myDashboard = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { listSimulados, listMyPurchases, listMyAttempts } = await import("./purchase.server");
+    const isAdmin = await checkAdmin(context);
     const [simulados, purchases, attempts] = await Promise.all([
-      listSimulados(context.userId),
+      listSimulados(context.userId, isAdmin),
       listMyPurchases(context.userId),
       listMyAttempts(context.userId),
     ]);
-    return { simulados, purchases, attempts };
+    return { simulados, purchases, attempts, isAdmin };
   });
+
 
 export const createSimuladoPix = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

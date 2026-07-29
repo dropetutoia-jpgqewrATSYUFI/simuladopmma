@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -137,7 +138,11 @@ export function PmmaQuizRunner({
         referrer: document.referrer || null,
         seenQuestionCodes: paid ? [] : readSeen(),
       };
-      const started = paid ? await startOwned({ data: payload }) : await startFree({ data: payload });
+      // Usuários logados (inclusive admins) iniciam pela via autenticada.
+      const { data: session } = await supabase.auth.getSession();
+      const useOwned = paid || Boolean(session.session);
+      const started = useOwned ? await startOwned({ data: payload }) : await startFree({ data: payload });
+
       const next: Persisted = {
         attemptId: started.attemptId,
         index: 0,

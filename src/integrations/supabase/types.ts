@@ -387,6 +387,7 @@ export type Database = {
       }
       pmma_questions: {
         Row: {
+          base_text: string | null
           campaign_id: string | null
           correct_answer: boolean
           created_at: string
@@ -402,14 +403,18 @@ export type Database = {
           original_reference: string | null
           pedagogical_review_status: string
           public_code: string
+          revision_date: string | null
           sort_order: number
+          source_base: string | null
           source_name: string | null
           source_type: string | null
           statement: string
           topic: string | null
           updated_at: string
+          version: string
         }
         Insert: {
+          base_text?: string | null
           campaign_id?: string | null
           correct_answer: boolean
           created_at?: string
@@ -425,14 +430,18 @@ export type Database = {
           original_reference?: string | null
           pedagogical_review_status?: string
           public_code: string
+          revision_date?: string | null
           sort_order?: number
+          source_base?: string | null
           source_name?: string | null
           source_type?: string | null
           statement: string
           topic?: string | null
           updated_at?: string
+          version?: string
         }
         Update: {
+          base_text?: string | null
           campaign_id?: string | null
           correct_answer?: boolean
           created_at?: string
@@ -448,12 +457,15 @@ export type Database = {
           original_reference?: string | null
           pedagogical_review_status?: string
           public_code?: string
+          revision_date?: string | null
           sort_order?: number
+          source_base?: string | null
           source_name?: string | null
           source_type?: string | null
           statement?: string
           topic?: string | null
           updated_at?: string
+          version?: string
         }
         Relationships: [
           {

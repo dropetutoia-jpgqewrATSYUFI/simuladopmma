@@ -65,7 +65,16 @@ export function PmmaQuestionCard({
         </p>
       ) : null}
 
-      <p className="mt-2 text-base leading-relaxed text-foreground/95 sm:text-lg">
+      {question.baseText ? (
+        <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+            Texto-base
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-foreground/90">{question.baseText}</p>
+        </div>
+      ) : null}
+
+      <p className="mt-4 text-base leading-relaxed text-foreground/95 sm:text-lg">
         {question.statement}
       </p>
 

@@ -106,7 +106,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
 
   const { data: pool, error } = await supabaseAdmin
     .from("pmma_questions")
-    .select("id, public_code, discipline, topic, statement, difficulty, correct_answer")
+    .select("id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer")
     .eq("is_active", true)
     .eq("campaign_id", campaign.id);
 
@@ -119,6 +119,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     public_code: string;
     discipline: string;
     topic: string | null;
+    base_text: string | null;
     statement: string;
     difficulty: string;
     correct_answer: boolean;
@@ -210,11 +211,12 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
   }
   await supabaseAdmin.from("pmma_attempt_questions").insert(rows);
 
-  const toPublic = (q: (typeof pool)[number], order: number, isBonus: boolean): PmmaPublicQuestion => ({
+  const toPublic = (q: PoolRow, order: number, isBonus: boolean): PmmaPublicQuestion => ({
     id: q.id,
     publicCode: q.public_code,
     discipline: q.discipline,
     topic: q.topic,
+    baseText: q.base_text,
     statement: q.statement,
     difficulty: q.difficulty,
     displayOrder: order,

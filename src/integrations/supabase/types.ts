@@ -615,6 +615,62 @@ export type Database = {
         }
         Relationships: []
       }
+      purchases: {
+        Row: {
+          amount: number
+          campaign_id: string
+          created_at: string
+          id: string
+          paid_at: string | null
+          provider: string
+          provider_payment_id: string | null
+          qr_code: string | null
+          qr_code_base64: string | null
+          status: string
+          ticket_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          campaign_id: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          provider?: string
+          provider_payment_id?: string | null
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          status?: string
+          ticket_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          provider?: string
+          provider_payment_id?: string | null
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          status?: string
+          ticket_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_answers: {
         Row: {
           answered_at: string

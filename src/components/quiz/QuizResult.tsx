@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, XCircle, HelpCircle, Award, Share2, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, HelpCircle, Award, Share2, RotateCcw, MessageCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { ResultSummary } from "@/lib/quiz.types";
 
@@ -11,19 +11,24 @@ interface QuizResultProps {
 }
 
 export function QuizResult({ result, publicToken }: QuizResultProps) {
+  const shareUrl = `${window.location.origin}/diagnostico-pmma/resultado/${publicToken}`;
   const shareMessage = `Fiz o Diagnóstico PMMA da Edital360 e tirei ${result.scorePercentage}%! Faça você também:`;
 
   const handleShare = () => {
-    const url = `${window.location.origin}/diagnostico-pmma?resultado=${publicToken}`;
     if (navigator.share) {
       navigator.share({
         title: "Meu resultado no Diagnóstico PMMA",
         text: shareMessage,
-        url,
+        url: shareUrl,
       });
     } else {
-      navigator.clipboard.writeText(`${shareMessage} ${url}`);
+      navigator.clipboard.writeText(`${shareMessage} ${shareUrl}`);
     }
+  };
+
+  const handleWhatsApp = () => {
+    const text = encodeURIComponent(`${shareMessage} ${shareUrl}`);
+    window.open(`https://wa.me/?text=${text}`, "_blank");
   };
 
   return (
@@ -71,6 +76,10 @@ export function QuizResult({ result, publicToken }: QuizResultProps) {
           <Button onClick={handleShare} variant="outline" className="flex-1">
             <Share2 className="mr-2 h-4 w-4" />
             Compartilhar
+          </Button>
+          <Button onClick={handleWhatsApp} variant="outline" className="flex-1">
+            <MessageCircle className="mr-2 h-4 w-4" />
+            WhatsApp
           </Button>
           <Button asChild className="flex-1">
             <Link to="/diagnostico-pmma" search={{ modo: "simulado" }}>

@@ -1,9 +1,15 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 
 import { PmmaQuizRunner } from "@/components/pmma/PmmaQuizRunner";
+import { PmmaPurchaseGate } from "@/components/pmma/PmmaPurchaseGate";
 import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { Card } from "@/components/ui/card";
-import { listPublicSimulados } from "@/lib/purchase.functions";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { listPublicSimulados, mySimuladoAccess } from "@/lib/purchase.functions";
 
 export const Route = createFileRoute("/simulado/$slug")({
   loader: async ({ params }) => {

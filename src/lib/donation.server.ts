@@ -79,6 +79,7 @@ export async function getAccessStatus(
   fingerprint?: string | null,
 ): Promise<AccessStatus> {
   const client = await db();
+  const useOr = Boolean(fingerprint) && isFilterSafe(sessionId) && isFilterSafe(fingerprint!);
 
   const attemptsQuery = client
     .from("pmma_attempts")
@@ -91,12 +92,12 @@ export async function getAccessStatus(
     .eq("consumed", false);
 
   const [{ count: completed }, { count: credits }] = await Promise.all([
-    fingerprint
+    useOr
       ? attemptsQuery.or(
           `anonymous_session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`,
         )
       : attemptsQuery.eq("anonymous_session_id", sessionId),
-    fingerprint
+    useOr
       ? donationsQuery.or(`session_id.eq.${sessionId},device_fingerprint.eq.${fingerprint}`)
       : donationsQuery.eq("session_id", sessionId),
   ]);

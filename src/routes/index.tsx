@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
+import { PmmaSiteFooter } from "@/components/pmma/PmmaSiteFooter";
+import { PmmaWhatsAppBubble } from "@/components/pmma/PmmaWhatsAppBubble";
 import { supabase } from "@/integrations/supabase/client";
 
 const TITLE = "Simulados para PMMA — Concurso 2026 | Edital360";

@@ -259,7 +259,7 @@ export async function refreshPurchase(
   const { data: row } = await client
     .from("purchases")
     .select(
-      "id, amount, status, provider_payment_id, qr_code, qr_code_base64, ticket_url, pmma_campaigns(slug)",
+      "id, amount, status, campaign_id, provider_payment_id, qr_code, qr_code_base64, ticket_url, pmma_campaigns(slug)",
     )
     .eq("id", purchaseId)
     .eq("user_id", userId)
@@ -289,6 +289,11 @@ export async function refreshPurchase(
           .eq("id", row.id);
       }
     }
+  }
+
+  // Desbloqueio imediato do simulado vinculado ao usuário assim que o Pix é aprovado.
+  if (status === "approved") {
+    await releaseSimuladoAccess(userId, row.campaign_id);
   }
 
   const campaign = row.pmma_campaigns as { slug: string } | null;

@@ -230,7 +230,7 @@ function PainelPage() {
                 return (
                   <Card
                     key={s.id}
-                    className={`pmma-glass pmma-rise ${delayClass} group relative overflow-hidden rounded-2xl p-5 transition-colors hover:border-white/20`}
+                    className={`pmma-glass pmma-rise ${delayClass} group relative overflow-hidden rounded-2xl p-4 transition-colors hover:border-white/20 sm:p-5`}
                   >
                     <span
                       aria-hidden="true"
@@ -240,20 +240,12 @@ function PainelPage() {
                           : "bg-linear-to-b from-accent to-accent/30"
                       }`}
                     />
-                    <div className="flex items-start justify-between gap-3 pl-2">
-                      <div className="min-w-0">
-                        <h3 className="font-display text-lg font-bold leading-snug">{s.name}</h3>
-                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                          {donationLocked
-                            ? "Você já concluiu este simulado. Para refazer, apoie o projeto com uma doação de qualquer valor (mínimo R$ 5) — a liberação é imediata após o Pix."
-                            : s.description}
-                        </p>
-                        <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                          {s.totalQuestions} questões
-                        </p>
-                      </div>
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2.5 pl-2 sm:gap-3">
+                      <h3 className="min-w-0 font-display text-base font-bold leading-snug sm:text-lg">
+                        {s.name}
+                      </h3>
                       <span
-                        className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${
+                        className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide sm:px-3 sm:text-[11px] ${
                           unlocked
                             ? "bg-emerald-500/15 text-emerald-400"
                             : "bg-accent/15 text-accent"
@@ -262,12 +254,22 @@ function PainelPage() {
                         {donationLocked ? "Concluído" : unlocked ? "Liberado" : brl(s.priceCents)}
                       </span>
                     </div>
+                    <div className="pl-2">
+                      <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
+                        {donationLocked
+                          ? "Você já concluiu este simulado. Para refazer, apoie o projeto com uma doação de qualquer valor (mínimo R$ 5) — a liberação é imediata após o Pix."
+                          : s.description}
+                      </p>
+                      <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                        {s.totalQuestions} questões
+                      </p>
+                    </div>
 
                     {unlocked ? (
                       <Button
                         asChild
                         size="lg"
-                        className="mt-5 h-14 w-full rounded-2xl bg-linear-to-r from-primary to-[#60a5fa] text-base font-black shadow-[0_10px_30px_-12px_var(--color-primary)] transition-transform active:scale-[0.99]"
+                        className="mt-4 h-13 w-full rounded-2xl bg-linear-to-r from-primary to-[#60a5fa] text-sm font-black shadow-[0_10px_30px_-12px_var(--color-primary)] transition-transform active:scale-[0.99] sm:mt-5 sm:h-14 sm:text-base"
                       >
                         <Link to="/simulado/$slug" params={{ slug: s.slug }}>
                           INICIAR AGORA
@@ -278,10 +280,10 @@ function PainelPage() {
                         asChild
                         size="lg"
                         variant="outline"
-                        className="mt-5 h-14 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-base font-bold text-accent hover:bg-accent/10"
+                        className="mt-4 h-13 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-sm font-bold text-accent hover:bg-accent/10 sm:mt-5 sm:h-14 sm:text-base"
                       >
                         <Link to="/simulado/$slug" params={{ slug: s.slug }}>
-                          <Lock className="h-4 w-4" aria-hidden="true" />
+                          <Lock className="h-4 w-4 shrink-0" aria-hidden="true" />
                           APOIAR E REFAZER
                         </Link>
                       </Button>
@@ -289,13 +291,14 @@ function PainelPage() {
                       <Button
                         size="lg"
                         variant="outline"
-                        className="mt-5 h-14 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-base font-bold text-accent hover:bg-accent/10"
+                        className="mt-4 h-13 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-sm font-bold text-accent hover:bg-accent/10 sm:mt-5 sm:h-14 sm:text-base"
                         onClick={() => setBuying(s)}
                       >
-                        <Lock className="h-4 w-4" aria-hidden="true" />
+                        <Lock className="h-4 w-4 shrink-0" aria-hidden="true" />
                         DESBLOQUEAR POR {brl(s.priceCents)}
                       </Button>
                     )}
+
                   </Card>
 
                 );

@@ -395,20 +395,22 @@ export async function syncPayment(kind: "purchase" | "donation", id: string) {
   const client = await db();
   const table = kind === "purchase" ? "purchases" : "donations";
 
-  const { data: row } = await client
-    .from(table)
-    .select("id, status, provider_payment_id, user_id" + (kind === "purchase" ? ", campaign_id" : ""))
+  const { data: rawRow } = await (client.from(table) as any)
+    .select("id, status, provider_payment_id, user_id, campaign_id")
     .eq("id", id)
     .maybeSingle();
 
-  if (!row) throw new Error("Pagamento não encontrado.");
-  const record = row as {
+  const row = rawRow as {
     id: string;
     status: string;
     provider_payment_id: string | null;
     user_id: string | null;
-    campaign_id?: string;
-  };
+    campaign_id?: string | null;
+  } | null;
+
+  if (!row) throw new Error("Pagamento não encontrado.");
+  const record = row;
+
   if (!record.provider_payment_id) throw new Error("Pagamento sem identificador no provedor.");
 
   const { getMercadoPagoToken } = await import("./donation.server");

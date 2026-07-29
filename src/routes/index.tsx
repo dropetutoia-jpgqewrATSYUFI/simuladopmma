@@ -77,6 +77,7 @@ function SimuladoPmmaPage() {
   const capture = useServerFn(pmmaCaptureLead);
   const finish = useServerFn(pmmaFinish);
   const track = useServerFn(pmmaTrack);
+  const countAttempts = useServerFn(pmmaCountAttempts);
 
   const [sessionId, setSessionId] = useState<string>("");
   const [stage, setStage] = useState<Stage>("intro");
@@ -89,6 +90,7 @@ function SimuladoPmmaPage() {
   const [resume, setResume] = useState<Persisted | null>(null);
   const [milestoneText, setMilestoneText] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
+  const [attemptsCount, setAttemptsCount] = useState<number | null>(null);
   const questionStartedAt = useRef<number>(Date.now());
 
   const params = useMemo(() => {

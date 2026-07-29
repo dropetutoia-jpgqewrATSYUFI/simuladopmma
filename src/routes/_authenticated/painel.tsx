@@ -138,22 +138,22 @@ function PainelPage() {
 
   return (
     <PmmaShell>
-      <div className="space-y-8">
-        <header className="pmma-rise relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-primary/15 via-white/[0.04] to-accent/10 p-6 sm:p-7">
+      <div className="space-y-6 sm:space-y-8">
+        <header className="pmma-rise relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-primary/15 via-white/[0.04] to-accent/10 p-5 sm:p-7">
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-primary/20 blur-3xl"
           />
-          <div className="relative flex flex-wrap items-start justify-between gap-4">
+          <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:flex sm:flex-wrap sm:justify-between sm:gap-4">
             <div className="min-w-0">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                <Sparkles className="h-3 w-3" aria-hidden="true" />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-accent sm:px-3 sm:text-[10px] sm:tracking-[0.18em]">
+                <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
                 Área do aluno
               </span>
-              <h1 className="mt-3 font-display text-2xl font-black leading-tight tracking-tight sm:text-3xl">
+              <h1 className="mt-3 truncate font-display text-xl font-black leading-tight tracking-tight sm:text-3xl">
                 {name ? `Olá, ${name}` : "Bem-vindo de volta"}
               </h1>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
                 Escolha um simulado e continue sua preparação para a PM-MA.
               </p>
             </div>
@@ -164,10 +164,11 @@ function PainelPage() {
               className="shrink-0 gap-2 rounded-full border-white/15 bg-white/5 text-xs font-bold"
             >
               <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-              SAIR
+              <span className="hidden sm:inline">SAIR</span>
             </Button>
           </div>
         </header>
+
 
         {buying ? (
           <div className="space-y-3">

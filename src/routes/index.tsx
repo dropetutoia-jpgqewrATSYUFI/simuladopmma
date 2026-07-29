@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { listPublicSimulados } from "@/lib/purchase.functions";
+import type { SimuladoCatalogItem } from "@/lib/pmma.types";
 import { pmmaCountAttempts } from "@/lib/pmma.functions";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -48,7 +49,7 @@ function brl(cents: number) {
 }
 
 function HomePage() {
-  const { simulados } = Route.useLoaderData();
+  const { simulados } = Route.useLoaderData() as { simulados: SimuladoCatalogItem[] };
   const countAttempts = useServerFn(pmmaCountAttempts);
   const [attemptsCount, setAttemptsCount] = useState<number | null>(null);
   const [signedIn, setSignedIn] = useState(false);

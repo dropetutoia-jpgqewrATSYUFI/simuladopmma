@@ -63,7 +63,7 @@ export function PmmaResultView({
 
   return (
     <div className="space-y-5">
-      <Card className="p-5 sm:p-6">
+      <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
         <h1 className="text-2xl font-bold">Seu resultado no Desafio PMMA</h1>
         {result.firstName ? (
           <p className="mt-1 text-sm text-muted-foreground">
@@ -107,7 +107,7 @@ export function PmmaResultView({
         ) : null}
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
         <h2 className="text-lg font-bold">Seu mapa de desempenho</h2>
         <ul className="mt-4 space-y-3">
           {result.disciplines.map((d) => {
@@ -137,7 +137,7 @@ export function PmmaResultView({
         </p>
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
         <h2 className="text-lg font-bold">O que este resultado indica</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
           {result.recommendations.map((r) => (

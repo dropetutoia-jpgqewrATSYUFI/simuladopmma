@@ -8,7 +8,14 @@ import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { PmmaLeadForm, type LeadFormValues } from "@/components/pmma/PmmaLeadForm";
 import { PmmaQuestionCard } from "@/components/pmma/PmmaQuestionCard";
 import { PmmaResultView } from "@/components/pmma/PmmaResultView";
-import { pmmaStart, pmmaAnswer, pmmaCaptureLead, pmmaFinish, pmmaTrack } from "@/lib/pmma.functions";
+import {
+  pmmaStart,
+  pmmaAnswer,
+  pmmaCaptureLead,
+  pmmaFinish,
+  pmmaTrack,
+  pmmaCountAttempts,
+} from "@/lib/pmma.functions";
 import type { PmmaAnswerFeedback, PmmaResult, PmmaStartResult } from "@/lib/pmma.types";
 
 const STORAGE_KEY = "pmma:desafio:v1";

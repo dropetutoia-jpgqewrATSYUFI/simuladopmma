@@ -41,13 +41,21 @@ export const pmmaStart = createServerFn({ method: "POST" })
     return result;
   });
 
-/** Início de simulados pagos: exige conta e compra aprovada. */
+/** Início autenticado: exige compra nos simulados pagos, exceto para administradores. */
 export const pmmaStartOwned = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .validator({ parse: (input) => startSchema.parse(input) })
   .handler(async ({ data, context }): Promise<PmmaStartResult> => {
     const { startAttempt, logEvent } = await import("./pmma.server");
-    const result = await startAttempt({ ...data, userId: context.userId });
+    const { data: adminFlag } = await context.supabase.rpc("has_role", {
+      _user_id: context.userId,
+      _role: "admin",
+    });
+    const result = await startAttempt({
+      ...data,
+      userId: context.userId,
+      isAdmin: adminFlag === true,
+    });
     await logEvent({
       sessionId: data.sessionId,
       attemptId: result.attemptId,
@@ -56,6 +64,7 @@ export const pmmaStartOwned = createServerFn({ method: "POST" })
     });
     return result;
   });
+
 
 
 export const pmmaAnswer = createServerFn({ method: "POST" })

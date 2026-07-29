@@ -359,13 +359,14 @@ function SimuladoPmmaPage() {
               : "Descubra agora quais matérias podem fazer você perder pontos na PMMA"}
           </h1>
           <p className="text-base leading-relaxed text-muted-foreground">
-            Responda ao desafio no formato Certo ou Errado, receba uma explicação após cada
-            resposta e descubra quais matérias precisam de mais atenção.
+            Responda ao desafio no formato Certo ou Errado, no estilo Cebraspe, receba uma
+            explicação após cada resposta e descubra quais matérias precisam de mais atenção.
           </p>
 
           <ul className="space-y-2 text-sm text-foreground/90">
             <li>• 14 questões por tentativa</li>
             <li>• 7 matérias diferentes</li>
+            <li>• Formato Certo ou Errado, estilo Cebraspe</li>
             <li>• Correção explicada na hora</li>
             <li>• Resultado personalizado</li>
             <li>• Acesso público e sem login</li>

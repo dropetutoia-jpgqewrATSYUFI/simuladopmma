@@ -8,7 +8,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { MessageCircle, ArrowRight, RotateCcw } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { MessageCircle, ArrowRight, RotateCcw, Home } from "lucide-react";
+
 import type { PmmaResult } from "@/lib/pmma.types";
 
 const STATE_LABEL = {

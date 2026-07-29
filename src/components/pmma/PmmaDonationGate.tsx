@@ -190,7 +190,8 @@ export function PmmaDonationGate({ sessionId, onUnlocked }: Props) {
             checking={polling.checking}
             attempts={polling.attempts}
             elapsed={polling.elapsed}
-            onCheckNow={() => void polling.checkNow()}
+            notFoundYet={polling.notFoundYet}
+            onCheckNow={polling.checkNow}
           />
 
           {pix.ticketUrl ? (

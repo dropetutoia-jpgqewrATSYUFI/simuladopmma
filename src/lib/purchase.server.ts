@@ -72,7 +72,7 @@ export async function listSimulados(
     totalQuestions: c.total_questions,
     availableQuestions: counts[i],
     status: c.status,
-    owned: !c.is_paid || ownedIds.has(c.id),
+    owned: isAdmin || !c.is_paid || ownedIds.has(c.id),
   }));
 }
 

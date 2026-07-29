@@ -119,6 +119,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     public_code: string;
     discipline: string;
     topic: string | null;
+    base_text: string | null;
     statement: string;
     difficulty: string;
     correct_answer: boolean;

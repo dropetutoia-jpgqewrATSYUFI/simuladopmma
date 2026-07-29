@@ -242,6 +242,49 @@
   }
 }
 
+/* Feixe de luz que varre o painel enquanto a resposta é corrigida. */
+@keyframes pmma-scan {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* Anel de progresso indeterminado do estado "Corrigindo". */
+@keyframes pmma-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pmma-dash {
+  0% {
+    stroke-dashoffset: 66;
+  }
+  50% {
+    stroke-dashoffset: 18;
+  }
+  100% {
+    stroke-dashoffset: 66;
+  }
+}
+
+@keyframes pmma-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
 
 
 @keyframes pmma-shine {

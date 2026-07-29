@@ -105,20 +105,50 @@ export function PmmaQuestionCard({
 
       {submitting && !feedback ? (
         <div
-          className="pmma-pop mt-4 flex items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+          className="pmma-pop relative mt-4 flex items-center gap-3 overflow-hidden rounded-xl border border-primary/25 bg-linear-to-r from-primary/10 via-white/5 to-accent/10 px-4 py-3.5"
           role="status"
           aria-live="polite"
         >
-          <span className="flex gap-1" aria-hidden="true">
-            <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
-            <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
-            <span className="size-1.5 animate-bounce rounded-full bg-accent" />
+          {/* feixe de luz varrendo o painel */}
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 bg-linear-to-r from-transparent via-white/15 to-transparent [animation:pmma-scan_1.5s_ease-in-out_infinite] motion-reduce:hidden"
+          />
+
+          {/* anel de progresso indeterminado */}
+          <span
+            aria-hidden="true"
+            className="relative grid size-8 shrink-0 place-items-center"
+          >
+            <span className="absolute inset-0 rounded-full bg-primary/20 blur-md [animation:pmma-breathe_1.6s_ease-in-out_infinite] motion-reduce:hidden" />
+            <svg viewBox="0 0 24 24" className="size-8 [animation:pmma-ring_1.1s_linear_infinite] motion-reduce:animate-none">
+              <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-white/10" />
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeDasharray="66"
+                className="text-accent [animation:pmma-dash_1.4s_ease-in-out_infinite] motion-reduce:animate-none"
+              />
+            </svg>
           </span>
-          <span className="bg-linear-to-r from-muted-foreground via-foreground to-muted-foreground bg-[length:200%_100%] bg-clip-text text-xs font-semibold tracking-wide text-transparent [animation:pmma-shimmer_1.4s_linear_infinite] motion-reduce:animate-none">
-            Corrigindo sua resposta...
+
+          <span className="relative min-w-0">
+            <span className="block bg-linear-to-r from-muted-foreground via-foreground to-muted-foreground bg-[length:200%_100%] bg-clip-text text-[13px] font-bold tracking-wide text-transparent [animation:pmma-shimmer_1.4s_linear_infinite] motion-reduce:animate-none">
+              Corrigindo sua resposta...
+            </span>
+            <span className="mt-0.5 block text-[11px] text-muted-foreground">
+              Comparando com o gabarito da banca
+            </span>
           </span>
         </div>
       ) : null}
+
+
 
 
       {feedback ? (

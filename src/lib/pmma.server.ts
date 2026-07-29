@@ -106,7 +106,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
 
   const { data: pool, error } = await supabaseAdmin
     .from("pmma_questions")
-    .select("id, public_code, discipline, topic, statement, difficulty, correct_answer")
+    .select("id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer")
     .eq("is_active", true)
     .eq("campaign_id", campaign.id);
 

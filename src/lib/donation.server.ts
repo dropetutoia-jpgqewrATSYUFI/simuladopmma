@@ -116,11 +116,16 @@ async function freeCampaignId(): Promise<string | null> {
 /** Access is blocked when the person already finished the free simulado and has no unused donation. */
 export async function getAccessStatus(identity: IdentityInput): Promise<AccessStatus> {
   const client = await db();
-  const attemptFilter = identityFilter(identity, {
-    session: "anonymous_session_id",
-    fingerprint: "device_fingerprint",
-    user: "user_id",
-  });
+  // O bloqueio do gratuito é por CONTA: no primeiro acesso o usuário logado sempre
+  // entra liberado, e só é bloqueado depois que ELE concluir a prova. Sessão e
+  // impressão digital só valem quando não há conta logada (fluxo anônimo).
+  const attemptFilter = identity.userId && isFilterSafe(identity.userId)
+    ? `user_id.eq.${identity.userId}`
+    : identityFilter({ ...identity, userId: null }, {
+        session: "anonymous_session_id",
+        fingerprint: "device_fingerprint",
+        user: "user_id",
+      });
   const donationFilter = identityFilter(identity, {
     session: "session_id",
     fingerprint: "device_fingerprint",
@@ -139,6 +144,7 @@ export async function getAccessStatus(identity: IdentityInput): Promise<AccessSt
     .eq("status", "completed")
     .or(attemptFilter);
   if (campaignId) attemptsQuery = attemptsQuery.eq("campaign_id", campaignId);
+
 
   const donationsQuery = client
     .from("donations")

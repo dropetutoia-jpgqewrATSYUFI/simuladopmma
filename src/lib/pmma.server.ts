@@ -119,11 +119,12 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
   if (input.isAdmin) {
     // Acesso liberado para administradores testarem as provas.
   } else if (campaign.isPaid) {
-    // Simulados pagos exigem conta e compra aprovada.
+    // Simulados pagos exigem conta e situação de acesso "liberado" vinculada ao usuário.
     if (!input.userId) throw new Error("LOGIN_REQUIRED");
-    const { hasApprovedPurchase } = await import("./purchase.server");
-    const owns = await hasApprovedPurchase(input.userId, campaign.id);
-    if (!owns) throw new Error("PURCHASE_REQUIRED");
+    const { getSimuladoAccessStatus, ensureSimuladoAccess } = await import("./purchase.server");
+    await ensureSimuladoAccess(input.userId);
+    const access = await getSimuladoAccessStatus(input.userId, campaign.id);
+    if (access !== "released") throw new Error("PURCHASE_REQUIRED");
   } else {
     // Anti-refazer no simulado gratuito: quem já concluiu precisa de uma doação aprovada.
     const { getAccessStatus, consumeDonationCredit } = await import("./donation.server");

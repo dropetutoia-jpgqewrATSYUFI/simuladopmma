@@ -63,6 +63,7 @@ function HomePage() {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [privacyOpen, setPrivacyOpen] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
 
   useEffect(() => {
     void supabase.auth.getUser().then(({ data }) => {

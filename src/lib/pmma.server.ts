@@ -311,12 +311,19 @@ export async function answerQuestion(params: {
 
   return {
     isCorrect,
-    correctAnswer: question.correct_answer,
-    feedback: isCorrect ? question.feedback_correct : question.feedback_wrong,
+    correctAnswer: neutral ? params.answer : question.correct_answer,
+    feedback: neutral
+      ? answerStatus === "anulada"
+        ? `Questão anulada no gabarito oficial definitivo. No modo de reprodução oficial, a pontuação deste item é atribuída a todos. ${question.feedback_correct}`
+        : `O arquivo-fonte não apresenta gabarito para este item. A questão está aguardando validação e não será pontuada. ${question.feedback_correct}`
+      : isCorrect
+        ? question.feedback_correct
+        : question.feedback_wrong,
     keyPoint: question.key_point,
     nextDiscipline,
   };
 }
+
 
 const DDD_MIN = 11;
 const DDD_MAX = 99;

@@ -247,3 +247,14 @@ export async function setQuestionActive(id: string, isActive: boolean) {
     .eq("id", id);
   if (error) throw new Error(error.message);
 }
+
+/** Remove leads selecionados no painel (limpeza da base de captação). */
+export async function deleteLeads(ids: string[]): Promise<number> {
+  if (ids.length === 0) return 0;
+  const db = await admin();
+  // Tentativas referenciam leads; soltamos o vínculo antes de apagar.
+  await db.from("pmma_attempts").update({ lead_id: null }).in("lead_id", ids);
+  const { error } = await db.from("pmma_leads").delete().in("id", ids);
+  if (error) throw new Error(error.message);
+  return ids.length;
+}

@@ -100,3 +100,15 @@ export const adminToggleQuestion = createServerFn({ method: "POST" })
     await setQuestionActive(data.id, data.isActive);
     return { ok: true };
   });
+
+export const adminDeleteLeads = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator({
+    parse: (input: unknown) =>
+      z.object({ ids: z.array(z.string().uuid()).min(1).max(500) }).parse(input),
+  })
+  .handler(async ({ context, data }): Promise<{ deleted: number }> => {
+    await assertAdmin(context);
+    const { deleteLeads } = await import("./admin.server");
+    return { deleted: await deleteLeads(data.ids) };
+  });

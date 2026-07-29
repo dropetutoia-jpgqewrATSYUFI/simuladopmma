@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import type { QuizMode, QuizQuestion, QuizAttempt, ResultSummary } from "./quiz.types";
+import type { QuizMode, QuizQuestion, QuizAttempt, ResultSummary, QuizAnswer } from "./quiz.types";
 
 const QUESTION_LIMIT: Record<QuizMode, number> = {
   quiz: 10,
@@ -49,6 +49,73 @@ export async function fetchActiveQuestions(mode: QuizMode): Promise<QuizQuestion
     ...q,
     options: optionsByQuestion.get(q.id) ?? [],
   }));
+}
+
+export async function getQuestionsForAttempt(attemptId: string): Promise<{
+  questions: QuizQuestion[];
+  answers: QuizAnswer[];
+}> {
+  const attempt = await getAttemptById(attemptId);
+  if (!attempt) {
+    throw new Error("Tentativa não encontrada.");
+  }
+
+  const limit = QUESTION_LIMIT[attempt.type as QuizMode];
+
+  const { data: questions, error: questionsError } = await supabaseAdmin
+    .from("quiz_questions")
+    .select("*")
+    .eq("is_active", true)
+    .order("position", { ascending: true })
+    .limit(limit);
+
+  if (questionsError) {
+    console.error("[quiz.server] getQuestionsForAttempt error:", questionsError);
+    throw new Error("Não foi possível carregar as questões.");
+  }
+
+  const questionIds = questions?.map((q) => q.id) ?? [];
+
+  const [{ data: options }, { data: answers }] = await Promise.all([
+    supabaseAdmin
+      .from("quiz_options")
+      .select("*")
+      .in("question_id", questionIds)
+      .order("position", { ascending: true }),
+    supabaseAdmin.from("quiz_answers").select("*").eq("attempt_id", attemptId),
+  ]);
+
+  const optionsByQuestion = new Map<string, typeof options>();
+  for (const option of options ?? []) {
+    const list = optionsByQuestion.get(option.question_id) ?? [];
+    list.push(option);
+    optionsByQuestion.set(option.question_id, list);
+  }
+
+  const enrichedQuestions = questions?.map((q) => ({
+    ...q,
+    options: optionsByQuestion.get(q.id) ?? [],
+  })) ?? [];
+
+  return {
+    questions: enrichedQuestions,
+    answers: answers ?? [],
+  };
+}
+
+function getAttemptById(attemptId: string): Promise<QuizAttempt | null> {
+  return supabaseAdmin
+    .from("quiz_attempts")
+    .select("*")
+    .eq("id", attemptId)
+    .single()
+    .then(({ data, error }) => {
+      if (error) {
+        if (error.code === "PGRST116") return null;
+        throw error;
+      }
+      return data;
+    });
 }
 
 export async function createAnonymousAttempt(mode: QuizMode): Promise<QuizAttempt> {

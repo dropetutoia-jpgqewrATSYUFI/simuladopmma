@@ -14,6 +14,8 @@ import {
 import { adminPaymentSettings, adminSavePaymentSettings } from "@/lib/donation.functions";
 import type { AdminLead, AdminOverview, AdminQuestion } from "@/lib/admin.types";
 import { supabase } from "@/integrations/supabase/client";
+import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -55,15 +57,20 @@ function formatDate(iso: string) {
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="pmma-glass pmma-rise rounded-2xl p-4 sm:p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        {label}
+    <div className="pmma-rise group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a] p-5 transition hover:border-primary/40">
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-primary/60 to-accent/60 opacity-60"
+      />
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">{label}</p>
+      <p className="mt-3 font-display text-3xl font-extrabold tracking-tight text-foreground">
+        {value}
       </p>
-      <p className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground">{value}</p>
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
+
 
 
 function AdminPage() {
@@ -224,33 +231,40 @@ function AdminPage() {
   return (
     <div className="pmma-theme min-h-[100dvh]">
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-        <header className="pmma-glass pmma-rise flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5">
-          <div>
-            <span className="inline-flex rounded-full bg-accent/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
-              Área administrativa
-            </span>
-            <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Painel de gerenciamento
-            </h1>
-            <p className="text-sm text-muted-foreground">Simulado PMMA 2026 · Edital360</p>
+        <header className="pmma-rise flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-white/10 bg-[#0f172a] p-6">
+          <div className="flex items-start gap-4">
+            <PmmaBrandMark size="sm" />
+            <div className="hidden h-12 w-px bg-white/10 sm:block" />
+            <div>
+              <span className="inline-flex rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
+                Área administrativa
+              </span>
+              <h1 className="mt-2 font-display text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
+                Painel de{" "}
+                <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+                  gerenciamento
+                </span>
+              </h1>
+              <p className="text-sm text-muted-foreground">Simulados PM-MA 2026 · Edital360</p>
+            </div>
           </div>
           <div className="flex gap-2">
             <button
               onClick={refresh}
-              className="h-10 rounded-xl border border-white/15 bg-white/5 px-4 text-sm font-semibold text-foreground transition hover:bg-white/10"
+              className="h-11 rounded-xl border border-white/15 bg-white/5 px-5 text-sm font-semibold text-foreground transition hover:border-primary/40 hover:bg-primary/10"
             >
               Atualizar
             </button>
             <button
               onClick={handleSignOut}
-              className="h-10 rounded-xl border border-white/10 px-4 text-sm font-semibold text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
+              className="h-11 rounded-xl border border-white/10 px-5 text-sm font-semibold text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
             >
               Sair
             </button>
           </div>
         </header>
 
-        <nav className="pmma-glass mt-4 flex gap-1 overflow-x-auto rounded-2xl p-1.5">
+        <nav className="mt-4 flex gap-1.5 overflow-x-auto rounded-2xl border border-white/10 bg-[#0f172a] p-1.5">
           {(
             [
               ["visao", "Visão geral"],
@@ -262,9 +276,9 @@ function AdminPage() {
             <button
               key={key}
               onClick={() => setTab(key)}
-              className={`h-10 flex-1 whitespace-nowrap rounded-xl px-4 text-sm font-semibold transition ${
+              className={`h-11 flex-1 whitespace-nowrap rounded-xl px-4 text-sm font-semibold transition ${
                 tab === key
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  ? "bg-linear-to-r from-primary to-[#2563eb] text-primary-foreground shadow-lg shadow-primary/25"
                   : "text-muted-foreground hover:bg-white/8 hover:text-foreground"
               }`}
             >
@@ -272,6 +286,8 @@ function AdminPage() {
             </button>
           ))}
         </nav>
+
+
 
 
       {tab === "visao" && overview ? (

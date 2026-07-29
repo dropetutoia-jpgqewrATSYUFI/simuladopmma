@@ -61,11 +61,11 @@ function shuffle<T>(items: T[]): T[] {
   return arr;
 }
 
-export async function loadCampaign(): Promise<PmmaCampaignConfig> {
+export async function loadCampaign(slug: string = CAMPAIGN_SLUG): Promise<PmmaCampaignConfig> {
   const { data, error } = await supabaseAdmin
     .from("pmma_campaigns")
     .select("*")
-    .eq("slug", CAMPAIGN_SLUG)
+    .eq("slug", slug)
     .maybeSingle();
 
   if (error || !data) {
@@ -74,8 +74,13 @@ export async function loadCampaign(): Promise<PmmaCampaignConfig> {
 
   return {
     id: data.id,
+    slug: data.slug,
     name: data.name,
+    description: data.description,
     status: data.status,
+    isPaid: data.is_paid,
+    priceCents: data.price_cents,
+    totalQuestions: data.total_questions,
     questionsPerAttempt: data.questions_per_attempt,
     questionsPerDiscipline: data.questions_per_discipline,
     leadCaptureAfterQuestion: data.lead_capture_after_question,
@@ -88,6 +93,8 @@ export async function loadCampaign(): Promise<PmmaCampaignConfig> {
 
 export type StartInput = {
   sessionId: string;
+  campaignSlug?: string;
+  userId?: string | null;
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
@@ -99,22 +106,30 @@ export type StartInput = {
 };
 
 export async function startAttempt(input: StartInput): Promise<PmmaStartResult> {
-  const campaign = await loadCampaign();
+  const campaign = await loadCampaign(input.campaignSlug ?? CAMPAIGN_SLUG);
   if (campaign.status !== "active") {
     throw new Error("PAUSED");
   }
 
-  // Anti-refazer: quem já concluiu o simulado precisa de uma doação aprovada.
-  // Além do sessionId (localStorage), usamos uma impressão digital do dispositivo,
-  // que continua reconhecendo a pessoa mesmo se ela limpar os dados do navegador.
   const { getDeviceFingerprint } = await import("./fingerprint.server");
   const fingerprint = await getDeviceFingerprint();
-  const { getAccessStatus, consumeDonationCredit } = await import("./donation.server");
-  const access = await getAccessStatus(input.sessionId, fingerprint);
-  if (access.completedAttempts > 0) {
-    const unlocked = await consumeDonationCredit(input.sessionId, fingerprint);
-    if (!unlocked) throw new Error("DONATION_REQUIRED");
+
+  if (campaign.isPaid) {
+    // Simulados pagos exigem conta e compra aprovada.
+    if (!input.userId) throw new Error("LOGIN_REQUIRED");
+    const { hasApprovedPurchase } = await import("./purchase.server");
+    const owns = await hasApprovedPurchase(input.userId, campaign.id);
+    if (!owns) throw new Error("PURCHASE_REQUIRED");
+  } else {
+    // Anti-refazer no simulado gratuito: quem já concluiu precisa de uma doação aprovada.
+    const { getAccessStatus, consumeDonationCredit } = await import("./donation.server");
+    const access = await getAccessStatus(input.sessionId, fingerprint);
+    if (access.completedAttempts > 0) {
+      const unlocked = await consumeDonationCredit(input.sessionId, fingerprint);
+      if (!unlocked) throw new Error("DONATION_REQUIRED");
+    }
   }
+
 
 
 
@@ -169,7 +184,9 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     .from("pmma_attempts")
     .insert({
       anonymous_session_id: input.sessionId,
+      user_id: input.userId ?? null,
       device_fingerprint: fingerprint,
+
       campaign_id: campaign.id,
       status: "started",
       total_questions: questions.length,

@@ -12,8 +12,13 @@ export type PmmaPublicQuestion = {
 
 export type PmmaCampaignConfig = {
   id: string;
+  slug: string;
   name: string;
+  description: string | null;
   status: string;
+  isPaid: boolean;
+  priceCents: number;
+  totalQuestions: number;
   questionsPerAttempt: number;
   questionsPerDiscipline: number;
   leadCaptureAfterQuestion: number;
@@ -22,6 +27,20 @@ export type PmmaCampaignConfig = {
   whatsappNumber: string | null;
   pausedMessage: string | null;
 };
+
+export type SimuladoCatalogItem = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  isPaid: boolean;
+  priceCents: number;
+  totalQuestions: number;
+  availableQuestions: number;
+  status: string;
+  owned: boolean;
+};
+
 
 export type PmmaStartResult = {
   attemptId: string;

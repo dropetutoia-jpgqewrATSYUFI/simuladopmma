@@ -288,18 +288,21 @@ export async function createPixDonation(input: {
 export async function refreshDonationStatus(
   donationId: string,
   sessionId: string,
+  userId?: string | null,
 ): Promise<DonationRecord> {
   const client = await db();
   const { data: row } = await client
     .from("donations")
     .select(
-      "id, session_id, amount, status, provider_payment_id, qr_code, qr_code_base64, ticket_url",
+      "id, session_id, user_id, amount, status, provider_payment_id, qr_code, qr_code_base64, ticket_url",
     )
     .eq("id", donationId)
-    .eq("session_id", sessionId)
     .maybeSingle();
 
-  if (!row) throw new Error("Doação não encontrada.");
+  // Só o dono da doação (mesma sessão ou mesma conta) pode consultar o status.
+  const owns = row?.session_id === sessionId || (userId != null && row?.user_id === userId);
+  if (!row || !owns) throw new Error("Doação não encontrada.");
+
 
   let status = row.status;
 

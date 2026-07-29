@@ -127,13 +127,17 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     if (access !== "released") throw new Error("PURCHASE_REQUIRED");
   } else {
     // Anti-refazer no simulado gratuito: quem já concluiu precisa de uma doação aprovada.
+    // O bloqueio é por conta + dispositivo/rede, então criar outro e-mail não libera.
+    if (!input.userId) throw new Error("LOGIN_REQUIRED");
     const { getAccessStatus, consumeDonationCredit } = await import("./donation.server");
-    const access = await getAccessStatus(input.sessionId, fingerprint);
+    const identity = { sessionId: input.sessionId, fingerprint, userId: input.userId };
+    const access = await getAccessStatus(identity);
     if (access.completedAttempts > 0) {
-      const unlocked = await consumeDonationCredit(input.sessionId, fingerprint);
+      const unlocked = await consumeDonationCredit(identity);
       if (!unlocked) throw new Error("DONATION_REQUIRED");
     }
   }
+
 
 
 

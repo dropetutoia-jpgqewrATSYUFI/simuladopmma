@@ -104,6 +104,16 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     throw new Error("PAUSED");
   }
 
+  // Anti-refazer: quem já concluiu o simulado precisa de uma doação aprovada.
+  const { getAccessStatus, consumeDonationCredit } = await import("./donation.server");
+  const access = await getAccessStatus(input.sessionId);
+  if (access.completedAttempts > 0) {
+    const unlocked = await consumeDonationCredit(input.sessionId);
+    if (!unlocked) throw new Error("DONATION_REQUIRED");
+  }
+
+
+
   const { data: pool, error } = await supabaseAdmin
     .from("pmma_questions")
     .select("id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer")

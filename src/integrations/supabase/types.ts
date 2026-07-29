@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          created_at: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          amount: number
+          consumed: boolean
+          consumed_at: string | null
+          created_at: string
+          id: string
+          paid_at: string | null
+          payer_email: string | null
+          provider: string
+          provider_payment_id: string | null
+          qr_code: string | null
+          qr_code_base64: string | null
+          session_id: string
+          status: string
+          ticket_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          consumed?: boolean
+          consumed_at?: string | null
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payer_email?: string | null
+          provider?: string
+          provider_payment_id?: string | null
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          session_id: string
+          status?: string
+          ticket_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          consumed?: boolean
+          consumed_at?: string | null
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          payer_email?: string | null
+          provider?: string
+          provider_payment_id?: string | null
+          qr_code?: string | null
+          qr_code_base64?: string | null
+          session_id?: string
+          status?: string
+          ticket_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           attempt_id: string | null

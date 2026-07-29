@@ -50,7 +50,7 @@ const inputClass =
 
 const labelClass = "text-sm font-medium text-foreground/90";
 
-const SIMULADO_TAGLINE = "Simulado grátis • 40 questões • 8 matérias";
+const SIMULADO_TAGLINE = "Comece pelo simulado grátis • 40 questões • 8 matérias do edital";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -62,6 +62,7 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   useEffect(() => {
     void supabase.auth.getUser().then(({ data }) => {
@@ -69,9 +70,33 @@ function HomePage() {
     });
   }, [navigate]);
 
+  async function runSignUp() {
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const digits = whatsapp.replace(/\D/g, "");
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/painel`,
+          data: { full_name: fullName.trim(), whatsapp: digits, phone: digits },
+        },
+      });
+      if (signUpError) throw signUpError;
+      const { data } = await supabase.auth.getSession();
+      if (data.session) navigate({ to: "/painel", replace: true });
+      else setMessage("Conta criada. Verifique seu e-mail para confirmar o acesso.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível autenticar.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setLoading(true);
     setError(null);
     setMessage(null);
     try {
@@ -79,24 +104,13 @@ function HomePage() {
         if (fullName.trim().length < 3) throw new Error("Informe seu nome completo.");
         const digits = whatsapp.replace(/\D/g, "");
         if (digits.length < 10) throw new Error("Informe um WhatsApp válido com DDD.");
-
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/painel`,
-            data: { full_name: fullName.trim(), whatsapp: digits, phone: digits },
-          },
-        });
-        if (signUpError) throw signUpError;
-        const { data } = await supabase.auth.getSession();
-        if (data.session) navigate({ to: "/painel", replace: true });
-        else setMessage("Conta criada. Verifique seu e-mail para confirmar o acesso.");
-      } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) throw signInError;
-        navigate({ to: "/painel", replace: true });
+        setPrivacyOpen(true);
+        return;
       }
+      setLoading(true);
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
+      navigate({ to: "/painel", replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível autenticar.");
     } finally {

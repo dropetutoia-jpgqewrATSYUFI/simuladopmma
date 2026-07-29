@@ -115,7 +115,7 @@ function HomePage() {
           <section className="pmma-rise space-y-9">
             <div className="space-y-5">
               <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
-                Estilo Cebraspe · Certo ou Errado
+                Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
               <h1 className="font-display text-[34px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Sua aprovação na

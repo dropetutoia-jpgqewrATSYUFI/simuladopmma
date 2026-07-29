@@ -27,6 +27,49 @@ export async function hasApprovedPurchase(userId: string, campaignId: string): P
   return (count ?? 0) > 0;
 }
 
+/** Cria as situações "bloqueado" de todos os simulados pagos para o usuário. */
+export async function ensureSimuladoAccess(userId: string): Promise<void> {
+  const client = await db();
+  await client.rpc("ensure_simulado_access", { _user_id: userId });
+}
+
+/** Libera imediatamente o simulado vinculado ao usuário. */
+export async function releaseSimuladoAccess(
+  userId: string,
+  campaignId: string,
+  source = "purchase",
+): Promise<void> {
+  const client = await db();
+  await client.rpc("release_simulado_access", {
+    _user_id: userId,
+    _campaign_id: campaignId,
+    _source: source,
+  });
+}
+
+/** Situação de acesso vinculada ao usuário: "released" só após pagamento aprovado. */
+export async function getSimuladoAccessStatus(
+  userId: string,
+  campaignId: string,
+): Promise<"released" | "blocked"> {
+  const client = await db();
+  const { data } = await client
+    .from("simulado_access")
+    .select("status")
+    .eq("user_id", userId)
+    .eq("campaign_id", campaignId)
+    .maybeSingle();
+
+  if (data?.status === "released") return "released";
+
+  // Segurança extra: se houver compra aprovada, sincroniza a situação.
+  if (await hasApprovedPurchase(userId, campaignId)) {
+    await releaseSimuladoAccess(userId, campaignId);
+    return "released";
+  }
+  return "blocked";
+}
+
 /** Catálogo público de simulados; `owned` só é verdadeiro para simulados já comprados pelo usuário (ou para admins). */
 export async function listSimulados(
   userId: string | null,

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
 import { supabase } from "@/integrations/supabase/client";
 
-const TITLE = "Simulados PM-MA 2026 | Estilo Cebraspe — Edital360";
+const TITLE = "Simulados para PMMA — Concurso 2026 | Edital360";
 const DESCRIPTION =
   "Entre ou crie sua conta para acessar os simulados PM-MA no estilo Cebraspe: mini simulado gratuito de 40 questões e simulados completos de 120 questões.";
 
@@ -115,7 +115,7 @@ function HomePage() {
                 Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
               <h1 className="font-display text-[22px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-                Simulados para concurso PMMA
+                Simulados para PMMA — Concurso 2026
               </h1>
               <p className="max-w-md text-[14px] leading-relaxed text-muted-foreground sm:text-base">
                 Simulados de alto nível com correção comentada e diagnóstico por matéria. Treine no

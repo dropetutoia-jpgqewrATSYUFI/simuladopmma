@@ -147,11 +147,15 @@ export async function createPixDonation(input: {
     throw new Error("Pagamentos indisponíveis no momento. Tente novamente mais tarde.");
   }
 
+  const { getDeviceFingerprint } = await import("./fingerprint.server");
+  const fingerprint = await getDeviceFingerprint();
+
   const client = await db();
   const { data: row, error: insertError } = await client
     .from("donations")
     .insert({
       session_id: input.sessionId,
+      device_fingerprint: fingerprint,
       amount,
       payer_email: input.email,
       status: "pending",

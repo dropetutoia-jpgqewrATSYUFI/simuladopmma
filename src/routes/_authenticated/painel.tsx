@@ -87,17 +87,21 @@ function MiniStat({
 function PainelPage() {
   const navigate = useNavigate();
   const loadDashboard = useServerFn(myDashboard);
+  const accessStatus = useServerFn(pmmaAccessStatus);
   const [simulados, setSimulados] = useState<SimuladoCatalogItem[]>([]);
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState<SimuladoCatalogItem | null>(null);
   const [name, setName] = useState<string | null>(null);
+  /** Simulado gratuito já concluído: só refaz depois de uma doação aprovada. */
+  const [freeBlocked, setFreeBlocked] = useState(false);
 
   const refresh = useCallback(async () => {
     const data = await loadDashboard({ data: undefined });
     setSimulados(data.simulados);
     setAttempts(data.attempts as Attempt[]);
     setLoading(false);
+
   }, [loadDashboard]);
 
   useEffect(() => {

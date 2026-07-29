@@ -115,7 +115,7 @@ function HomePage() {
                 Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
               <h1 className="font-display text-[22px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-3xl lg:text-4xl">
-                Simulados para PMMA — Concurso 2026
+                Simulados para concurso PMMA
               </h1>
               <p className="max-w-md text-[14px] leading-relaxed text-muted-foreground sm:text-base">
                 Simulados de alto nível com correção comentada e diagnóstico por matéria. Treine no

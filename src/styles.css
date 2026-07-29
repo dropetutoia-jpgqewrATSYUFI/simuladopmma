@@ -233,6 +233,17 @@
   }
 }
 
+@keyframes pmma-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+
+
 @keyframes pmma-shine {
   0% {
     background-position: -160% 0;

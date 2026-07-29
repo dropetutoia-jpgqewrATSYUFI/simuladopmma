@@ -184,7 +184,9 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     .from("pmma_attempts")
     .insert({
       anonymous_session_id: input.sessionId,
+      user_id: input.userId ?? null,
       device_fingerprint: fingerprint,
+
       campaign_id: campaign.id,
       status: "started",
       total_questions: questions.length,

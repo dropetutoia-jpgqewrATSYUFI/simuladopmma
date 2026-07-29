@@ -11,6 +11,7 @@ import {
   adminToggleQuestion,
   adminWhoAmI,
 } from "@/lib/admin.functions";
+import { adminPaymentSettings, adminSavePaymentSettings } from "@/lib/donation.functions";
 import type { AdminLead, AdminOverview, AdminQuestion } from "@/lib/admin.types";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,7 +29,25 @@ export const Route = createFileRoute("/_authenticated/admin")({
   }),
 });
 
-type Tab = "visao" | "leads" | "questoes";
+type Tab = "visao" | "leads" | "questoes" | "pagamentos";
+
+type PaymentsData = {
+  settings: {
+    configured: boolean;
+    source: "painel" | "ambiente" | "nenhum";
+    maskedToken: string | null;
+    updatedAt: string | null;
+  };
+  donations: {
+    id: string;
+    amount: number;
+    status: string;
+    sessionId: string;
+    createdAt: string;
+    paidAt: string | null;
+    consumed: boolean;
+  }[];
+};
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
@@ -55,6 +74,8 @@ function AdminPage() {
   const loadCsv = useServerFn(adminLeadsCsv);
   const loadQuestions = useServerFn(adminQuestions);
   const toggleQuestion = useServerFn(adminToggleQuestion);
+  const loadPayments = useServerFn(adminPaymentSettings);
+  const savePayments = useServerFn(adminSavePaymentSettings);
 
   const [status, setStatus] = useState<"loading" | "denied" | "ready">("loading");
   const [tab, setTab] = useState<Tab>("visao");
@@ -64,24 +85,29 @@ function AdminPage() {
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [payments, setPayments] = useState<PaymentsData | null>(null);
+  const [mpToken, setMpToken] = useState("");
+  const [mpMessage, setMpMessage] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setError(null);
     try {
-      const [o, l, q] = await Promise.all([
+      const [o, l, q, p] = await Promise.all([
         loadOverview(),
         loadLeads({ data: { search: "", limit: 200 } }),
         loadQuestions(),
+        loadPayments(),
       ]);
       setOverview(o);
       setLeads(l);
       setQuestions(q);
+      setPayments(p as PaymentsData);
       setStatus("ready");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Falha ao carregar dados.");
       setStatus("denied");
     }
-  }, [loadLeads, loadOverview, loadQuestions]);
+  }, [loadLeads, loadOverview, loadQuestions, loadPayments]);
 
   useEffect(() => {
     let active = true;
@@ -141,6 +167,22 @@ function AdminPage() {
       setQuestions((prev) =>
         prev.map((q) => (q.id === question.id ? { ...q, isActive: !q.isActive } : q)),
       );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleSaveToken(event: React.FormEvent) {
+    event.preventDefault();
+    setBusy(true);
+    setMpMessage(null);
+    try {
+      await savePayments({ data: { accessToken: mpToken.trim() } });
+      setMpToken("");
+      setPayments((await loadPayments()) as PaymentsData);
+      setMpMessage("Credencial salva com sucesso.");
+    } catch (err) {
+      setMpMessage(err instanceof Error ? err.message : "Não foi possível salvar.");
     } finally {
       setBusy(false);
     }
@@ -209,6 +251,7 @@ function AdminPage() {
             ["visao", "Visão geral"],
             ["leads", `Leads (${leads.length})`],
             ["questoes", `Questões (${questions.length})`],
+            ["pagamentos", "Pagamentos"],
           ] as [Tab, string][]
         ).map(([key, label]) => (
           <button
@@ -361,6 +404,91 @@ function AdminPage() {
                       <td className="px-4 py-3 text-muted-foreground">
                         {formatDate(lead.createdAt)}
                       </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
+
+      {tab === "pagamentos" ? (
+        <section className="mt-6 space-y-4">
+          <div className="pmma-glass rounded-2xl p-5">
+            <h2 className="font-display text-lg font-semibold text-foreground">
+              Mercado Pago (Pix das doações)
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Cole o <strong>Access Token de produção</strong> da sua aplicação no Mercado Pago
+              (Suas integrações → Credenciais de produção). Ele fica guardado apenas no servidor e
+              nunca é exibido de novo.
+            </p>
+            <p className="mt-3 text-sm">
+              Status:{" "}
+              <span className={payments?.settings.configured ? "text-emerald-400" : "text-amber-400"}>
+                {payments?.settings.configured
+                  ? `configurado (${payments.settings.maskedToken}, via ${payments.settings.source})`
+                  : "não configurado — o Pix não será gerado"}
+              </span>
+            </p>
+            <form onSubmit={handleSaveToken} className="mt-4 flex flex-wrap gap-2">
+              <input
+                type="password"
+                value={mpToken}
+                onChange={(e) => setMpToken(e.target.value)}
+                placeholder="APP_USR-..."
+                className="h-11 min-w-[240px] flex-1 rounded-xl border border-white/10 bg-white/5 px-4 text-foreground outline-none focus:border-primary"
+              />
+              <button
+                type="submit"
+                disabled={busy || mpToken.trim().length < 20}
+                className="h-11 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground disabled:opacity-60"
+              >
+                Salvar credencial
+              </button>
+            </form>
+            {mpMessage ? <p className="mt-2 text-sm text-muted-foreground">{mpMessage}</p> : null}
+          </div>
+
+          <div className="pmma-glass overflow-x-auto rounded-2xl">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-3">Valor</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Sessão</th>
+                  <th className="px-4 py-3">Usada</th>
+                  <th className="px-4 py-3">Criada em</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(payments?.donations.length ?? 0) === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                      Nenhuma doação registrada ainda.
+                    </td>
+                  </tr>
+                ) : (
+                  payments?.donations.map((d) => (
+                    <tr key={d.id} className="border-b border-white/5 last:border-0">
+                      <td className="px-4 py-3 font-medium text-foreground">
+                        {d.amount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={
+                            d.status === "approved" ? "text-emerald-400" : "text-muted-foreground"
+                          }
+                        >
+                          {d.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{d.sessionId}…</td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {d.consumed ? "sim" : "não"}
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">{formatDate(d.createdAt)}</td>
                     </tr>
                   ))
                 )}

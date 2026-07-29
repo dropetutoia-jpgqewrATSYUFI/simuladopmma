@@ -70,19 +70,20 @@ function MiniStat({
         : "text-emerald-400 from-emerald-400/70";
 
   return (
-    <Card className={`pmma-glass pmma-rise ${delay} relative overflow-hidden rounded-2xl p-4`}>
+    <Card className={`pmma-glass pmma-rise ${delay} relative overflow-hidden rounded-2xl p-3 sm:p-4`}>
       <span
         aria-hidden="true"
         className={`absolute inset-x-0 top-0 h-px bg-linear-to-r to-transparent ${toneClass}`}
       />
       <Icon className={`h-4 w-4 ${toneClass.split(" ")[0]}`} aria-hidden="true" />
-      <p className="mt-3 font-display text-2xl font-black leading-none tabular-nums text-foreground">
+      <p className="mt-2.5 font-display text-xl font-black leading-none tabular-nums text-foreground sm:text-2xl">
         {value}
       </p>
-      <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="mt-1.5 text-[9px] font-semibold uppercase leading-tight tracking-[0.1em] text-muted-foreground sm:text-[10px] sm:tracking-[0.16em]">
         {label}
       </p>
     </Card>
+
   );
 }
 

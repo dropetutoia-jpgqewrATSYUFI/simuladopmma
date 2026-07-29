@@ -47,16 +47,21 @@ export function PmmaLeadForm({
   }
 
   return (
-    <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
-      <h2 className="text-xl font-bold">Fique por dentro de todas as novidades do concurso</h2>
-      <p className="mt-2 text-sm text-muted-foreground">
+    <Card className="pmma-glass pmma-rise rounded-2xl p-5 sm:p-6">
+      <span className="inline-flex rounded-full bg-accent/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-accent">
+        Último passo
+      </span>
+      <h2 className="mt-3 text-2xl font-extrabold leading-tight sm:text-[26px]">
+        Fique por dentro de todas as novidades do concurso
+      </h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         Informe seu WhatsApp para receber a análise do seu simulado e todas as novidades do
         concurso da PMMA. Sem login e sem cobrança.
       </p>
 
 
       <form
-        className="mt-5 space-y-4"
+        className="mt-6 space-y-4"
         noValidate
         onSubmit={(event) => {
           event.preventDefault();
@@ -67,6 +72,7 @@ export function PmmaLeadForm({
           <Label htmlFor="pmma-name">Primeiro nome</Label>
           <Input
             id="pmma-name"
+            className="h-12 rounded-xl bg-white/5 text-base"
             autoComplete="given-name"
             value={values.firstName}
             aria-invalid={Boolean(errors.firstName)}
@@ -81,6 +87,7 @@ export function PmmaLeadForm({
           <Label htmlFor="pmma-whatsapp">WhatsApp</Label>
           <Input
             id="pmma-whatsapp"
+            className="h-12 rounded-xl bg-white/5 text-base"
             inputMode="tel"
             autoComplete="tel"
             placeholder="(98) 91234-5678"
@@ -95,6 +102,7 @@ export function PmmaLeadForm({
           <Label htmlFor="pmma-email">E-mail (opcional)</Label>
           <Input
             id="pmma-email"
+            className="h-12 rounded-xl bg-white/5 text-base"
             type="email"
             autoComplete="email"
             value={values.email}
@@ -104,7 +112,7 @@ export function PmmaLeadForm({
           {errors.email ? <p className="text-xs text-destructive">{errors.email}</p> : null}
         </div>
 
-        <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/40 p-3">
+        <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-3">
           <Checkbox
             id="pmma-consent"
             checked={values.consent}
@@ -119,7 +127,12 @@ export function PmmaLeadForm({
         {errors.consent ? <p className="text-xs text-destructive">{errors.consent}</p> : null}
         {serverError ? <p className="text-sm text-destructive">{serverError}</p> : null}
 
-        <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+        <Button
+          type="submit"
+          size="lg"
+          className="h-14 w-full rounded-xl bg-linear-to-r from-primary to-[#2563eb] text-base font-bold shadow-[0_16px_40px_-18px_var(--color-primary)] transition-transform active:scale-[0.98]"
+          disabled={submitting}
+        >
           {submitting ? "ENVIANDO..." : "ENVIAR"}
         </Button>
 

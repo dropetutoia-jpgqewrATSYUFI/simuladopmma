@@ -114,16 +114,27 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     throw new Error("Nenhuma questão disponível no momento.");
   }
 
+  type PoolRow = {
+    id: string;
+    public_code: string;
+    discipline: string;
+    topic: string | null;
+    statement: string;
+    difficulty: string;
+    correct_answer: boolean;
+  };
+  const rowsPool: PoolRow[] = pool;
+
   const seen = new Set(input.seenQuestionCodes ?? []);
-  const byDiscipline = new Map<string, typeof pool>();
-  for (const q of pool) {
+  const byDiscipline = new Map<string, PoolRow[]>();
+  for (const q of rowsPool) {
     const list = byDiscipline.get(q.discipline) ?? [];
     list.push(q);
     byDiscipline.set(q.discipline, list);
   }
 
-  const picked: typeof pool = [];
-  const leftovers: typeof pool = [];
+  const picked: PoolRow[] = [];
+  const leftovers: PoolRow[] = [];
 
   for (const [, list] of shuffle([...byDiscipline.entries()])) {
     // prioriza questões ainda não vistas neste dispositivo
@@ -133,7 +144,7 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     // procura equilibrar itens com gabarito CERTO e ERRADO
     const certos = ordered.filter((q) => q.correct_answer);
     const errados = ordered.filter((q) => !q.correct_answer);
-    const balanced: typeof pool = [];
+    const balanced: PoolRow[] = [];
     while (balanced.length < campaign.questionsPerDiscipline && (certos.length || errados.length)) {
       const source =
         balanced.filter((q) => q.correct_answer).length <=

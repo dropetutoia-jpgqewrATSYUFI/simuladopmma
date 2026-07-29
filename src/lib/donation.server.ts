@@ -68,6 +68,11 @@ export async function getMercadoPagoStatus() {
   };
 }
 
+/** Evita que caracteres especiais quebrem/injetem no filtro `or()` do PostgREST. */
+function isFilterSafe(value: string) {
+  return /^[A-Za-z0-9_-]{1,64}$/.test(value);
+}
+
 /** Access is blocked when the session already finished a simulado and has no unused donation. */
 export async function getAccessStatus(
   sessionId: string,

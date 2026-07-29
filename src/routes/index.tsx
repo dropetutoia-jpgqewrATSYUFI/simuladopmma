@@ -291,8 +291,11 @@ function SimuladoPmmaPage() {
       });
       setFirstName(values.firstName.trim());
       persist({ ...state, leadCaptured: true });
-      setStage("quiz");
-      questionStartedAt.current = Date.now();
+      if (state.start.bonusQuestion) {
+        setStage("bonus_offer");
+      } else {
+        void computeResult(state.attemptId);
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Não foi possível salvar agora.";
       setLeadError(message);

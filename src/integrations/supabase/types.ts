@@ -489,6 +489,7 @@ export type Database = {
       }
       pmma_questions: {
         Row: {
+          answer_status: string
           base_text: string | null
           campaign_id: string | null
           correct_answer: boolean
@@ -516,6 +517,7 @@ export type Database = {
           version: string
         }
         Insert: {
+          answer_status?: string
           base_text?: string | null
           campaign_id?: string | null
           correct_answer: boolean
@@ -543,6 +545,7 @@ export type Database = {
           version?: string
         }
         Update: {
+          answer_status?: string
           base_text?: string | null
           campaign_id?: string | null
           correct_answer?: boolean

@@ -103,19 +103,18 @@ export async function getQuestionsForAttempt(attemptId: string): Promise<{
   };
 }
 
-function getAttemptById(attemptId: string): Promise<QuizAttempt | null> {
-  return supabaseAdmin
+async function getAttemptById(attemptId: string): Promise<QuizAttempt | null> {
+  const { data, error } = await supabaseAdmin
     .from("quiz_attempts")
     .select("*")
     .eq("id", attemptId)
-    .single()
-    .then(({ data, error }) => {
-      if (error) {
-        if (error.code === "PGRST116") return null;
-        throw error;
-      }
-      return data;
-    });
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    throw error;
+  }
+  return data;
 }
 
 export async function createAnonymousAttempt(mode: QuizMode): Promise<QuizAttempt> {

@@ -1,13 +1,3 @@
-const SITE = "https://edital360.com";
-
-const LINKS: { label: string; href: string }[] = [
-  { label: "Início", href: SITE },
-  { label: "Inscrições abertas", href: `${SITE}/inscricoes-abertas` },
-  { label: "Notícias", href: `${SITE}/noticias` },
-  { label: "Sobre", href: `${SITE}/sobre` },
-  { label: "Contato", href: `${SITE}/contato` },
-];
-
 export function PmmaSiteFooter() {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-center sm:px-8">

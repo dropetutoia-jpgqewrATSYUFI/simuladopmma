@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import {
   adminClaimFirstAdmin,
+  adminDeleteLeads,
   adminLeads,
   adminLeadsCsv,
   adminOverview,
@@ -68,6 +69,7 @@ function AdminPage() {
   const loadOverview = useServerFn(adminOverview);
   const loadLeads = useServerFn(adminLeads);
   const loadCsv = useServerFn(adminLeadsCsv);
+  const deleteLeads = useServerFn(adminDeleteLeads);
   const loadQuestions = useServerFn(adminQuestions);
   const toggleQuestion = useServerFn(adminToggleQuestion);
 
@@ -77,10 +79,12 @@ function AdminPage() {
   const [currentUserId, setCurrentUserId] = useState("");
   const [overview, setOverview] = useState<AdminOverview | null>(null);
   const [leads, setLeads] = useState<AdminLead[]>([]);
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [questions, setQuestions] = useState<AdminQuestion[]>([]);
   const [search, setSearch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
 
   const refresh = useCallback(async () => {
     setError(null);
@@ -126,11 +130,39 @@ function AdminPage() {
     navigate({ to: "/auth", replace: true });
   }
 
+  function toggleLead(id: string) {
+    setSelectedLeads((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
+  }
+
+  function toggleAllLeads() {
+    setSelectedLeads((prev) => (prev.length === leads.length ? [] : leads.map((l) => l.id)));
+  }
+
+  async function handleDeleteLeads() {
+    if (selectedLeads.length === 0) return;
+    if (!window.confirm(`Apagar ${selectedLeads.length} lead(s)? Esta ação não pode ser desfeita.`))
+      return;
+    setBusy(true);
+    try {
+      await deleteLeads({ data: { ids: selectedLeads } });
+      setLeads((prev) => prev.filter((l) => !selectedLeads.includes(l.id)));
+      setSelectedLeads([]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao apagar leads.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function handleSearch(event: React.FormEvent) {
     event.preventDefault();
     setBusy(true);
     try {
+      setSelectedLeads([]);
       setLeads(await loadLeads({ data: { search, limit: 200 } }));
+
     } finally {
       setBusy(false);
     }
@@ -378,10 +410,35 @@ function AdminPage() {
                 </button>
               </form>
 
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-white/55">
+                  {selectedLeads.length > 0
+                    ? `${selectedLeads.length} selecionado(s)`
+                    : `${leads.length} lead(s)`}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleDeleteLeads}
+                  disabled={busy || selectedLeads.length === 0}
+                  className="h-9 rounded-lg bg-red-500/90 px-4 text-xs font-bold text-white disabled:opacity-40"
+                >
+                  Apagar selecionados
+                </button>
+              </div>
+
               <div className="overflow-x-auto rounded-2xl border border-white/10 bg-[#0f172a]">
-                <table className="w-full min-w-[720px] text-left text-sm">
+                <table className="w-full min-w-[760px] text-left text-sm">
                   <thead className="border-b border-white/10 text-xs uppercase tracking-wide text-white/55">
                     <tr>
+                      <th className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          aria-label="Selecionar todos os leads"
+                          checked={leads.length > 0 && selectedLeads.length === leads.length}
+                          onChange={toggleAllLeads}
+                          className="h-4 w-4 accent-primary"
+                        />
+                      </th>
                       <th className="px-4 py-3">Nome</th>
                       <th className="px-4 py-3">WhatsApp</th>
                       <th className="px-4 py-3">E-mail</th>
@@ -393,14 +450,24 @@ function AdminPage() {
                   <tbody>
                     {leads.length === 0 ? (
                       <tr>
-                        <td colSpan={6} className="px-4 py-8 text-center text-white/50">
+                        <td colSpan={7} className="px-4 py-8 text-center text-white/50">
                           Nenhum lead encontrado.
                         </td>
                       </tr>
                     ) : (
                       leads.map((lead) => (
                         <tr key={lead.id} className="border-b border-white/5 last:border-0">
+                          <td className="px-4 py-3">
+                            <input
+                              type="checkbox"
+                              aria-label={`Selecionar ${lead.firstName}`}
+                              checked={selectedLeads.includes(lead.id)}
+                              onChange={() => toggleLead(lead.id)}
+                              className="h-4 w-4 accent-primary"
+                            />
+                          </td>
                           <td className="px-4 py-3 font-medium text-white">{lead.firstName}</td>
+
                           <td className="px-4 py-3">
                             <a
                               href={`https://wa.me/${lead.whatsapp.replace(/\D/g, "")}`}

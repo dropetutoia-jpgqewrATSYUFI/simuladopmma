@@ -536,6 +536,8 @@ function AdminPage() {
           ))}
         </section>
       ) : null}
-    </main>
+      </main>
+    </div>
+
   );
 }

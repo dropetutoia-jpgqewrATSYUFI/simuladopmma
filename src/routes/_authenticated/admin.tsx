@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
 import { AdminUsersPanel } from "@/components/admin/AdminUsersPanel";
 import { AdminPaymentsPanel } from "@/components/admin/AdminPaymentsPanel";
+import { AdminAccessPanel } from "@/components/admin/AdminAccessPanel";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
@@ -31,11 +32,12 @@ export const Route = createFileRoute("/_authenticated/admin")({
   }),
 });
 
-type Tab = "visao" | "usuarios" | "pagamentos" | "leads" | "questoes";
+type Tab = "visao" | "usuarios" | "acessos" | "pagamentos" | "leads" | "questoes";
 
 const NAV: { key: Tab; label: string; icon: string; hint: string }[] = [
   { key: "visao", label: "Visão geral", icon: "▤", hint: "Métricas" },
   { key: "usuarios", label: "Usuários", icon: "◍", hint: "Contas e acessos" },
+  { key: "acessos", label: "Liberar acesso", icon: "🔓", hint: "Simulados pagos" },
   { key: "pagamentos", label: "Pagamentos", icon: "◈", hint: "Pix e liberações" },
   { key: "leads", label: "Leads", icon: "✦", hint: "Captação" },
   { key: "questoes", label: "Questões", icon: "✎", hint: "Banco" },
@@ -345,6 +347,8 @@ function AdminPage() {
           ) : null}
 
           {tab === "usuarios" ? <AdminUsersPanel currentUserId={currentUserId} /> : null}
+
+          {tab === "acessos" ? <AdminAccessPanel /> : null}
 
           {tab === "pagamentos" ? <AdminPaymentsPanel /> : null}
 

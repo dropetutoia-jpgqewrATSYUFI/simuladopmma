@@ -135,9 +135,12 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
 
   const { data: pool, error } = await supabaseAdmin
     .from("pmma_questions")
-    .select("id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer")
+    .select(
+      "id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer, sort_order",
+    )
     .eq("is_active", true)
-    .eq("campaign_id", campaign.id);
+    .eq("campaign_id", campaign.id)
+    .order("sort_order", { ascending: true });
 
   if (error || !pool || pool.length === 0) {
     throw new Error("Nenhuma questão disponível no momento.");
@@ -152,27 +155,31 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     statement: string;
     difficulty: string;
     correct_answer: boolean;
+    sort_order: number;
   };
   const rowsPool: PoolRow[] = pool;
 
-  const seen = new Set(input.seenQuestionCodes ?? []);
-  const byDiscipline = new Map<string, PoolRow[]>();
-  for (const q of rowsPool) {
-    const list = byDiscipline.get(q.discipline) ?? [];
-    list.push(q);
-    byDiscipline.set(q.discipline, list);
-  }
-
-  // Aplica TODAS as questões ativas da campanha, intercalando as disciplinas
-  const orderedByDiscipline = shuffle([...byDiscipline.entries()]).map(([, list]) => shuffle(list));
   const questions: PoolRow[] = [];
-  const maxLen = Math.max(0, ...orderedByDiscipline.map((l) => l.length));
-  for (let i = 0; i < maxLen; i++) {
-    for (const list of orderedByDiscipline) {
-      const item = list[i];
-      if (item) questions.push(item);
+  if (campaign.isPaid) {
+    // Provas comentadas preservam a numeração original (1..120).
+    questions.push(...rowsPool);
+  } else {
+    const byDiscipline = new Map<string, PoolRow[]>();
+    for (const q of rowsPool) {
+      const list = byDiscipline.get(q.discipline) ?? [];
+      list.push(q);
+      byDiscipline.set(q.discipline, list);
+    }
+    const orderedByDiscipline = shuffle([...byDiscipline.entries()]).map(([, list]) => shuffle(list));
+    const maxLen = Math.max(0, ...orderedByDiscipline.map((l) => l.length));
+    for (let i = 0; i < maxLen; i++) {
+      for (const list of orderedByDiscipline) {
+        const item = list[i];
+        if (item) questions.push(item);
+      }
     }
   }
+
 
   const bonus: PoolRow | null = null;
 
@@ -256,7 +263,7 @@ export async function answerQuestion(params: {
 
   const { data: question, error: questionError } = await supabaseAdmin
     .from("pmma_questions")
-    .select("correct_answer, feedback_correct, feedback_wrong, key_point")
+    .select("correct_answer, feedback_correct, feedback_wrong, key_point, answer_status")
     .eq("id", params.questionId)
     .maybeSingle();
 
@@ -264,7 +271,11 @@ export async function answerQuestion(params: {
     throw new Error("Questão não encontrada.");
   }
 
-  const isCorrect = question.correct_answer === params.answer;
+  const answerStatus = (question as { answer_status?: string }).answer_status ?? "definitivo";
+  const neutral = answerStatus === "anulada" || answerStatus === "pendente";
+  // Anulada: ponto atribuído a todos. Pendente de revisão: item não penaliza o candidato.
+  const isCorrect = neutral ? true : question.correct_answer === params.answer;
+
 
   if (!link.answered_at) {
     await supabaseAdmin
@@ -300,12 +311,19 @@ export async function answerQuestion(params: {
 
   return {
     isCorrect,
-    correctAnswer: question.correct_answer,
-    feedback: isCorrect ? question.feedback_correct : question.feedback_wrong,
+    correctAnswer: neutral ? params.answer : question.correct_answer,
+    feedback: neutral
+      ? answerStatus === "anulada"
+        ? `Questão anulada no gabarito oficial definitivo. No modo de reprodução oficial, a pontuação deste item é atribuída a todos. ${question.feedback_correct}`
+        : `O arquivo-fonte não apresenta gabarito para este item. A questão está aguardando validação e não será pontuada. ${question.feedback_correct}`
+      : isCorrect
+        ? question.feedback_correct
+        : question.feedback_wrong,
     keyPoint: question.key_point,
     nextDiscipline,
   };
 }
+
 
 const DDD_MIN = 11;
 const DDD_MAX = 99;

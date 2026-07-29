@@ -102,47 +102,48 @@ function HomePage() {
 
   return (
     <div className="pmma-theme min-h-[100dvh] w-full">
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:py-10">
-        <header className="pmma-rise flex items-center justify-between">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-4 py-5 sm:px-8 sm:py-6 lg:py-10">
+        <header className="pmma-rise grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <PmmaBrandMark />
           <span className="hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground sm:inline">
             Simulados PM-MA
           </span>
         </header>
 
-        <main className="grid flex-1 grid-cols-1 items-center gap-12 py-10 lg:grid-cols-2 lg:gap-16">
+        <main className="grid flex-1 grid-cols-1 items-center gap-8 py-7 sm:gap-12 sm:py-10 lg:grid-cols-2 lg:gap-16">
           {/* Apresentação */}
-          <section className="pmma-rise space-y-9">
-            <div className="space-y-5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+          <section className="pmma-rise space-y-6 sm:space-y-9">
+            <div className="space-y-4 sm:space-y-5">
+              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.16em] text-accent sm:text-[10px] sm:tracking-[0.2em]">
                 Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
-              <h1 className="font-display text-[34px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              <h1 className="font-display text-[30px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Sua aprovação na
                 <br />
                 <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
                   PM-MA começa aqui
                 </span>
               </h1>
-              <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-lg">
                 Plataforma de simulados de alto nível, com correção comentada e diagnóstico por
                 matéria. Treine no mesmo formato da banca, do primeiro item ao gabarito.
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-6 border-t border-white/10 pt-6">
+            <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-5 sm:gap-6 sm:pt-6">
               {STATS.map((stat) => (
-                <div key={stat.label} className="space-y-1">
+                <div key={stat.label} className="min-w-0 space-y-1">
                   <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">
                     {stat.value}
                   </p>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                  <p className="text-[9px] font-semibold uppercase leading-tight tracking-[0.12em] text-primary sm:text-[10px] sm:tracking-[0.16em]">
                     {stat.label}
                   </p>
                 </div>
               ))}
             </div>
           </section>
+
 
           {/* Card de acesso */}
           <section className="pmma-rise pmma-delay-2 relative">

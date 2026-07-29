@@ -237,6 +237,7 @@ export type Database = {
           status: string
           total_questions: number
           updated_at: string
+          user_id: string | null
           utm_campaign: string | null
           utm_content: string | null
           utm_medium: string | null
@@ -268,6 +269,7 @@ export type Database = {
           status?: string
           total_questions?: number
           updated_at?: string
+          user_id?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
           utm_medium?: string | null
@@ -299,6 +301,7 @@ export type Database = {
           status?: string
           total_questions?: number
           updated_at?: string
+          user_id?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
           utm_medium?: string | null
@@ -326,57 +329,75 @@ export type Database = {
         Row: {
           bonus_enabled: boolean
           created_at: string
+          description: string | null
+          display_order: number
           end_at: string | null
           id: string
+          is_paid: boolean
           lead_capture_after_question: number
           name: string
           offer_url: string
           paused_message: string | null
+          price_cents: number
           product_id: string | null
           questions_per_attempt: number
           questions_per_discipline: number
+          requires_login: boolean
           settings_json: Json
           slug: string
           start_at: string | null
           status: string
+          total_questions: number
           updated_at: string
           whatsapp_number: string | null
         }
         Insert: {
           bonus_enabled?: boolean
           created_at?: string
+          description?: string | null
+          display_order?: number
           end_at?: string | null
           id?: string
+          is_paid?: boolean
           lead_capture_after_question?: number
           name: string
           offer_url?: string
           paused_message?: string | null
+          price_cents?: number
           product_id?: string | null
           questions_per_attempt?: number
           questions_per_discipline?: number
+          requires_login?: boolean
           settings_json?: Json
           slug: string
           start_at?: string | null
           status?: string
+          total_questions?: number
           updated_at?: string
           whatsapp_number?: string | null
         }
         Update: {
           bonus_enabled?: boolean
           created_at?: string
+          description?: string | null
+          display_order?: number
           end_at?: string | null
           id?: string
+          is_paid?: boolean
           lead_capture_after_question?: number
           name?: string
           offer_url?: string
           paused_message?: string | null
+          price_cents?: number
           product_id?: string | null
           questions_per_attempt?: number
           questions_per_discipline?: number
+          requires_login?: boolean
           settings_json?: Json
           slug?: string
           start_at?: string | null
           status?: string
+          total_questions?: number
           updated_at?: string
           whatsapp_number?: string | null
         }
@@ -563,6 +584,7 @@ export type Database = {
           avatar_url: string | null
           city: string | null
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
           phone: string | null
@@ -573,6 +595,7 @@ export type Database = {
           avatar_url?: string | null
           city?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
@@ -583,6 +606,7 @@ export type Database = {
           avatar_url?: string | null
           city?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null

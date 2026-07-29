@@ -196,78 +196,83 @@ function AdminPage() {
 
   if (status === "loading") {
     return (
-      <main className="flex min-h-screen items-center justify-center">
+      <div className="pmma-theme flex min-h-[100dvh] items-center justify-center">
         <p className="text-sm text-muted-foreground">Carregando painel...</p>
-      </main>
+      </div>
     );
   }
 
   if (status === "denied") {
     return (
-      <main className="flex min-h-screen items-center justify-center px-4">
-        <div className="pmma-glass max-w-md rounded-2xl p-8 text-center">
+      <div className="pmma-theme flex min-h-[100dvh] items-center justify-center px-4">
+        <div className="pmma-glass pmma-rise max-w-md rounded-2xl p-8 text-center">
           <h1 className="font-display text-xl font-bold text-foreground">Acesso restrito</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             {error ?? "Sua conta não tem permissão de administrador."}
           </p>
           <button
             onClick={handleSignOut}
-            className="mt-6 h-11 w-full rounded-xl bg-primary text-sm font-bold text-primary-foreground"
+            className="mt-6 h-11 w-full rounded-xl bg-primary text-sm font-bold text-primary-foreground transition hover:brightness-110"
           >
             Sair
           </button>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-      <header className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground sm:text-3xl">
-            Painel de gerenciamento
-          </h1>
-          <p className="text-sm text-muted-foreground">Simulado PMMA 2026 · Edital360</p>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={refresh}
-            className="h-10 rounded-xl border border-white/10 px-4 text-sm font-semibold text-foreground transition hover:bg-white/5"
-          >
-            Atualizar
-          </button>
-          <button
-            onClick={handleSignOut}
-            className="h-10 rounded-xl border border-white/10 px-4 text-sm font-semibold text-muted-foreground transition hover:bg-white/5"
-          >
-            Sair
-          </button>
-        </div>
-      </header>
+    <div className="pmma-theme min-h-[100dvh]">
+      <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+        <header className="pmma-glass pmma-rise flex flex-wrap items-center justify-between gap-3 rounded-2xl p-5">
+          <div>
+            <span className="inline-flex rounded-full bg-accent/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-accent">
+              Área administrativa
+            </span>
+            <h1 className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Painel de gerenciamento
+            </h1>
+            <p className="text-sm text-muted-foreground">Simulado PMMA 2026 · Edital360</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={refresh}
+              className="h-10 rounded-xl border border-white/15 bg-white/5 px-4 text-sm font-semibold text-foreground transition hover:bg-white/10"
+            >
+              Atualizar
+            </button>
+            <button
+              onClick={handleSignOut}
+              className="h-10 rounded-xl border border-white/10 px-4 text-sm font-semibold text-muted-foreground transition hover:bg-white/10 hover:text-foreground"
+            >
+              Sair
+            </button>
+          </div>
+        </header>
 
-      <nav className="mt-6 flex gap-2 overflow-x-auto">
-        {(
-          [
-            ["visao", "Visão geral"],
-            ["leads", `Leads (${leads.length})`],
-            ["questoes", `Questões (${questions.length})`],
-            ["pagamentos", "Pagamentos"],
-          ] as [Tab, string][]
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`h-10 whitespace-nowrap rounded-xl px-4 text-sm font-semibold transition ${
-              tab === key
-                ? "bg-primary text-primary-foreground"
-                : "border border-white/10 text-muted-foreground hover:bg-white/5"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+        <nav className="pmma-glass mt-4 flex gap-1 overflow-x-auto rounded-2xl p-1.5">
+          {(
+            [
+              ["visao", "Visão geral"],
+              ["leads", `Leads (${leads.length})`],
+              ["questoes", `Questões (${questions.length})`],
+              ["pagamentos", "Pagamentos"],
+            ] as [Tab, string][]
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`h-10 flex-1 whitespace-nowrap rounded-xl px-4 text-sm font-semibold transition ${
+                tab === key
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25"
+                  : "text-muted-foreground hover:bg-white/8 hover:text-foreground"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </nav>
+
 
       {tab === "visao" && overview ? (
         <section className="mt-6 space-y-6">

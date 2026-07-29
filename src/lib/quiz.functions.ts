@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import type { QuizMode, ResultSummary } from "./quiz.types";
+import type { QuizMode, ResultSummary, QuizQuestion, QuizAnswer } from "./quiz.types";
 
 const QuizModeSchema = z.enum(["quiz", "simulado"]);
 
@@ -19,6 +19,19 @@ export const startQuiz = createServerFn({ method: "POST" })
       publicToken: attempt.public_token,
       mode: attempt.type as QuizMode,
     };
+  });
+
+export const getQuestions = createServerFn({ method: "GET" })
+  .inputValidator((data) =>
+    z
+      .object({
+        attemptId: z.string().uuid(),
+      })
+      .parse(data)
+  )
+  .handler(async ({ data }): Promise<{ questions: QuizQuestion[]; answers: QuizAnswer[] }> => {
+    const { getQuestionsForAttempt } = await import("./quiz.server");
+    return getQuestionsForAttempt(data.attemptId);
   });
 
 export const saveAnswer = createServerFn({ method: "POST" })

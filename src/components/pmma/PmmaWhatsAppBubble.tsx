@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = "5598991234567";
+const WHATSAPP_NUMBER = "5598991884014";
 const MESSAGE = "Olá! Vim pelos simulados PM-MA da Edital360 e preciso de ajuda.";
 
 export function PmmaWhatsAppBubble() {

@@ -96,7 +96,7 @@ function HomePage() {
         if (fullName.trim().length < 3) throw new Error("Informe seu nome completo.");
         const digits = whatsapp.replace(/\D/g, "");
         if (digits.length < 10) throw new Error("Informe um WhatsApp válido com DDD.");
-        setPrivacyOpen(true);
+        await runSignUp();
         return;
       }
       setLoading(true);

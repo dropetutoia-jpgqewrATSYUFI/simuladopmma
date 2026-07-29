@@ -91,6 +91,21 @@ export async function saveAnswer(
   questionId: string,
   optionId: string | null
 ): Promise<void> {
+  if (!optionId) {
+    // Resposta em branco: remove qualquer resposta anterior
+    const { error } = await supabaseAdmin
+      .from("quiz_answers")
+      .delete()
+      .eq("attempt_id", attemptId)
+      .eq("question_id", questionId);
+
+    if (error) {
+      console.error("[quiz.server] saveAnswer delete error:", error);
+      throw new Error("Não foi possível limpar a resposta.");
+    }
+    return;
+  }
+
   // Busca a alternativa correta para calcular is_correct
   const { data: option, error: optionError } = await supabaseAdmin
     .from("quiz_options")
@@ -98,7 +113,7 @@ export async function saveAnswer(
     .eq("id", optionId)
     .single();
 
-  if (optionError && optionId) {
+  if (optionError) {
     console.error("[quiz.server] saveAnswer option error:", optionError);
     throw new Error("Alternativa inválida.");
   }
@@ -287,8 +302,8 @@ export async function getResultByAttemptId(attemptId: string): Promise<QuizAttem
         wrongCount: resultRow.wrong_count,
         blankCount: resultRow.blank_count,
         scorePercentage: resultRow.score_percentage,
-        estimatedRank: resultRow.estimated_rank,
-        recommendation: resultRow.recommendation,
+        estimatedRank: resultRow.estimated_rank ?? "Indefinido",
+        recommendation: resultRow.recommendation ?? "Continue estudando.",
         passed: resultRow.passed,
       }
     : null;

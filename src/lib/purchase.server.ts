@@ -27,8 +27,11 @@ export async function hasApprovedPurchase(userId: string, campaignId: string): P
   return (count ?? 0) > 0;
 }
 
-/** Catálogo público de simulados; `owned` só é verdadeiro para simulados já comprados pelo usuário. */
-export async function listSimulados(userId: string | null): Promise<SimuladoCatalogItem[]> {
+/** Catálogo público de simulados; `owned` só é verdadeiro para simulados já comprados pelo usuário (ou para admins). */
+export async function listSimulados(
+  userId: string | null,
+  isAdmin = false,
+): Promise<SimuladoCatalogItem[]> {
   const client = await db();
   const { data: campaigns } = await client
     .from("pmma_campaigns")

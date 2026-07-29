@@ -87,7 +87,7 @@ export function QuizQuestion({
             >
               <RadioGroupItem value={option.id} id={option.id} className="mt-0.5" />
               <Label htmlFor={option.id} className="flex-1 cursor-pointer text-sm font-normal">
-                {option.label}. {option.text}
+                {option.label}. {option.option_text}
               </Label>
             </div>
           ))}

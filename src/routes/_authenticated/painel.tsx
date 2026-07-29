@@ -296,7 +296,6 @@ function PainelPage() {
                     )}
                   </Card>
 
-                  </Card>
                 );
               })}
             </section>

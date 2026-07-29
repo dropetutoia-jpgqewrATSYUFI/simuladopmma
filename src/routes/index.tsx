@@ -38,7 +38,8 @@ function FallbackScreen({ text }: { text: string }) {
 }
 
 const inputClass =
-  "mt-2 h-12 w-full rounded-xl border border-white/10 bg-[#131c2e] px-4 text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/40";
+  "mt-2 h-12 w-full rounded-xl border border-white/10 bg-[#131c2e] px-4 text-base text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/40";
+
 
 const labelClass = "text-sm font-medium text-foreground/90";
 

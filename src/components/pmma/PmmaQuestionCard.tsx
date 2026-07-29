@@ -104,8 +104,22 @@ export function PmmaQuestionCard({
       </div>
 
       {submitting && !feedback ? (
-        <p className="mt-3 text-center text-xs text-muted-foreground">Corrigindo...</p>
+        <div
+          className="pmma-pop mt-4 flex items-center justify-center gap-2.5 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+          role="status"
+          aria-live="polite"
+        >
+          <span className="flex gap-1" aria-hidden="true">
+            <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:-0.3s]" />
+            <span className="size-1.5 animate-bounce rounded-full bg-primary [animation-delay:-0.15s]" />
+            <span className="size-1.5 animate-bounce rounded-full bg-accent" />
+          </span>
+          <span className="bg-linear-to-r from-muted-foreground via-foreground to-muted-foreground bg-[length:200%_100%] bg-clip-text text-xs font-semibold tracking-wide text-transparent [animation:pmma-shimmer_1.4s_linear_infinite] motion-reduce:animate-none">
+            Corrigindo sua resposta...
+          </span>
+        </div>
       ) : null}
+
 
       {feedback ? (
         <div

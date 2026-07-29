@@ -1,5 +1,12 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import type { QuizMode, QuizQuestion, QuizAttempt, ResultSummary, QuizAnswer } from "./quiz.types";
+import type {
+  QuizMode,
+  QuizQuestion,
+  PublicQuizQuestion,
+  QuizAttempt,
+  ResultSummary,
+  QuizAnswer,
+} from "./quiz.types";
 
 const QUESTION_LIMIT: Record<QuizMode, number> = {
   quiz: 10,
@@ -52,7 +59,7 @@ export async function fetchActiveQuestions(mode: QuizMode): Promise<QuizQuestion
 }
 
 export async function getQuestionsForAttempt(attemptId: string): Promise<{
-  questions: QuizQuestion[];
+  questions: PublicQuizQuestion[];
   answers: QuizAnswer[];
 }> {
   const attempt = await getAttemptById(attemptId);
@@ -92,10 +99,17 @@ export async function getQuestionsForAttempt(attemptId: string): Promise<{
     optionsByQuestion.set(option.question_id, list);
   }
 
-  const enrichedQuestions = questions?.map((q) => ({
-    ...q,
-    options: optionsByQuestion.get(q.id) ?? [],
-  })) ?? [];
+  const enrichedQuestions: PublicQuizQuestion[] =
+    questions?.map((q) => {
+      const rawOptions = optionsByQuestion.get(q.id) ?? [];
+      const publicOptions: PublicQuizQuestion["options"] = rawOptions.map(
+        ({ is_correct, ...rest }) => rest
+      );
+      return {
+        ...q,
+        options: publicOptions,
+      };
+    }) ?? [];
 
   return {
     questions: enrichedQuestions,

@@ -35,10 +35,17 @@ export async function getMercadoPagoToken(): Promise<string | null> {
 }
 
 export async function saveMercadoPagoToken(accessToken: string) {
+  const token = accessToken.trim();
+  // A Public Key do Mercado Pago tem formato UUID (APP_USR-xxxxxxxx-xxxx-...) e não autentica a API.
+  if (/^(APP_USR|TEST)-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(token)) {
+    throw new Error(
+      "Esse valor é a Public Key. Cole o Access Token (credencial privada) do Mercado Pago.",
+    );
+  }
   const client = await db();
   const { error } = await client
     .from("app_settings")
-    .upsert({ key: SETTINGS_KEY, value: { accessToken } }, { onConflict: "key" });
+    .upsert({ key: SETTINGS_KEY, value: { accessToken: token } }, { onConflict: "key" });
   if (error) throw new Error(error.message);
 }
 

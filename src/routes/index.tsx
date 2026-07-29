@@ -151,19 +151,20 @@ function HomePage() {
               aria-hidden="true"
               className="pointer-events-none absolute -inset-1 rounded-[2rem] bg-linear-to-tr from-primary/25 to-accent/25 opacity-50 blur-2xl"
             />
-            <div className="relative rounded-[1.75rem] border border-white/10 bg-[#0f172a] p-6 shadow-[0_30px_70px_-40px_rgb(2,6,23)] sm:p-9">
-              <div className="mb-7">
-                <h2 className="font-display text-2xl font-bold text-foreground">
+            <div className="relative rounded-3xl border border-white/10 bg-[#0f172a] p-5 shadow-[0_30px_70px_-40px_rgb(2,6,23)] sm:rounded-[1.75rem] sm:p-9">
+              <div className="mb-6 sm:mb-7">
+                <h2 className="font-display text-xl font-bold text-foreground sm:text-2xl">
                   {mode === "signup" ? "Criar sua conta" : "Acesse sua conta"}
                 </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {mode === "signup"
                     ? "Só nome, WhatsApp e e-mail para liberar seus simulados."
                     : "Entre para continuar seus estudos."}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+
                 {mode === "signup" ? (
                   <>
                     <div>

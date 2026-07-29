@@ -64,3 +64,29 @@ export const checkSimuladoPix = createServerFn({ method: "POST" })
     const { refreshPurchase } = await import("./purchase.server");
     return refreshPurchase(data.purchaseId, context.userId);
   });
+
+/** Situação de acesso do usuário logado a um simulado (bloqueado/liberado). */
+export const mySimuladoAccess = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator({
+    parse: (input: unknown) =>
+      z.object({ campaignSlug: z.string().min(3).max(80) }).parse(input),
+  })
+  .handler(async ({ data, context }): Promise<{ status: "released" | "blocked"; isAdmin: boolean }> => {
+    const { getSimuladoAccessStatus, ensureSimuladoAccess } = await import("./purchase.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const isAdmin = await checkAdmin(context);
+
+    const { data: campaign } = await supabaseAdmin
+      .from("pmma_campaigns")
+      .select("id, is_paid")
+      .eq("slug", data.campaignSlug)
+      .maybeSingle();
+
+    if (!campaign) return { status: "blocked", isAdmin };
+    if (isAdmin || !campaign.is_paid) return { status: "released", isAdmin };
+
+    await ensureSimuladoAccess(context.userId);
+    const status = await getSimuladoAccessStatus(context.userId, campaign.id);
+    return { status, isAdmin };
+  });

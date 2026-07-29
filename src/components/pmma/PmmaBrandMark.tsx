@@ -1,12 +1,12 @@
+import { Link } from "@tanstack/react-router";
+
 export function PmmaBrandMark({ size = "md" }: { size?: "sm" | "md" }) {
   const isSm = size === "sm";
   return (
-    <a
-      href="https://edital360.com"
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      to="/"
       className="inline-flex items-center gap-3"
-      aria-label="Edital360 — Concursos Públicos"
+      aria-label="Edital360 — ir para a página inicial dos simulados"
     >
       <span className="flex h-9 w-1 flex-col gap-1" aria-hidden="true">
         <span className="flex-1 rounded-full bg-accent" />
@@ -24,6 +24,6 @@ export function PmmaBrandMark({ size = "md" }: { size?: "sm" | "md" }) {
           Concursos Públicos
         </span>
       </span>
-    </a>
+    </Link>
   );
 }

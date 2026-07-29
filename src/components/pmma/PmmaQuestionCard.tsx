@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, AlertTriangle, Lightbulb } from "lucide-react";
+import { CheckCircle2, AlertTriangle, Lightbulb, Flame } from "lucide-react";
 import type { PmmaAnswerFeedback, PmmaPublicQuestion } from "@/lib/pmma.types";
 
 export function PmmaQuestionCard({
@@ -24,65 +24,85 @@ export function PmmaQuestionCard({
   submitting: boolean;
 }) {
   const locked = feedback !== null || submitting;
+  const chosen = feedback ? (feedback.isCorrect ? feedback.correctAnswer : !feedback.correctAnswer) : null;
+
+  function optionClass(value: boolean) {
+    if (!feedback) {
+      return "border-white/15 bg-white/5 text-foreground hover:border-primary/60 hover:bg-primary/10";
+    }
+    if (feedback.correctAnswer === value) {
+      return "border-[#22c55e]/60 bg-[#22c55e]/15 text-[#4ade80]";
+    }
+    if (chosen === value) {
+      return "border-destructive/60 bg-destructive/15 text-destructive";
+    }
+    return "border-white/10 bg-white/5 text-muted-foreground";
+  }
 
   return (
-    <Card className="p-5 sm:p-6">
+    <Card
+      key={question.id}
+      className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6"
+    >
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">
+        <Badge className="rounded-full border-0 bg-primary/15 text-primary">
           {question.isBonus ? "Questão bônus" : `Questão ${index} de ${total}`}
         </Badge>
-        <Badge variant="outline">{question.discipline}</Badge>
+        <Badge variant="outline" className="rounded-full border-white/15 text-muted-foreground">
+          {question.discipline}
+        </Badge>
         {streak >= 2 && !feedback ? (
-          <span className="text-xs font-medium text-success">{streak} acertos seguidos</span>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-accent">
+            <Flame className="size-3.5" aria-hidden />
+            {streak} acertos seguidos
+          </span>
         ) : null}
       </div>
 
       {question.topic ? (
-        <p className="mt-3 text-xs uppercase tracking-wide text-muted-foreground">
+        <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-accent">
           {question.topic}
         </p>
       ) : null}
 
-      <p className="mt-2 text-base leading-relaxed sm:text-lg">{question.statement}</p>
+      <p className="mt-2 text-base leading-relaxed text-foreground/95 sm:text-lg">
+        {question.statement}
+      </p>
 
-      <div className="mt-5 grid grid-cols-2 gap-3">
-        <Button
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        <button
           type="button"
-          size="lg"
-          variant={feedback && feedback.correctAnswer ? "default" : "outline"}
-          className="h-14 text-base font-semibold"
+          className={`h-14 rounded-xl border text-base font-semibold tracking-wide transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-100 motion-reduce:transition-none ${optionClass(true)} ${locked ? "" : "active:scale-[0.98]"}`}
           disabled={locked}
           onClick={() => onAnswer(true)}
         >
           CERTO
-        </Button>
-        <Button
+        </button>
+        <button
           type="button"
-          size="lg"
-          variant={feedback && !feedback.correctAnswer ? "default" : "outline"}
-          className="h-14 text-base font-semibold"
+          className={`h-14 rounded-xl border text-base font-semibold tracking-wide transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-100 motion-reduce:transition-none ${optionClass(false)} ${locked ? "" : "active:scale-[0.98]"}`}
           disabled={locked}
           onClick={() => onAnswer(false)}
         >
           ERRADO
-        </Button>
+        </button>
       </div>
 
       {feedback ? (
         <div
-          className={`mt-5 rounded-xl border p-4 ${
+          className={`mt-5 animate-fade-in rounded-2xl border p-4 ${
             feedback.isCorrect
-              ? "border-success/40 bg-success/10"
+              ? "border-[#22c55e]/40 bg-[#22c55e]/10"
               : "border-destructive/40 bg-destructive/10"
           }`}
         >
           <div className="flex items-center gap-2">
             {feedback.isCorrect ? (
-              <CheckCircle2 className="size-5 text-success" aria-hidden />
+              <CheckCircle2 className="size-5 text-[#4ade80]" aria-hidden />
             ) : (
               <AlertTriangle className="size-5 text-destructive" aria-hidden />
             )}
-            <h3 className="font-semibold">
+            <h3 className={`font-semibold ${feedback.isCorrect ? "text-[#4ade80]" : "text-destructive"}`}>
               {feedback.isCorrect ? "Você acertou!" : "Não foi dessa vez"}
             </h3>
           </div>
@@ -93,12 +113,12 @@ export function PmmaQuestionCard({
             </p>
           ) : null}
 
-          <p className="mt-2 text-sm leading-relaxed">{feedback.feedback}</p>
+          <p className="mt-2 text-sm leading-relaxed text-foreground/90">{feedback.feedback}</p>
 
-          <div className="mt-3 flex gap-2 rounded-lg bg-info/10 p-3">
-            <Lightbulb className="mt-0.5 size-4 shrink-0 text-info" aria-hidden />
+          <div className="mt-3 flex gap-2 rounded-xl border border-accent/25 bg-accent/10 p-3">
+            <Lightbulb className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden />
             <p className="text-sm leading-relaxed">
-              <span className="font-semibold">Ponto-chave: </span>
+              <span className="font-semibold text-accent">Ponto-chave: </span>
               {feedback.keyPoint}
             </p>
           </div>
@@ -115,7 +135,12 @@ export function PmmaQuestionCard({
             </p>
           ) : null}
 
-          <Button type="button" size="lg" className="mt-4 w-full" onClick={onNext}>
+          <Button
+            type="button"
+            size="lg"
+            className="mt-4 w-full rounded-xl font-semibold shadow-[0_10px_30px_-12px_var(--color-primary)]"
+            onClick={onNext}
+          >
             ENTENDI, PRÓXIMA QUESTÃO
           </Button>
         </div>

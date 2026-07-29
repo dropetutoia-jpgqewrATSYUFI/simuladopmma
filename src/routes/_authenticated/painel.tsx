@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { PmmaPurchaseGate } from "@/components/pmma/PmmaPurchaseGate";
 import { myDashboard } from "@/lib/purchase.functions";
+import { pmmaAccessStatus } from "@/lib/donation.functions";
+
 import { supabase } from "@/integrations/supabase/client";
 import type { SimuladoCatalogItem } from "@/lib/pmma.types";
 

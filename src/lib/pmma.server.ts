@@ -181,14 +181,6 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     display_order: index + 1,
     is_bonus: false,
   }));
-  if (bonus) {
-    rows.push({
-      attempt_id: attempt.id,
-      question_id: bonus.id,
-      display_order: questions.length + 1,
-      is_bonus: true,
-    });
-  }
   await supabaseAdmin.from("pmma_attempt_questions").insert(rows);
 
   const toPublic = (q: PoolRow, order: number, isBonus: boolean): PmmaPublicQuestion => ({

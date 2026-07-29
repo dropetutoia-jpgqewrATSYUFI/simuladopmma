@@ -15,24 +15,32 @@ export function PmmaShell({
   return (
     <div className="pmma-theme min-h-[100dvh]">
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#0b1220]/80 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-2xl items-center gap-2.5 px-4 py-3 sm:gap-3">
-          <div className="flex shrink-0 items-baseline gap-1">
-            <span className="text-base font-extrabold tracking-tight text-foreground sm:text-lg">
-              EDITAL
+        <div className="mx-auto flex w-full max-w-2xl items-center gap-3 px-4 py-3">
+          <a
+            href="https://edital360.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex min-w-0 flex-col leading-none"
+            aria-label="Edital360 — Concursos Públicos"
+          >
+            <span className="font-display text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              Edital<span className="text-accent">360</span>
             </span>
-            <span className="rounded-md bg-primary px-1.5 py-0.5 text-base font-extrabold leading-none text-primary-foreground shadow-[0_0_20px_-4px_var(--color-primary)] sm:text-lg">
-              360
+            <span className="mt-1 text-[9px] uppercase tracking-[0.28em] text-muted-foreground/80">
+              Concursos Públicos
             </span>
-          </div>
-          <span className="min-w-0 truncate text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground sm:text-xs">
-            Desafio PMMA
-          </span>
+          </a>
           {progress && progress.total > 0 ? (
             <span className="ml-auto shrink-0 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-muted-foreground">
               {Math.min(progress.current + 1, progress.total)}/{progress.total}
             </span>
-          ) : null}
+          ) : (
+            <span className="ml-auto shrink-0 truncate text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Desafio PMMA
+            </span>
+          )}
         </div>
+
         {progress && progress.total > 0 ? (
           <div
             className="h-1.5 w-full bg-white/10"

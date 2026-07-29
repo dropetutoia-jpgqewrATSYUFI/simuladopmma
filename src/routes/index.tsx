@@ -2,6 +2,13 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -43,7 +50,7 @@ const inputClass =
 
 const labelClass = "text-sm font-medium text-foreground/90";
 
-const SIMULADO_TAGLINE = "Simulado grátis • 40 questões • 8 matérias";
+const SIMULADO_TAGLINE = "Comece pelo simulado grátis • 40 questões • 8 matérias do edital";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -55,6 +62,7 @@ function HomePage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
 
   useEffect(() => {
     void supabase.auth.getUser().then(({ data }) => {
@@ -62,9 +70,33 @@ function HomePage() {
     });
   }, [navigate]);
 
+  async function runSignUp() {
+    setLoading(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const digits = whatsapp.replace(/\D/g, "");
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/painel`,
+          data: { full_name: fullName.trim(), whatsapp: digits, phone: digits },
+        },
+      });
+      if (signUpError) throw signUpError;
+      const { data } = await supabase.auth.getSession();
+      if (data.session) navigate({ to: "/painel", replace: true });
+      else setMessage("Conta criada. Verifique seu e-mail para confirmar o acesso.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Não foi possível autenticar.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setLoading(true);
     setError(null);
     setMessage(null);
     try {
@@ -72,24 +104,13 @@ function HomePage() {
         if (fullName.trim().length < 3) throw new Error("Informe seu nome completo.");
         const digits = whatsapp.replace(/\D/g, "");
         if (digits.length < 10) throw new Error("Informe um WhatsApp válido com DDD.");
-
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/painel`,
-            data: { full_name: fullName.trim(), whatsapp: digits, phone: digits },
-          },
-        });
-        if (signUpError) throw signUpError;
-        const { data } = await supabase.auth.getSession();
-        if (data.session) navigate({ to: "/painel", replace: true });
-        else setMessage("Conta criada. Verifique seu e-mail para confirmar o acesso.");
-      } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) throw signInError;
-        navigate({ to: "/painel", replace: true });
+        setPrivacyOpen(true);
+        return;
       }
+      setLoading(true);
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
+      navigate({ to: "/painel", replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível autenticar.");
     } finally {
@@ -118,8 +139,9 @@ function HomePage() {
                 Simulados para PMMA — Concurso 2026
               </h1>
               <p className="max-w-md text-[14px] leading-relaxed text-muted-foreground sm:text-base">
-                Simulados de alto nível com correção comentada e diagnóstico por matéria. Treine no
-                mesmo formato da banca.
+                Estude com foco no que realmente cai: questões no formato da banca, correção
+                comentada item a item e um diagnóstico que mostra em quais matérias você precisa
+                melhorar antes da prova.
               </p>
             </div>
 
@@ -266,6 +288,60 @@ function HomePage() {
           </p>
         </footer>
       </div>
+
+      <Dialog open={privacyOpen} onOpenChange={setPrivacyOpen}>
+        <DialogContent className="max-w-lg border-white/10 bg-[#0f172a]">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg text-foreground">
+              Privacidade e proteção de dados (LGPD)
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Antes de finalizar seu cadastro, leia como tratamos seus dados.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="max-h-[45vh] space-y-3 overflow-y-auto pr-1 text-sm leading-relaxed text-muted-foreground">
+            <p>
+              Coletamos apenas <strong className="text-foreground">nome, e-mail e WhatsApp</strong>{" "}
+              para criar sua conta, liberar o acesso aos simulados, registrar seu desempenho e enviar
+              comunicados sobre a plataforma e o concurso.
+            </p>
+            <p>
+              Seus dados são armazenados em ambiente seguro, com acesso restrito, e{" "}
+              <strong className="text-foreground">não são vendidos nem repassados</strong> a
+              terceiros para fins comerciais. Utilizamos apenas fornecedores necessários para o
+              funcionamento do serviço (hospedagem, banco de dados e pagamentos).
+            </p>
+            <p>
+              Conforme a Lei nº 13.709/2018 (LGPD), você pode solicitar a qualquer momento o acesso,
+              a correção ou a exclusão dos seus dados, bem como revogar este consentimento, pelo
+              nosso canal de atendimento.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button
+              type="button"
+              variant="outline"
+              className="h-12 flex-1 rounded-xl border-white/15"
+              onClick={() => setPrivacyOpen(false)}
+            >
+              Voltar
+            </Button>
+            <Button
+              type="button"
+              disabled={loading}
+              className="h-12 flex-1 rounded-xl bg-linear-to-r from-accent to-[#d97706] font-display text-xs font-extrabold uppercase tracking-[0.12em] text-accent-foreground"
+              onClick={() => {
+                setPrivacyOpen(false);
+                void runSignUp();
+              }}
+            >
+              {loading ? "Aguarde..." : "Li e aceito — criar conta"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

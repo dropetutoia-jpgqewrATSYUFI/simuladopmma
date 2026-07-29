@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
+import { PmmaSiteFooter } from "@/components/pmma/PmmaSiteFooter";
+import { PmmaWhatsAppBubble } from "@/components/pmma/PmmaWhatsAppBubble";
 
 export function PmmaShell({
   progress,

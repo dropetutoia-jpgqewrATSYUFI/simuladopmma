@@ -5,17 +5,17 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PmmaShell } from "@/components/pmma/PmmaShell";
-import { PmmaLeadForm, type LeadFormValues } from "@/components/pmma/PmmaLeadForm";
+import { PmmaDonationGate } from "@/components/pmma/PmmaDonationGate";
 import { PmmaQuestionCard } from "@/components/pmma/PmmaQuestionCard";
 import { PmmaResultView } from "@/components/pmma/PmmaResultView";
 import {
   pmmaStart,
   pmmaAnswer,
-  pmmaCaptureLead,
   pmmaFinish,
   pmmaTrack,
   pmmaCountAttempts,
 } from "@/lib/pmma.functions";
+import { pmmaAccessStatus } from "@/lib/donation.functions";
 import type { PmmaAnswerFeedback, PmmaResult, PmmaStartResult } from "@/lib/pmma.types";
 
 const STORAGE_KEY = "pmma:desafio:v1";
@@ -40,12 +40,11 @@ export const Route = createFileRoute("/")({
   component: SimuladoPmmaPage,
 });
 
-type Stage = "intro" | "quiz" | "lead" | "milestone" | "bonus_offer" | "bonus" | "result";
+type Stage = "intro" | "quiz" | "donation" | "milestone" | "bonus_offer" | "bonus" | "result";
 
 type Persisted = {
   attemptId: string;
   index: number;
-  leadCaptured: boolean;
   start: PmmaStartResult;
   answered: string[];
   correctCount: number;
@@ -74,7 +73,7 @@ function readSeen(): string[] {
 function SimuladoPmmaPage() {
   const start = useServerFn(pmmaStart);
   const answer = useServerFn(pmmaAnswer);
-  const capture = useServerFn(pmmaCaptureLead);
+  const accessStatus = useServerFn(pmmaAccessStatus);
   const finish = useServerFn(pmmaFinish);
   const track = useServerFn(pmmaTrack);
   const countAttempts = useServerFn(pmmaCountAttempts);
@@ -86,7 +85,7 @@ function SimuladoPmmaPage() {
   const [result, setResult] = useState<PmmaResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [leadError, setLeadError] = useState<string | null>(null);
+  const [blocked, setBlocked] = useState(false);
   const [resume, setResume] = useState<Persisted | null>(null);
   const [milestoneText, setMilestoneText] = useState<string | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -131,10 +130,14 @@ function SimuladoPmmaPage() {
       }
     }
 
+    void accessStatus({ data: { sessionId: sid } })
+      .then((status) => setBlocked(status.blocked))
+      .catch(() => setBlocked(false));
+
     void countAttempts({ data: undefined })
       .then((count) => setAttemptsCount(count))
       .catch(() => setAttemptsCount(null));
-  }, [countAttempts]);
+  }, [countAttempts, accessStatus]);
 
   useEffect(() => {
     if (sessionId) emit("quiz_view");
@@ -170,7 +173,6 @@ function SimuladoPmmaPage() {
       const next: Persisted = {
         attemptId: started.attemptId,
         index: 0,
-        leadCaptured: false,
         start: started,
         answered: [],
         correctCount: 0,
@@ -181,7 +183,14 @@ function SimuladoPmmaPage() {
       questionStartedAt.current = Date.now();
       emit("question_view", started.attemptId, { order: 1 });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível iniciar agora.");
+      const message = err instanceof Error ? err.message : "Não foi possível iniciar agora.";
+      if (message.includes("DONATION_REQUIRED")) {
+        setBlocked(true);
+        setStage("donation");
+        setError(null);
+      } else {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -256,11 +265,6 @@ function SimuladoPmmaPage() {
 
     if (nextIndex >= total) {
       persist({ ...state, index: nextIndex });
-      if (!state.leadCaptured) {
-        setStage("lead");
-        emit("lead_form_view", state.attemptId);
-        return;
-      }
       if (state.start.bonusQuestion) {
         setStage("bonus_offer");
       } else {
@@ -287,39 +291,8 @@ function SimuladoPmmaPage() {
     emit("next_question_click", state.attemptId, { order: nextIndex + 1 });
   }
 
-  async function handleLead(values: LeadFormValues) {
-    if (!state) return;
-    setLoading(true);
-    setLeadError(null);
-    emit("lead_form_submit", state.attemptId);
-    try {
-      await capture({
-        data: {
-          attemptId: state.attemptId,
-          firstName: values.firstName,
-          whatsapp: values.whatsapp,
-          email: values.email || undefined,
-          consent: true,
-        },
-      });
-      setFirstName(values.firstName.trim());
-      persist({ ...state, leadCaptured: true });
-      if (state.start.bonusQuestion) {
-        setStage("bonus_offer");
-      } else {
-        void computeResult(state.attemptId);
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Não foi possível salvar agora.";
-      setLeadError(message);
-      emit("lead_form_error", state.attemptId, { message });
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const progress =
-    stage === "quiz" || stage === "lead" || stage === "milestone"
+    stage === "quiz" || stage === "milestone"
       ? { current: state?.index ?? 0, total }
       : null;
 
@@ -460,10 +433,17 @@ function SimuladoPmmaPage() {
     );
   }
 
-  if (stage === "lead") {
+  if (stage === "donation" || (blocked && stage === "intro" && !resume)) {
     return (
-      <PmmaShell progress={progress}>
-        <PmmaLeadForm onSubmit={handleLead} submitting={loading} serverError={leadError} />
+      <PmmaShell>
+        <PmmaDonationGate
+          sessionId={sessionId}
+          onUnlocked={() => {
+            setBlocked(false);
+            setStage("intro");
+            void handleStart();
+          }}
+        />
       </PmmaShell>
     );
   }
@@ -527,7 +507,8 @@ function SimuladoPmmaPage() {
             emit("retake_click", state.attemptId);
             setResult(null);
             setState(null);
-            setStage("intro");
+            setBlocked(true);
+            setStage("donation");
           }}
         />
       </PmmaShell>

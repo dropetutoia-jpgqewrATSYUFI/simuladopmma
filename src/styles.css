@@ -152,6 +152,60 @@
   --sidebar-ring: oklch(0.55 0.1 255);
 }
 
+/*
+ * Tema escuro premium — escopo do funil público Desafio PMMA.
+ * Slate 900/800 + azul #3B82F6 + dourado #F59E0B.
+ */
+.pmma-theme {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+  --primary: #3b82f6;
+  --primary-foreground: #0b1220;
+  --secondary: #334155;
+  --secondary-foreground: #e2e8f0;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --accent: #f59e0b;
+  --accent-foreground: #1a1204;
+  --destructive: #ef4444;
+  --destructive-foreground: #fef2f2;
+  --border: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 14%);
+  --ring: #3b82f6;
+
+  --success: #22c55e;
+  --success-foreground: #052e16;
+  --warning: #f59e0b;
+  --warning-foreground: #1a1204;
+  --info: #38bdf8;
+  --info-foreground: #04212e;
+
+  color: var(--foreground);
+  background-color: #0f172a;
+  background-image:
+    radial-gradient(120% 80% at 50% -10%, #1e293b 0%, rgb(30 41 59 / 0%) 60%),
+    radial-gradient(90% 60% at 100% 0%, rgb(59 130 246 / 14%) 0%, rgb(59 130 246 / 0%) 55%),
+    radial-gradient(80% 60% at 0% 100%, rgb(245 158 11 / 8%) 0%, rgb(245 158 11 / 0%) 55%);
+  background-attachment: fixed;
+}
+
+@utility pmma-glass {
+  background-color: rgb(30 41 59 / 72%);
+  border: 1px solid rgb(255 255 255 / 10%);
+  backdrop-filter: blur(14px) saturate(140%);
+  box-shadow: 0 18px 40px -24px rgb(2 6 23 / 90%);
+}
+
+@utility pmma-gold-text {
+  color: #f59e0b;
+}
+
+
+
 @layer base {
   * {
     border-color: var(--color-border);

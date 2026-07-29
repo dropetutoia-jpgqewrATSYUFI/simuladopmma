@@ -9,136 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SimuladoPmmaRouteImport } from './routes/simulado-pmma'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DiagnosticoPmmaIndexRouteImport } from './routes/diagnostico-pmma/index'
-import { Route as AdminQuizPmmaIndexRouteImport } from './routes/admin/quiz-pmma/index'
-import { Route as AdminDiagnosticoPmmaIndexRouteImport } from './routes/admin/diagnostico-pmma/index'
-import { Route as DiagnosticoPmmaResultadoTokenRouteImport } from './routes/diagnostico-pmma/resultado/$token'
 
-const SimuladoPmmaRoute = SimuladoPmmaRouteImport.update({
-  id: '/simulado-pmma',
-  path: '/simulado-pmma',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DiagnosticoPmmaIndexRoute = DiagnosticoPmmaIndexRouteImport.update({
-  id: '/diagnostico-pmma/',
-  path: '/diagnostico-pmma/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminQuizPmmaIndexRoute = AdminQuizPmmaIndexRouteImport.update({
-  id: '/admin/quiz-pmma/',
-  path: '/admin/quiz-pmma/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminDiagnosticoPmmaIndexRoute =
-  AdminDiagnosticoPmmaIndexRouteImport.update({
-    id: '/admin/diagnostico-pmma/',
-    path: '/admin/diagnostico-pmma/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const DiagnosticoPmmaResultadoTokenRoute =
-  DiagnosticoPmmaResultadoTokenRouteImport.update({
-    id: '/diagnostico-pmma/resultado/$token',
-    path: '/diagnostico-pmma/resultado/$token',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/simulado-pmma': typeof SimuladoPmmaRoute
-  '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
-  '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
-  '/admin/diagnostico-pmma/': typeof AdminDiagnosticoPmmaIndexRoute
-  '/admin/quiz-pmma/': typeof AdminQuizPmmaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/simulado-pmma': typeof SimuladoPmmaRoute
-  '/diagnostico-pmma': typeof DiagnosticoPmmaIndexRoute
-  '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
-  '/admin/diagnostico-pmma': typeof AdminDiagnosticoPmmaIndexRoute
-  '/admin/quiz-pmma': typeof AdminQuizPmmaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
-  '/simulado-pmma': typeof SimuladoPmmaRoute
-  '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
-  '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
-  '/admin/diagnostico-pmma/': typeof AdminDiagnosticoPmmaIndexRoute
-  '/admin/quiz-pmma/': typeof AdminQuizPmmaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/auth'
-    | '/simulado-pmma'
-    | '/diagnostico-pmma/'
-    | '/diagnostico-pmma/resultado/$token'
-    | '/admin/diagnostico-pmma/'
-    | '/admin/quiz-pmma/'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/auth'
-    | '/simulado-pmma'
-    | '/diagnostico-pmma'
-    | '/diagnostico-pmma/resultado/$token'
-    | '/admin/diagnostico-pmma'
-    | '/admin/quiz-pmma'
-  id:
-    | '__root__'
-    | '/'
-    | '/auth'
-    | '/simulado-pmma'
-    | '/diagnostico-pmma/'
-    | '/diagnostico-pmma/resultado/$token'
-    | '/admin/diagnostico-pmma/'
-    | '/admin/quiz-pmma/'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
-  SimuladoPmmaRoute: typeof SimuladoPmmaRoute
-  DiagnosticoPmmaIndexRoute: typeof DiagnosticoPmmaIndexRoute
-  DiagnosticoPmmaResultadoTokenRoute: typeof DiagnosticoPmmaResultadoTokenRoute
-  AdminDiagnosticoPmmaIndexRoute: typeof AdminDiagnosticoPmmaIndexRoute
-  AdminQuizPmmaIndexRoute: typeof AdminQuizPmmaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/simulado-pmma': {
-      id: '/simulado-pmma'
-      path: '/simulado-pmma'
-      fullPath: '/simulado-pmma'
-      preLoaderRoute: typeof SimuladoPmmaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -146,45 +48,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/diagnostico-pmma/': {
-      id: '/diagnostico-pmma/'
-      path: '/diagnostico-pmma'
-      fullPath: '/diagnostico-pmma/'
-      preLoaderRoute: typeof DiagnosticoPmmaIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/quiz-pmma/': {
-      id: '/admin/quiz-pmma/'
-      path: '/admin/quiz-pmma'
-      fullPath: '/admin/quiz-pmma/'
-      preLoaderRoute: typeof AdminQuizPmmaIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/diagnostico-pmma/': {
-      id: '/admin/diagnostico-pmma/'
-      path: '/admin/diagnostico-pmma'
-      fullPath: '/admin/diagnostico-pmma/'
-      preLoaderRoute: typeof AdminDiagnosticoPmmaIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/diagnostico-pmma/resultado/$token': {
-      id: '/diagnostico-pmma/resultado/$token'
-      path: '/diagnostico-pmma/resultado/$token'
-      fullPath: '/diagnostico-pmma/resultado/$token'
-      preLoaderRoute: typeof DiagnosticoPmmaResultadoTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
-  SimuladoPmmaRoute: SimuladoPmmaRoute,
-  DiagnosticoPmmaIndexRoute: DiagnosticoPmmaIndexRoute,
-  DiagnosticoPmmaResultadoTokenRoute: DiagnosticoPmmaResultadoTokenRoute,
-  AdminDiagnosticoPmmaIndexRoute: AdminDiagnosticoPmmaIndexRoute,
-  AdminQuizPmmaIndexRoute: AdminQuizPmmaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

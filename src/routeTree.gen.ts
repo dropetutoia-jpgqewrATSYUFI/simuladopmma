@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DiagnosticoPmmaIndexRouteImport } from './routes/diagnostico-pmma/index'
+import { Route as DiagnosticoPmmaResultadoTokenRouteImport } from './routes/diagnostico-pmma/resultado/$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,45 @@ const DiagnosticoPmmaIndexRoute = DiagnosticoPmmaIndexRouteImport.update({
   path: '/diagnostico-pmma/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DiagnosticoPmmaResultadoTokenRoute =
+  DiagnosticoPmmaResultadoTokenRouteImport.update({
+    id: '/diagnostico-pmma/resultado/$token',
+    path: '/diagnostico-pmma/resultado/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
+  '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/diagnostico-pmma': typeof DiagnosticoPmmaIndexRoute
+  '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/diagnostico-pmma/': typeof DiagnosticoPmmaIndexRoute
+  '/diagnostico-pmma/resultado/$token': typeof DiagnosticoPmmaResultadoTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/diagnostico-pmma/'
+  fullPaths: '/' | '/diagnostico-pmma/' | '/diagnostico-pmma/resultado/$token'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/diagnostico-pmma'
-  id: '__root__' | '/' | '/diagnostico-pmma/'
+  to: '/' | '/diagnostico-pmma' | '/diagnostico-pmma/resultado/$token'
+  id:
+    | '__root__'
+    | '/'
+    | '/diagnostico-pmma/'
+    | '/diagnostico-pmma/resultado/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiagnosticoPmmaIndexRoute: typeof DiagnosticoPmmaIndexRoute
+  DiagnosticoPmmaResultadoTokenRoute: typeof DiagnosticoPmmaResultadoTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +80,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DiagnosticoPmmaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/diagnostico-pmma/resultado/$token': {
+      id: '/diagnostico-pmma/resultado/$token'
+      path: '/diagnostico-pmma/resultado/$token'
+      fullPath: '/diagnostico-pmma/resultado/$token'
+      preLoaderRoute: typeof DiagnosticoPmmaResultadoTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiagnosticoPmmaIndexRoute: DiagnosticoPmmaIndexRoute,
+  DiagnosticoPmmaResultadoTokenRoute: DiagnosticoPmmaResultadoTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

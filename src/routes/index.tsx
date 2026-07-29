@@ -352,19 +352,19 @@ function SimuladoPmmaPage() {
     return (
       <PmmaShell>
         <div className="space-y-5">
-          <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-accent">MINI SIMULADO GRATUITO</Badge>
+          <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-accent">SIMULADO ESTILO CEBRASPE</Badge>
           <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
             {headlineVariant === "A"
               ? "Você está realmente preparado para as questões da PMMA?"
               : "Descubra agora quais matérias podem fazer você perder pontos na PMMA"}
           </h1>
           <p className="text-base leading-relaxed text-muted-foreground">
-            Responda ao desafio no formato Certo ou Errado, no estilo Cebraspe, receba uma
+            Responda ao simulado no formato Certo ou Errado, no estilo Cebraspe, receba uma
             explicação após cada resposta e descubra quais matérias precisam de mais atenção.
           </p>
 
           <ul className="space-y-2 text-sm text-foreground/90">
-            <li>• 16 questões por tentativa</li>
+            <li>• 40 questões por simulado</li>
             <li>• 8 matérias diferentes</li>
             <li>• Formato Certo ou Errado, estilo Cebraspe</li>
             <li>• Correção explicada na hora</li>
@@ -373,16 +373,11 @@ function SimuladoPmmaPage() {
           </ul>
 
           <Card className="animate-fade-in rounded-2xl border border-dashed border-white/15 bg-white/5 p-4">
-            <p className="text-xs font-semibold text-muted-foreground">Questão 1 de 16</p>
+            <p className="text-xs font-semibold text-muted-foreground">Questão 1 de 40</p>
             <p className="mt-2 text-base font-semibold">Certo ou Errado?</p>
             <p className="mt-1 text-sm text-muted-foreground">Responda e veja a explicação</p>
           </Card>
 
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            Questões autorais elaboradas com base nos assuntos do edital. Este simulado não contém
-            questões oficiais do Cebraspe. Conteúdo preparatório independente: a Edital360 não
-            representa nem possui vínculo institucional com a PMMA ou com o Cebraspe.
-          </p>
 
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}

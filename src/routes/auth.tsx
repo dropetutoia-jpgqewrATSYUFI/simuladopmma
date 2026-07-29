@@ -1,26 +1,36 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>) => ({
+    mode: search.mode === "signup" ? ("signup" as const) : ("signin" as const),
+  }),
   component: AuthPage,
   head: () => ({
     meta: [
-      { title: "Acesso administrativo | Simulado PMMA" },
+      { title: "Entrar ou criar conta | Simulados PM-MA" },
       { name: "robots", content: "noindex, nofollow" },
       {
         name: "description",
-        content: "Área restrita de gerenciamento do Simulado PMMA da Edital360.",
+        content: "Acesse sua conta para fazer os simulados PM-MA e acompanhar seu desempenho.",
       },
     ],
   }),
 });
 
+const inputClass =
+  "mt-1 h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 text-foreground outline-none focus:border-primary";
+
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const { mode: initialMode } = Route.useSearch();
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
+  const [fullName, setFullName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,8 +38,8 @@ function AuthPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/admin", replace: true });
+    void supabase.auth.getUser().then(({ data }) => {
+      if (data.user) navigate({ to: "/painel", replace: true });
     });
   }, [navigate]);
 
@@ -40,22 +50,26 @@ function AuthPage() {
     setMessage(null);
     try {
       if (mode === "signup") {
+        if (fullName.trim().length < 3) throw new Error("Informe seu nome completo.");
+        const digits = whatsapp.replace(/\D/g, "");
+        if (digits.length < 10) throw new Error("Informe um WhatsApp válido com DDD.");
+
         const { error: signUpError } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/admin` },
+          options: {
+            emailRedirectTo: `${window.location.origin}/painel`,
+            data: { full_name: fullName.trim(), whatsapp: digits, phone: digits },
+          },
         });
         if (signUpError) throw signUpError;
-        setMessage("Conta criada. Se a confirmação de e-mail estiver ativa, verifique sua caixa de entrada.");
         const { data } = await supabase.auth.getSession();
-        if (data.session) navigate({ to: "/admin", replace: true });
+        if (data.session) navigate({ to: "/painel", replace: true });
+        else setMessage("Conta criada. Verifique seu e-mail para confirmar o acesso.");
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
-        navigate({ to: "/admin", replace: true });
+        navigate({ to: "/painel", replace: true });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Não foi possível autenticar.");
@@ -66,18 +80,53 @@ function AuthPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="pmma-glass w-full max-w-md rounded-2xl p-6 sm:p-8">
+      <div className="pmma-glass pmma-rise w-full max-w-md rounded-2xl p-6 sm:p-8">
         <Link to="/" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          ← Voltar ao simulado
+          ← Voltar aos simulados
         </Link>
         <h1 className="mt-4 font-display text-2xl font-bold text-foreground">
-          Painel de gerenciamento
+          {mode === "signup" ? "Criar conta rápida" : "Entrar na sua conta"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Acesso restrito à equipe Edital360.
+          {mode === "signup"
+            ? "Só nome, e-mail e WhatsApp para acessar seus simulados."
+            : "Acesse seu painel e continue treinando para a PM-MA."}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {mode === "signup" ? (
+            <>
+              <div>
+                <label htmlFor="fullName" className="text-sm font-medium text-foreground">
+                  Nome completo
+                </label>
+                <input
+                  id="fullName"
+                  required
+                  autoComplete="name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="whatsapp" className="text-sm font-medium text-foreground">
+                  WhatsApp (com DDD)
+                </label>
+                <input
+                  id="whatsapp"
+                  required
+                  inputMode="tel"
+                  autoComplete="tel"
+                  placeholder="(98) 99999-9999"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </>
+          ) : null}
+
           <div>
             <label htmlFor="email" className="text-sm font-medium text-foreground">
               E-mail
@@ -89,9 +138,10 @@ function AuthPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 text-foreground outline-none transition focus:border-primary"
+              className={inputClass}
             />
           </div>
+
           <div>
             <label htmlFor="password" className="text-sm font-medium text-foreground">
               Senha
@@ -100,36 +150,32 @@ function AuthPage() {
               id="password"
               type="password"
               required
-              minLength={8}
+              minLength={6}
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 text-foreground outline-none transition focus:border-primary"
+              className={inputClass}
             />
           </div>
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
           {message ? <p className="text-sm text-emerald-400">{message}</p> : null}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="h-12 w-full rounded-xl bg-primary text-sm font-bold uppercase tracking-wide text-primary-foreground transition hover:brightness-110 disabled:opacity-60"
-          >
-            {loading ? "Aguarde..." : mode === "signup" ? "Criar conta" : "Entrar"}
-          </button>
+          <Button type="submit" size="lg" className="h-14 w-full rounded-2xl" disabled={loading}>
+            {loading ? "AGUARDE..." : mode === "signup" ? "CRIAR CONTA" : "ENTRAR"}
+          </Button>
         </form>
 
         <button
           type="button"
           onClick={() => {
-            setMode(mode === "signin" ? "signup" : "signin");
+            setMode(mode === "signup" ? "signin" : "signup");
             setError(null);
             setMessage(null);
           }}
-          className="mt-4 w-full text-center text-sm text-muted-foreground underline-offset-4 hover:underline"
+          className="mt-5 w-full text-center text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
         >
-          {mode === "signin" ? "Primeiro acesso? Criar conta" : "Já tenho conta. Entrar"}
+          {mode === "signup" ? "Já tenho conta — entrar" : "Não tenho conta — criar agora"}
         </button>
       </div>
     </main>

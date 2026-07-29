@@ -45,7 +45,7 @@ export async function saveMercadoPagoToken(accessToken: string) {
   const client = await db();
   const { error } = await client
     .from("app_settings")
-    .upsert({ key: SETTINGS_KEY, value: { accessToken } }, { onConflict: "key" });
+    .upsert({ key: SETTINGS_KEY, value: { accessToken: token } }, { onConflict: "key" });
   if (error) throw new Error(error.message);
 }
 

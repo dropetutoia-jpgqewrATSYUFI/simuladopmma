@@ -60,27 +60,28 @@ export const listAttempts = createServerFn({ method: "GET" })
 
 export const upsertQuestion = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator(
-    z.object({
-      id: z.string().uuid().optional(),
-      statement: z.string().min(5),
-      discipline: z.string().min(2),
-      topic: z.string().min(2),
-      difficulty: z.enum(["easy", "medium", "hard"]),
-      explanation: z.string().min(5),
-      options: z
-        .array(
-          z.object({
-            id: z.string().uuid().optional(),
-            label: z.string().min(1).max(2),
-            option_text: z.string().min(1),
-            position: z.number().int().min(0).default(0),
-            is_correct: z.boolean(),
-          })
-        )
-        .min(2),
-    })
-  )
+  .validator({
+    parse: (input) =>
+      z.object({
+        id: z.string().uuid().optional(),
+        statement: z.string().min(5),
+        discipline: z.string().min(2),
+        topic: z.string().min(2),
+        difficulty: z.enum(["easy", "medium", "hard"]),
+        explanation: z.string().min(5),
+        options: z
+          .array(
+            z.object({
+              id: z.string().uuid().optional(),
+              label: z.string().min(1).max(2),
+              option_text: z.string().min(1),
+              position: z.number().int().min(0).default(0),
+              is_correct: z.boolean(),
+            })
+          )
+          .min(2),
+      }).parse(input),
+  })
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
     await requireAdmin(supabase, userId);

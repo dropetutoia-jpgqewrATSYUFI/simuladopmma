@@ -47,7 +47,7 @@ export function PmmaLeadForm({
   }
 
   return (
-    <Card className="p-5 sm:p-6">
+    <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
       <h2 className="text-xl font-bold">Você já começou seu diagnóstico</h2>
       <p className="mt-2 text-sm text-muted-foreground">
         Informe seus dados para salvar suas respostas e liberar a análise personalizada no final.

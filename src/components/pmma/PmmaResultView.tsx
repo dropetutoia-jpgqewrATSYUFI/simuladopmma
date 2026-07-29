@@ -12,9 +12,9 @@ import { MessageCircle, ArrowRight, RotateCcw } from "lucide-react";
 import type { PmmaResult } from "@/lib/pmma.types";
 
 const STATE_LABEL = {
-  prioridade: { label: "Prioridade", className: "bg-destructive/15 text-destructive" },
-  atencao: { label: "Atenção", className: "bg-warning/20 text-warning-foreground" },
-  ponto_forte: { label: "Ponto forte", className: "bg-success/15 text-success" },
+  prioridade: { label: "Prioridade", className: "bg-destructive/20 text-destructive" },
+  atencao: { label: "Atenção", className: "bg-accent/20 text-accent" },
+  ponto_forte: { label: "Ponto forte", className: "bg-[#22c55e]/20 text-[#4ade80]" },
 } as const;
 
 const OFFER_TEXT: Record<string, string> = {
@@ -63,7 +63,7 @@ export function PmmaResultView({
 
   return (
     <div className="space-y-5">
-      <Card className="p-5 sm:p-6">
+      <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
         <h1 className="text-2xl font-bold">Seu resultado no Desafio PMMA</h1>
         {result.firstName ? (
           <p className="mt-1 text-sm text-muted-foreground">
@@ -71,7 +71,7 @@ export function PmmaResultView({
           </p>
         ) : null}
 
-        <div className="mt-5 rounded-xl bg-primary p-5 text-primary-foreground">
+        <div className="mt-5 rounded-2xl border border-white/10 bg-linear-to-br from-primary to-[#1d4ed8] p-5 text-white shadow-[0_18px_40px_-20px_var(--color-primary)]">
           <p className="text-lg font-semibold">
             Você acertou {result.correct} de {result.total} questões
           </p>
@@ -82,19 +82,19 @@ export function PmmaResultView({
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{result.band.text}</p>
 
         <dl className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-          <div className="rounded-lg bg-muted/50 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
             <dt className="text-xs text-muted-foreground">Erros</dt>
             <dd className="font-semibold">{result.wrong}</dd>
           </div>
-          <div className="rounded-lg bg-muted/50 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
             <dt className="text-xs text-muted-foreground">Tempo total</dt>
             <dd className="font-semibold">{formatDuration(result.durationSeconds)}</dd>
           </div>
-          <div className="rounded-lg bg-muted/50 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
             <dt className="text-xs text-muted-foreground">Média/questão</dt>
             <dd className="font-semibold">{result.averageSecondsPerQuestion}s</dd>
           </div>
-          <div className="rounded-lg bg-muted/50 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/5 p-3">
             <dt className="text-xs text-muted-foreground">Melhor sequência</dt>
             <dd className="font-semibold">{result.bestStreak}</dd>
           </div>
@@ -107,7 +107,7 @@ export function PmmaResultView({
         ) : null}
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
         <h2 className="text-lg font-bold">Seu mapa de desempenho</h2>
         <ul className="mt-4 space-y-3">
           {result.disciplines.map((d) => {
@@ -124,8 +124,8 @@ export function PmmaResultView({
                     </span>
                   </span>
                 </div>
-                <div className="mt-1.5 h-2 w-full rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${pct}%` }} />
+                <div className="mt-1.5 h-2 w-full rounded-full bg-white/10">
+                  <div className="h-full rounded-full bg-linear-to-r from-primary to-accent transition-all duration-500" style={{ width: `${pct}%` }} />
                 </div>
               </li>
             );
@@ -137,7 +137,7 @@ export function PmmaResultView({
         </p>
       </Card>
 
-      <Card className="p-5 sm:p-6">
+      <Card className="pmma-glass animate-fade-in rounded-2xl p-5 sm:p-6">
         <h2 className="text-lg font-bold">O que este resultado indica</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
           {result.recommendations.map((r) => (
@@ -146,7 +146,7 @@ export function PmmaResultView({
         </ul>
       </Card>
 
-      <Card className="p-2 sm:p-3">
+      <Card className="pmma-glass rounded-2xl p-2 sm:p-3">
         <Accordion
           type="single"
           collapsible
@@ -163,7 +163,7 @@ export function PmmaResultView({
             </AccordionTrigger>
             <AccordionContent className="space-y-4 px-3">
               {result.review.map((item) => (
-                <div key={item.publicCode} className="rounded-lg border border-border p-3">
+                <div key={item.publicCode} className="rounded-xl border border-white/10 bg-white/5 p-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant="outline">{item.discipline}</Badge>
                     <Badge variant={item.isCorrect ? "secondary" : "destructive"}>
@@ -188,7 +188,7 @@ export function PmmaResultView({
         </Accordion>
       </Card>
 
-      <Card className="border-primary/30 bg-primary/5 p-5 sm:p-6">
+      <Card className="animate-fade-in rounded-2xl border border-accent/30 bg-linear-to-br from-primary/15 to-accent/10 p-5 sm:p-6 backdrop-blur-xl">
         <h2 className="text-xl font-bold">Agora transforme seus erros em um plano de estudo</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           O mini simulado mostrou onde você precisa melhorar. No Preparatório Online PMMA da
@@ -212,7 +212,7 @@ export function PmmaResultView({
           <li>• Banco de provas e simulados no estilo da banca</li>
         </ul>
 
-        <Button asChild size="lg" className="mt-5 w-full">
+        <Button asChild size="lg" className="mt-5 w-full rounded-xl bg-accent font-semibold text-accent-foreground shadow-[0_16px_40px_-16px_var(--color-accent)] hover:bg-accent/90">
           <a href={offerHref} target="_blank" rel="noopener noreferrer" onClick={onOfferClick}>
             {ctaVariant === "A" ? "CONHECER O PREPARATÓRIO PMMA" : "VER COMO ORGANIZAR MEUS ESTUDOS"}
             <ArrowRight className="ml-1 size-4" aria-hidden />
@@ -220,7 +220,7 @@ export function PmmaResultView({
         </Button>
 
         {whatsappHref ? (
-          <Button asChild variant="outline" size="lg" className="mt-3 w-full">
+          <Button asChild variant="outline" size="lg" className="mt-3 w-full rounded-xl border-white/15 bg-white/5">
             <a
               href={whatsappHref}
               target="_blank"

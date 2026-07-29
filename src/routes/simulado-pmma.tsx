@@ -314,7 +314,7 @@ function SimuladoPmmaPage() {
   if (resume && stage === "intro") {
     return (
       <PmmaShell>
-        <Card className="p-6">
+        <Card className="pmma-glass animate-fade-in rounded-2xl p-6">
           <h1 className="text-xl font-bold">Você parou na questão {resume.index + 1}</h1>
           <p className="mt-2 text-sm text-muted-foreground">Deseja continuar de onde parou?</p>
           <div className="mt-5 space-y-3">
@@ -352,7 +352,7 @@ function SimuladoPmmaPage() {
     return (
       <PmmaShell>
         <div className="space-y-5">
-          <Badge className="bg-accent text-accent-foreground">MINI SIMULADO GRATUITO</Badge>
+          <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-accent">MINI SIMULADO GRATUITO</Badge>
           <h1 className="text-3xl font-extrabold leading-tight sm:text-4xl">
             {headlineVariant === "A"
               ? "Você está realmente preparado para as questões da PMMA?"
@@ -363,7 +363,7 @@ function SimuladoPmmaPage() {
             resposta e descubra quais matérias precisam de mais atenção.
           </p>
 
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-2 text-sm text-foreground/90">
             <li>• 14 questões por tentativa</li>
             <li>• 7 matérias diferentes</li>
             <li>• Correção explicada na hora</li>
@@ -371,7 +371,7 @@ function SimuladoPmmaPage() {
             <li>• Acesso público e sem login</li>
           </ul>
 
-          <Card className="border-dashed p-4">
+          <Card className="animate-fade-in rounded-2xl border border-dashed border-white/15 bg-white/5 p-4">
             <p className="text-xs font-semibold text-muted-foreground">Questão 1 de 14</p>
             <p className="mt-2 text-base font-semibold">Certo ou Errado?</p>
             <p className="mt-1 text-sm text-muted-foreground">Responda e veja a explicação</p>
@@ -379,7 +379,7 @@ function SimuladoPmmaPage() {
 
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
-          <Button size="lg" className="h-14 w-full text-base" disabled={loading} onClick={handleStart}>
+          <Button size="lg" className="h-14 w-full rounded-xl bg-linear-to-r from-primary to-[#2563eb] text-base font-semibold shadow-[0_18px_40px_-16px_var(--color-primary)] transition-transform hover:scale-[1.01]" disabled={loading} onClick={handleStart}>
             {loading ? "PREPARANDO..." : "COMEÇAR O DESAFIO"}
           </Button>
           <p className="text-center text-xs text-muted-foreground">
@@ -393,7 +393,7 @@ function SimuladoPmmaPage() {
   if (stage === "milestone") {
     return (
       <PmmaShell progress={progress}>
-        <Card className="p-8 text-center">
+        <Card className="pmma-glass animate-fade-in rounded-2xl p-8 text-center">
           <p className="text-lg font-semibold">{milestoneText}</p>
         </Card>
       </PmmaShell>
@@ -411,7 +411,7 @@ function SimuladoPmmaPage() {
   if (stage === "bonus_offer" && state) {
     return (
       <PmmaShell>
-        <Card className="p-6 text-center">
+        <Card className="pmma-glass animate-fade-in rounded-2xl p-6 text-center">
           <h2 className="text-xl font-bold">
             Quer responder uma questão bônus antes de ver o resultado?
           </h2>
@@ -496,7 +496,7 @@ function SimuladoPmmaPage() {
 
   return (
     <PmmaShell>
-      <Card className="p-8 text-center text-sm text-muted-foreground">
+      <Card className="pmma-glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
         {error ?? "Carregando seu desafio..."}
       </Card>
     </PmmaShell>

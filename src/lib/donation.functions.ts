@@ -19,14 +19,20 @@ async function assertAdmin(context: AuthedContext) {
 const sessionSchema = z.object({ sessionId: z.string().min(8).max(64) });
 
 export const pmmaAccessStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator({ parse: (input: unknown) => sessionSchema.parse(input) })
-  .handler(async ({ data }): Promise<AccessStatus> => {
+  .handler(async ({ data, context }): Promise<AccessStatus> => {
     const { getAccessStatus } = await import("./donation.server");
     const { getDeviceFingerprint } = await import("./fingerprint.server");
-    return getAccessStatus(data.sessionId, await getDeviceFingerprint());
+    return getAccessStatus({
+      sessionId: data.sessionId,
+      fingerprint: await getDeviceFingerprint(),
+      userId: context.userId,
+    });
   });
 
 export const donationCreatePix = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator({
     parse: (input: unknown) =>
       z
@@ -37,26 +43,29 @@ export const donationCreatePix = createServerFn({ method: "POST" })
         })
         .parse(input),
   })
-  .handler(async ({ data }): Promise<DonationRecord> => {
+  .handler(async ({ data, context }): Promise<DonationRecord> => {
     const { createPixDonation } = await import("./donation.server");
     return createPixDonation({
       sessionId: data.sessionId,
       amount: data.amount,
       email: data.email || null,
+      userId: context.userId,
     });
   });
 
 export const donationCheckPix = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator({
     parse: (input: unknown) =>
       z
         .object({ donationId: z.string().uuid(), sessionId: z.string().min(8).max(64) })
         .parse(input),
   })
-  .handler(async ({ data }): Promise<DonationRecord> => {
+  .handler(async ({ data, context }): Promise<DonationRecord> => {
     const { refreshDonationStatus } = await import("./donation.server");
-    return refreshDonationStatus(data.donationId, data.sessionId);
+    return refreshDonationStatus(data.donationId, data.sessionId, context.userId);
   });
+
 
 export const adminPaymentSettings = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

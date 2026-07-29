@@ -70,19 +70,20 @@ function MiniStat({
         : "text-emerald-400 from-emerald-400/70";
 
   return (
-    <Card className={`pmma-glass pmma-rise ${delay} relative overflow-hidden rounded-2xl p-4`}>
+    <Card className={`pmma-glass pmma-rise ${delay} relative overflow-hidden rounded-2xl p-3 sm:p-4`}>
       <span
         aria-hidden="true"
         className={`absolute inset-x-0 top-0 h-px bg-linear-to-r to-transparent ${toneClass}`}
       />
       <Icon className={`h-4 w-4 ${toneClass.split(" ")[0]}`} aria-hidden="true" />
-      <p className="mt-3 font-display text-2xl font-black leading-none tabular-nums text-foreground">
+      <p className="mt-2.5 font-display text-xl font-black leading-none tabular-nums text-foreground sm:text-2xl">
         {value}
       </p>
-      <p className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+      <p className="mt-1.5 text-[9px] font-semibold uppercase leading-tight tracking-[0.1em] text-muted-foreground sm:text-[10px] sm:tracking-[0.16em]">
         {label}
       </p>
     </Card>
+
   );
 }
 
@@ -138,22 +139,22 @@ function PainelPage() {
 
   return (
     <PmmaShell>
-      <div className="space-y-8">
-        <header className="pmma-rise relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-primary/15 via-white/[0.04] to-accent/10 p-6 sm:p-7">
+      <div className="space-y-6 sm:space-y-8">
+        <header className="pmma-rise relative overflow-hidden rounded-3xl border border-white/10 bg-linear-to-br from-primary/15 via-white/[0.04] to-accent/10 p-5 sm:p-7">
           <span
             aria-hidden="true"
             className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-primary/20 blur-3xl"
           />
-          <div className="relative flex flex-wrap items-start justify-between gap-4">
+          <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 sm:flex sm:flex-wrap sm:justify-between sm:gap-4">
             <div className="min-w-0">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-accent">
-                <Sparkles className="h-3 w-3" aria-hidden="true" />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-accent sm:px-3 sm:text-[10px] sm:tracking-[0.18em]">
+                <Sparkles className="h-3 w-3 shrink-0" aria-hidden="true" />
                 Área do aluno
               </span>
-              <h1 className="mt-3 font-display text-2xl font-black leading-tight tracking-tight sm:text-3xl">
+              <h1 className="mt-3 truncate font-display text-xl font-black leading-tight tracking-tight sm:text-3xl">
                 {name ? `Olá, ${name}` : "Bem-vindo de volta"}
               </h1>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
                 Escolha um simulado e continue sua preparação para a PM-MA.
               </p>
             </div>
@@ -164,10 +165,11 @@ function PainelPage() {
               className="shrink-0 gap-2 rounded-full border-white/15 bg-white/5 text-xs font-bold"
             >
               <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-              SAIR
+              <span className="hidden sm:inline">SAIR</span>
             </Button>
           </div>
         </header>
+
 
         {buying ? (
           <div className="space-y-3">
@@ -228,7 +230,7 @@ function PainelPage() {
                 return (
                   <Card
                     key={s.id}
-                    className={`pmma-glass pmma-rise ${delayClass} group relative overflow-hidden rounded-2xl p-5 transition-colors hover:border-white/20`}
+                    className={`pmma-glass pmma-rise ${delayClass} group relative overflow-hidden rounded-2xl p-4 transition-colors hover:border-white/20 sm:p-5`}
                   >
                     <span
                       aria-hidden="true"
@@ -238,20 +240,12 @@ function PainelPage() {
                           : "bg-linear-to-b from-accent to-accent/30"
                       }`}
                     />
-                    <div className="flex items-start justify-between gap-3 pl-2">
-                      <div className="min-w-0">
-                        <h3 className="font-display text-lg font-bold leading-snug">{s.name}</h3>
-                        <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                          {donationLocked
-                            ? "Você já concluiu este simulado. Para refazer, apoie o projeto com uma doação de qualquer valor (mínimo R$ 5) — a liberação é imediata após o Pix."
-                            : s.description}
-                        </p>
-                        <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                          {s.totalQuestions} questões
-                        </p>
-                      </div>
+                    <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2.5 pl-2 sm:gap-3">
+                      <h3 className="min-w-0 font-display text-base font-bold leading-snug sm:text-lg">
+                        {s.name}
+                      </h3>
                       <span
-                        className={`shrink-0 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide ${
+                        className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide sm:px-3 sm:text-[11px] ${
                           unlocked
                             ? "bg-emerald-500/15 text-emerald-400"
                             : "bg-accent/15 text-accent"
@@ -260,12 +254,22 @@ function PainelPage() {
                         {donationLocked ? "Concluído" : unlocked ? "Liberado" : brl(s.priceCents)}
                       </span>
                     </div>
+                    <div className="pl-2">
+                      <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground sm:text-sm">
+                        {donationLocked
+                          ? "Você já concluiu este simulado. Para refazer, apoie o projeto com uma doação de qualquer valor (mínimo R$ 5) — a liberação é imediata após o Pix."
+                          : s.description}
+                      </p>
+                      <p className="mt-3 inline-flex rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                        {s.totalQuestions} questões
+                      </p>
+                    </div>
 
                     {unlocked ? (
                       <Button
                         asChild
                         size="lg"
-                        className="mt-5 h-14 w-full rounded-2xl bg-linear-to-r from-primary to-[#60a5fa] text-base font-black shadow-[0_10px_30px_-12px_var(--color-primary)] transition-transform active:scale-[0.99]"
+                        className="mt-4 h-13 w-full rounded-2xl bg-linear-to-r from-primary to-[#60a5fa] text-sm font-black shadow-[0_10px_30px_-12px_var(--color-primary)] transition-transform active:scale-[0.99] sm:mt-5 sm:h-14 sm:text-base"
                       >
                         <Link to="/simulado/$slug" params={{ slug: s.slug }}>
                           INICIAR AGORA
@@ -276,10 +280,10 @@ function PainelPage() {
                         asChild
                         size="lg"
                         variant="outline"
-                        className="mt-5 h-14 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-base font-bold text-accent hover:bg-accent/10"
+                        className="mt-4 h-13 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-sm font-bold text-accent hover:bg-accent/10 sm:mt-5 sm:h-14 sm:text-base"
                       >
                         <Link to="/simulado/$slug" params={{ slug: s.slug }}>
-                          <Lock className="h-4 w-4" aria-hidden="true" />
+                          <Lock className="h-4 w-4 shrink-0" aria-hidden="true" />
                           APOIAR E REFAZER
                         </Link>
                       </Button>
@@ -287,13 +291,14 @@ function PainelPage() {
                       <Button
                         size="lg"
                         variant="outline"
-                        className="mt-5 h-14 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-base font-bold text-accent hover:bg-accent/10"
+                        className="mt-4 h-13 w-full gap-2 rounded-2xl border-accent/40 bg-accent/5 text-sm font-bold text-accent hover:bg-accent/10 sm:mt-5 sm:h-14 sm:text-base"
                         onClick={() => setBuying(s)}
                       >
-                        <Lock className="h-4 w-4" aria-hidden="true" />
+                        <Lock className="h-4 w-4 shrink-0" aria-hidden="true" />
                         DESBLOQUEAR POR {brl(s.priceCents)}
                       </Button>
                     )}
+
                   </Card>
 
                 );

@@ -38,7 +38,8 @@ function FallbackScreen({ text }: { text: string }) {
 }
 
 const inputClass =
-  "mt-2 h-12 w-full rounded-xl border border-white/10 bg-[#131c2e] px-4 text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/40";
+  "mt-2 h-12 w-full rounded-xl border border-white/10 bg-[#131c2e] px-4 text-base text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-primary focus:ring-2 focus:ring-primary/40";
+
 
 const labelClass = "text-sm font-medium text-foreground/90";
 
@@ -102,41 +103,41 @@ function HomePage() {
 
   return (
     <div className="pmma-theme min-h-[100dvh] w-full">
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-5 py-6 sm:px-8 lg:py-10">
-        <header className="pmma-rise flex items-center justify-between">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-4 py-5 sm:px-8 sm:py-6 lg:py-10">
+        <header className="pmma-rise grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <PmmaBrandMark />
           <span className="hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground sm:inline">
             Simulados PM-MA
           </span>
         </header>
 
-        <main className="grid flex-1 grid-cols-1 items-center gap-12 py-10 lg:grid-cols-2 lg:gap-16">
+        <main className="grid flex-1 grid-cols-1 items-center gap-8 py-7 sm:gap-12 sm:py-10 lg:grid-cols-2 lg:gap-16">
           {/* Apresentação */}
-          <section className="pmma-rise space-y-9">
-            <div className="space-y-5">
-              <span className="inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-accent">
+          <section className="pmma-rise space-y-6 sm:space-y-9">
+            <div className="space-y-4 sm:space-y-5">
+              <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1.5 text-[9px] font-bold uppercase leading-tight tracking-[0.16em] text-accent sm:text-[10px] sm:tracking-[0.2em]">
                 Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
-              <h1 className="font-display text-[34px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              <h1 className="font-display text-[30px] font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
                 Sua aprovação na
                 <br />
                 <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
                   PM-MA começa aqui
                 </span>
               </h1>
-              <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+              <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground sm:text-lg">
                 Plataforma de simulados de alto nível, com correção comentada e diagnóstico por
                 matéria. Treine no mesmo formato da banca, do primeiro item ao gabarito.
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-6 border-t border-white/10 pt-6">
+            <div className="grid grid-cols-3 gap-3 border-t border-white/10 pt-5 sm:gap-6 sm:pt-6">
               {STATS.map((stat) => (
-                <div key={stat.label} className="space-y-1">
+                <div key={stat.label} className="min-w-0 space-y-1">
                   <p className="font-display text-2xl font-bold text-foreground sm:text-3xl">
                     {stat.value}
                   </p>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-primary">
+                  <p className="text-[9px] font-semibold uppercase leading-tight tracking-[0.12em] text-primary sm:text-[10px] sm:tracking-[0.16em]">
                     {stat.label}
                   </p>
                 </div>
@@ -144,25 +145,27 @@ function HomePage() {
             </div>
           </section>
 
+
           {/* Card de acesso */}
           <section className="pmma-rise pmma-delay-2 relative">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -inset-1 rounded-[2rem] bg-linear-to-tr from-primary/25 to-accent/25 opacity-50 blur-2xl"
             />
-            <div className="relative rounded-[1.75rem] border border-white/10 bg-[#0f172a] p-6 shadow-[0_30px_70px_-40px_rgb(2,6,23)] sm:p-9">
-              <div className="mb-7">
-                <h2 className="font-display text-2xl font-bold text-foreground">
+            <div className="relative rounded-3xl border border-white/10 bg-[#0f172a] p-5 shadow-[0_30px_70px_-40px_rgb(2,6,23)] sm:rounded-[1.75rem] sm:p-9">
+              <div className="mb-6 sm:mb-7">
+                <h2 className="font-display text-xl font-bold text-foreground sm:text-2xl">
                   {mode === "signup" ? "Criar sua conta" : "Acesse sua conta"}
                 </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {mode === "signup"
                     ? "Só nome, WhatsApp e e-mail para liberar seus simulados."
                     : "Entre para continuar seus estudos."}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+
                 {mode === "signup" ? (
                   <>
                     <div>
@@ -246,7 +249,7 @@ function HomePage() {
                 </Button>
               </form>
 
-              <div className="relative py-6">
+              <div className="relative py-5 sm:py-6">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/10" />
                 </div>
@@ -264,10 +267,11 @@ function HomePage() {
                   setError(null);
                   setMessage(null);
                 }}
-                className="h-13 w-full rounded-xl border border-primary/30 py-4 font-display text-sm font-semibold text-foreground transition hover:bg-primary/10"
+                className="h-12 w-full rounded-xl border border-primary/30 font-display text-sm font-semibold text-foreground transition hover:bg-primary/10 active:scale-[0.99]"
               >
                 {mode === "signup" ? "Entrar com minha conta" : "Criar conta gratuita"}
               </button>
+
             </div>
           </section>
         </main>

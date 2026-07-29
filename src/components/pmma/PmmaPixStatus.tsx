@@ -16,6 +16,7 @@ export function usePixPolling({
   const [attempts, setAttempts] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [approved, setApproved] = useState(false);
+  const [notFoundYet, setNotFoundYet] = useState(false);
 
   const checkRef = useRef(check);
   checkRef.current = check;
@@ -24,7 +25,7 @@ export function usePixPolling({
   const busyRef = useRef(false);
   const doneRef = useRef(false);
 
-  const runCheck = useCallback(async () => {
+  const runCheck = useCallback(async (manual = false) => {
     if (busyRef.current || doneRef.current) return;
     busyRef.current = true;
     setChecking(true);
@@ -33,11 +34,16 @@ export function usePixPolling({
       setAttempts((n) => n + 1);
       if (ok) {
         doneRef.current = true;
+        setNotFoundYet(false);
         setApproved(true);
         approvedRef.current();
+      } else if (manual) {
+        // Só o provedor de pagamento confirma: sem aprovação, nada é liberado.
+        setNotFoundYet(true);
       }
     } catch {
       setAttempts((n) => n + 1);
+      if (manual) setNotFoundYet(true);
     } finally {
       busyRef.current = false;
       setChecking(false);
@@ -60,7 +66,14 @@ export function usePixPolling({
     if (approved) doneRef.current = true;
   }, [approved]);
 
-  return { checking, attempts, elapsed, approved, checkNow: runCheck };
+  return {
+    checking,
+    attempts,
+    elapsed,
+    approved,
+    notFoundYet,
+    checkNow: () => void runCheck(true),
+  };
 }
 
 function mmss(total: number) {
@@ -74,11 +87,13 @@ export function PmmaPixWaiting({
   checking,
   attempts,
   elapsed,
+  notFoundYet = false,
   onCheckNow,
 }: {
   checking: boolean;
   attempts: number;
   elapsed: number;
+  notFoundYet?: boolean;
   onCheckNow: () => void;
 }) {
   return (
@@ -120,6 +135,13 @@ export function PmmaPixWaiting({
       >
         {checking ? "VERIFICANDO..." : "JÁ PAGUEI — VERIFICAR AGORA"}
       </button>
+
+      {notFoundYet && !checking ? (
+        <p className="mt-2 text-center text-[11px] leading-relaxed text-amber-300/90">
+          Pagamento ainda não identificado pelo banco. Se você acabou de pagar, aguarde alguns
+          segundos — a liberação acontece sozinha assim que o Pix for compensado.
+        </p>
+      ) : null}
     </div>
   );
 }

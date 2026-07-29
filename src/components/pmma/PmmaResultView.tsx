@@ -188,36 +188,55 @@ export function PmmaResultView({
         </Accordion>
       </Card>
 
-      <Card className="animate-fade-in rounded-2xl border border-accent/30 bg-linear-to-br from-primary/15 to-accent/10 p-5 sm:p-6 backdrop-blur-xl">
-        <h2 className="text-xl font-bold">Agora transforme seus erros em um plano de estudo</h2>
+      <Card className="animate-fade-in relative overflow-hidden rounded-2xl border border-accent/40 bg-linear-to-br from-primary/25 via-primary/10 to-accent/15 p-5 sm:p-7 backdrop-blur-xl shadow-[0_24px_60px_-30px_var(--color-accent)]">
+        <div className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-accent/20 blur-3xl" aria-hidden />
+        <span className="inline-flex rounded-full bg-accent/20 px-3 py-1 text-xs font-bold tracking-wide text-accent">
+          PREPARATÓRIO ONLINE PMMA 2026
+        </span>
+        <h2 className="mt-3 text-2xl font-extrabold leading-tight sm:text-[28px]">
+          Transforme seus erros em aprovação na PMMA
+        </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          O mini simulado mostrou onde você precisa melhorar. No Preparatório Online PMMA da
-          Edital360, o conteúdo fica organizado por módulos para você estudar pelo celular ou
-          computador, acompanhar seu progresso e praticar ao longo da preparação.
+          Você já sabe onde está perdendo pontos. O Preparatório Online PMMA da Edital360 entrega o
+          conteúdo do edital organizado por módulos, com questões no estilo da banca e
+          acompanhamento do seu progresso — estude pelo celular, no seu ritmo.
         </p>
-        <p className="mt-3 text-sm leading-relaxed">{OFFER_TEXT[result.band.key]}</p>
+        <p className="mt-3 text-sm font-medium leading-relaxed">{OFFER_TEXT[result.band.key]}</p>
         {worst ? (
-          <p className="mt-2 text-sm leading-relaxed">
-            Seu resultado indica que {worst} merece atenção especial. Dentro da plataforma, você
-            poderá estudar essa matéria por etapas e acompanhar seu progresso.
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+            Comece por <span className="font-semibold text-foreground">{worst}</span>: essa foi a
+            matéria com o pior desempenho no seu simulado.
           </p>
         ) : null}
 
-        <ul className="mt-4 space-y-1.5 text-sm text-muted-foreground">
-          <li>• Plataforma online de estudos</li>
-          <li>• Conteúdo organizado por módulos e disciplinas</li>
-          <li>• Acesso pelo celular e computador</li>
-          <li>• Acompanhamento de progresso</li>
-          <li>• Questões e testes interativos</li>
-          <li>• Banco de provas e simulados no estilo da banca</li>
+        <ul className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
+          {[
+            "Todo o conteúdo do edital em módulos",
+            "Questões e simulados no estilo da banca",
+            "Acesso pelo celular e computador",
+            "Acompanhamento de progresso",
+            "Correções comentadas",
+            "Estude no seu ritmo, quando quiser",
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+              <span className="mt-0.5 text-accent" aria-hidden>
+                ✓
+              </span>
+              <span className="text-foreground/90">{item}</span>
+            </li>
+          ))}
         </ul>
 
-        <Button asChild size="lg" className="mt-5 w-full rounded-xl bg-accent font-semibold text-accent-foreground shadow-[0_16px_40px_-16px_var(--color-accent)] hover:bg-accent/90">
+        <Button asChild size="lg" className="mt-5 h-14 w-full rounded-xl bg-accent text-base font-bold text-accent-foreground shadow-[0_16px_40px_-16px_var(--color-accent)] transition-transform hover:scale-[1.01] hover:bg-accent/90">
           <a href={offerHref} target="_blank" rel="noopener noreferrer" onClick={onOfferClick}>
-            {ctaVariant === "A" ? "CONHECER O PREPARATÓRIO PMMA" : "VER COMO ORGANIZAR MEUS ESTUDOS"}
+            {ctaVariant === "A" ? "QUERO O PREPARATÓRIO PMMA" : "QUERO ORGANIZAR MEUS ESTUDOS AGORA"}
             <ArrowRight className="ml-1 size-4" aria-hidden />
           </a>
         </Button>
+        <p className="mt-2 text-center text-xs text-muted-foreground">
+          Vagas e condições especiais para quem concluiu o simulado.
+        </p>
+
 
         {whatsappHref ? (
           <Button asChild variant="outline" size="lg" className="mt-3 w-full rounded-xl border-white/15 bg-white/5">

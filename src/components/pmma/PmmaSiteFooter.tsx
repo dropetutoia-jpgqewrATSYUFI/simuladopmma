@@ -4,13 +4,7 @@ export function PmmaSiteFooter() {
       <p className="font-display text-sm font-bold tracking-tight text-foreground">
         Edital<span className="text-accent">360</span>
       </p>
-      <p className="mx-auto mt-2 max-w-md text-[12px] leading-relaxed text-muted-foreground">
-        Editais, cursos e apostilas para concursos públicos. Somos uma equipe de servidores,
-        jornalistas e desenvolvedores que transforma o cenário confuso dos editais em informação
-        clara, útil e confiável.
-      </p>
-
-      <div className="mt-5 space-y-1 text-[11px] leading-relaxed text-muted-foreground/80">
+      <div className="mt-4 space-y-1 text-[11px] leading-relaxed text-muted-foreground/80">
         <p className="font-medium text-foreground/90">
           CONNEX TECNOLOGIA E SERVIÇOS DIGITAIS INOVA SIMPLES (I.S.)
         </p>

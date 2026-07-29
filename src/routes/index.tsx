@@ -139,8 +139,9 @@ function HomePage() {
                 Simulados para PMMA — Concurso 2026
               </h1>
               <p className="max-w-md text-[14px] leading-relaxed text-muted-foreground sm:text-base">
-                Simulados de alto nível com correção comentada e diagnóstico por matéria. Treine no
-                mesmo formato da banca.
+                Estude com foco no que realmente cai: questões no formato da banca, correção
+                comentada item a item e um diagnóstico que mostra em quais matérias você precisa
+                melhorar antes da prova.
               </p>
             </div>
 

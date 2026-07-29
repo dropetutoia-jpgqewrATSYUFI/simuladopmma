@@ -114,8 +114,8 @@ function HomePage() {
               <span className="inline-flex max-w-full items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-2.5 py-1 text-[9px] font-bold uppercase leading-tight tracking-[0.16em] text-accent sm:text-[10px] sm:tracking-[0.2em]">
                 Estilo Cebraspe · DE ACORDO COM O EDITAL
               </span>
-              <h1 className="font-display text-[26px] font-extrabold leading-[1.1] tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-                Sua aprovação na PM-MA começa aqui
+              <h1 className="font-display text-[22px] font-bold leading-[1.15] tracking-tight text-foreground sm:text-3xl lg:text-4xl">
+                Simulados para PMMA — Concurso 2026
               </h1>
               <p className="max-w-md text-[14px] leading-relaxed text-muted-foreground sm:text-base">
                 Simulados de alto nível com correção comentada e diagnóstico por matéria. Treine no

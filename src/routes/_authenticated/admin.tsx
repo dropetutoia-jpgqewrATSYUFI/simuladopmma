@@ -55,15 +55,20 @@ function formatDate(iso: string) {
 
 function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="pmma-glass pmma-rise rounded-2xl p-4 sm:p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        {label}
+    <div className="pmma-rise group relative overflow-hidden rounded-2xl border border-white/10 bg-[#0f172a] p-5 transition hover:border-primary/40">
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-primary/60 to-accent/60 opacity-60"
+      />
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">{label}</p>
+      <p className="mt-3 font-display text-3xl font-extrabold tracking-tight text-foreground">
+        {value}
       </p>
-      <p className="mt-2 font-display text-3xl font-bold tracking-tight text-foreground">{value}</p>
       {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   );
 }
+
 
 
 function AdminPage() {

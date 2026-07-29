@@ -157,39 +157,39 @@
  * Slate 900/800 + azul #3B82F6 + dourado #F59E0B.
  */
 .pmma-theme {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
+  --background: #0b1220;
+  --foreground: #ffffff;
   --card: #1e293b;
-  --card-foreground: #f1f5f9;
+  --card-foreground: #ffffff;
   --popover: #1e293b;
-  --popover-foreground: #f1f5f9;
+  --popover-foreground: #ffffff;
   --primary: #3b82f6;
-  --primary-foreground: #0b1220;
+  --primary-foreground: #020617;
   --secondary: #334155;
-  --secondary-foreground: #e2e8f0;
+  --secondary-foreground: #f8fafc;
   --muted: #334155;
-  --muted-foreground: #94a3b8;
-  --accent: #f59e0b;
+  --muted-foreground: #cbd5e1;
+  --accent: #fbbf24;
   --accent-foreground: #1a1204;
-  --destructive: #ef4444;
-  --destructive-foreground: #fef2f2;
-  --border: rgb(255 255 255 / 10%);
-  --input: rgb(255 255 255 / 14%);
-  --ring: #3b82f6;
+  --destructive: #f87171;
+  --destructive-foreground: #450a0a;
+  --border: rgb(255 255 255 / 12%);
+  --input: rgb(255 255 255 / 16%);
+  --ring: #60a5fa;
 
-  --success: #22c55e;
+  --success: #4ade80;
   --success-foreground: #052e16;
-  --warning: #f59e0b;
+  --warning: #fbbf24;
   --warning-foreground: #1a1204;
   --info: #38bdf8;
   --info-foreground: #04212e;
 
   color: var(--foreground);
-  background-color: #0f172a;
+  background-color: #0b1220;
   background-image:
     radial-gradient(120% 80% at 50% -10%, #1e293b 0%, rgb(30 41 59 / 0%) 60%),
-    radial-gradient(90% 60% at 100% 0%, rgb(59 130 246 / 14%) 0%, rgb(59 130 246 / 0%) 55%),
-    radial-gradient(80% 60% at 0% 100%, rgb(245 158 11 / 8%) 0%, rgb(245 158 11 / 0%) 55%);
+    radial-gradient(90% 60% at 100% 0%, rgb(59 130 246 / 16%) 0%, rgb(59 130 246 / 0%) 55%),
+    radial-gradient(80% 60% at 0% 100%, rgb(251 191 36 / 10%) 0%, rgb(251 191 36 / 0%) 55%);
   background-attachment: fixed;
 }
 

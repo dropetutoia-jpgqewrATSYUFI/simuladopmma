@@ -1,9 +1,15 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, notFound, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 
 import { PmmaQuizRunner } from "@/components/pmma/PmmaQuizRunner";
+import { PmmaPurchaseGate } from "@/components/pmma/PmmaPurchaseGate";
 import { PmmaShell } from "@/components/pmma/PmmaShell";
 import { Card } from "@/components/ui/card";
-import { listPublicSimulados } from "@/lib/purchase.functions";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { listPublicSimulados, mySimuladoAccess } from "@/lib/purchase.functions";
 
 export const Route = createFileRoute("/simulado/$slug")({
   loader: async ({ params }) => {
@@ -47,6 +53,71 @@ export const Route = createFileRoute("/simulado/$slug")({
 
 function SimuladoRunPage() {
   const { simulado } = Route.useLoaderData();
+  const checkAccess = useServerFn(mySimuladoAccess);
+  const [state, setState] = useState<"checking" | "released" | "blocked" | "anon">(
+    simulado.isPaid ? "checking" : "released",
+  );
+
+  useEffect(() => {
+    if (!simulado.isPaid) return;
+    let alive = true;
+    void (async () => {
+      const { data: session } = await supabase.auth.getSession();
+      if (!alive) return;
+      if (!session.session) {
+        setState("anon");
+        return;
+      }
+      try {
+        const access = await checkAccess({ data: { campaignSlug: simulado.slug } });
+        if (alive) setState(access.status === "released" ? "released" : "blocked");
+      } catch {
+        if (alive) setState("blocked");
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [checkAccess, simulado.isPaid, simulado.slug]);
+
+  if (state === "checking") {
+    return (
+      <PmmaShell>
+        <Card className="pmma-glass rounded-2xl p-8 text-center text-sm text-muted-foreground">
+          Verificando a situação do seu acesso...
+        </Card>
+      </PmmaShell>
+    );
+  }
+
+  if (state === "anon") {
+    return (
+      <PmmaShell>
+        <Card className="pmma-glass pmma-rise rounded-2xl p-6 text-center">
+          <Badge className="rounded-full border-0 bg-accent/20 px-3 py-1 text-[11px] font-bold tracking-[0.14em] text-accent">
+            SITUAÇÃO: BLOQUEADO
+          </Badge>
+          <h1 className="mt-4 font-display text-xl font-bold">{simulado.name}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Este simulado é vinculado à sua conta. Entre ou cadastre-se para ver a situação do seu
+            acesso e liberar por Pix.
+          </p>
+          <Button asChild size="lg" className="mt-5 w-full">
+            <Link to="/">ENTRAR NA MINHA CONTA</Link>
+          </Button>
+        </Card>
+      </PmmaShell>
+    );
+  }
+
+  if (state === "blocked") {
+    return (
+      <PmmaShell>
+        <PmmaPurchaseGate simulado={simulado} onUnlocked={() => setState("released")} />
+      </PmmaShell>
+    );
+  }
+
   return (
     <PmmaQuizRunner
       campaignSlug={simulado.slug}

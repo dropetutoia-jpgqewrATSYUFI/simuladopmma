@@ -27,6 +27,49 @@ export async function hasApprovedPurchase(userId: string, campaignId: string): P
   return (count ?? 0) > 0;
 }
 
+/** Cria as situações "bloqueado" de todos os simulados pagos para o usuário. */
+export async function ensureSimuladoAccess(userId: string): Promise<void> {
+  const client = await db();
+  await client.rpc("ensure_simulado_access", { _user_id: userId });
+}
+
+/** Libera imediatamente o simulado vinculado ao usuário. */
+export async function releaseSimuladoAccess(
+  userId: string,
+  campaignId: string,
+  source = "purchase",
+): Promise<void> {
+  const client = await db();
+  await client.rpc("release_simulado_access", {
+    _user_id: userId,
+    _campaign_id: campaignId,
+    _source: source,
+  });
+}
+
+/** Situação de acesso vinculada ao usuário: "released" só após pagamento aprovado. */
+export async function getSimuladoAccessStatus(
+  userId: string,
+  campaignId: string,
+): Promise<"released" | "blocked"> {
+  const client = await db();
+  const { data } = await client
+    .from("simulado_access")
+    .select("status")
+    .eq("user_id", userId)
+    .eq("campaign_id", campaignId)
+    .maybeSingle();
+
+  if (data?.status === "released") return "released";
+
+  // Segurança extra: se houver compra aprovada, sincroniza a situação.
+  if (await hasApprovedPurchase(userId, campaignId)) {
+    await releaseSimuladoAccess(userId, campaignId);
+    return "released";
+  }
+  return "blocked";
+}
+
 /** Catálogo público de simulados; `owned` só é verdadeiro para simulados já comprados pelo usuário (ou para admins). */
 export async function listSimulados(
   userId: string | null,
@@ -43,12 +86,25 @@ export async function listSimulados(
 
   const ownedIds = new Set<string>();
   if (userId) {
-    const { data: owned } = await client
+    // Garante que todo usuário cadastrado tenha os simulados pagos com situação "bloqueado".
+    await ensureSimuladoAccess(userId);
+
+    const { data: approved } = await client
       .from("purchases")
       .select("campaign_id")
       .eq("user_id", userId)
       .eq("status", "approved");
-    for (const p of owned ?? []) ownedIds.add(p.campaign_id);
+    for (const p of approved ?? []) {
+      ownedIds.add(p.campaign_id);
+      await releaseSimuladoAccess(userId, p.campaign_id);
+    }
+
+    const { data: access } = await client
+      .from("simulado_access")
+      .select("campaign_id, status")
+      .eq("user_id", userId)
+      .eq("status", "released");
+    for (const a of access ?? []) ownedIds.add(a.campaign_id);
   }
 
   const counts = await Promise.all(
@@ -203,7 +259,7 @@ export async function refreshPurchase(
   const { data: row } = await client
     .from("purchases")
     .select(
-      "id, amount, status, provider_payment_id, qr_code, qr_code_base64, ticket_url, pmma_campaigns(slug)",
+      "id, amount, status, campaign_id, provider_payment_id, qr_code, qr_code_base64, ticket_url, pmma_campaigns(slug)",
     )
     .eq("id", purchaseId)
     .eq("user_id", userId)
@@ -233,6 +289,11 @@ export async function refreshPurchase(
           .eq("id", row.id);
       }
     }
+  }
+
+  // Desbloqueio imediato do simulado vinculado ao usuário assim que o Pix é aprovado.
+  if (status === "approved") {
+    await releaseSimuladoAccess(userId, row.campaign_id);
   }
 
   const campaign = row.pmma_campaigns as { slug: string } | null;

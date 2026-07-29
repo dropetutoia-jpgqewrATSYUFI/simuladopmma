@@ -925,6 +925,47 @@ export type Database = {
           },
         ]
       }
+      simulado_access: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          released_at: string | null
+          source: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          released_at?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          released_at?: string | null
+          source?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "simulado_access_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "pmma_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -951,12 +992,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      ensure_simulado_access: { Args: { _user_id: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      release_simulado_access: {
+        Args: { _campaign_id: string; _source?: string; _user_id: string }
+        Returns: undefined
       }
     }
     Enums: {

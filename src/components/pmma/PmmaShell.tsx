@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PmmaBrandMark } from "@/components/pmma/PmmaBrandMark";
 
 export function PmmaShell({
   progress,

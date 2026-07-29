@@ -355,17 +355,16 @@ export function PmmaQuizRunner({
           onOfferClick={() => emit("offer_click", state.attemptId)}
           onWhatsappClick={() => emit("whatsapp_click", state.attemptId)}
           onCorrectionsOpen={() => emit("corrections_open", state.attemptId)}
+          canRetake={paid}
+          backHref={isAuthed ? "/painel" : "/"}
           onRetake={() => {
             emit("retake_click", state.attemptId);
             setResult(null);
             setState(null);
-            if (paid) {
-              autoStarted.current = false;
-              setStage("intro");
-            } else {
-              setStage("donation");
-            }
+            autoStarted.current = false;
+            setStage("intro");
           }}
+
         />
       </PmmaShell>
     );

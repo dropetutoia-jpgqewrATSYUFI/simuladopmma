@@ -263,7 +263,7 @@ export async function answerQuestion(params: {
 
   const { data: question, error: questionError } = await supabaseAdmin
     .from("pmma_questions")
-    .select("correct_answer, feedback_correct, feedback_wrong, key_point")
+    .select("correct_answer, feedback_correct, feedback_wrong, key_point, answer_status")
     .eq("id", params.questionId)
     .maybeSingle();
 
@@ -271,7 +271,11 @@ export async function answerQuestion(params: {
     throw new Error("Questão não encontrada.");
   }
 
-  const isCorrect = question.correct_answer === params.answer;
+  const answerStatus = (question as { answer_status?: string }).answer_status ?? "definitivo";
+  const neutral = answerStatus === "anulada" || answerStatus === "pendente";
+  // Anulada: ponto atribuído a todos. Pendente de revisão: item não penaliza o candidato.
+  const isCorrect = neutral ? true : question.correct_answer === params.answer;
+
 
   if (!link.answered_at) {
     await supabaseAdmin

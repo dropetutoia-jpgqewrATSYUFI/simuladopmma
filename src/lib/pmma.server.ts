@@ -135,9 +135,12 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
 
   const { data: pool, error } = await supabaseAdmin
     .from("pmma_questions")
-    .select("id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer")
+    .select(
+      "id, public_code, discipline, topic, base_text, statement, difficulty, correct_answer, sort_order",
+    )
     .eq("is_active", true)
-    .eq("campaign_id", campaign.id);
+    .eq("campaign_id", campaign.id)
+    .order("sort_order", { ascending: true });
 
   if (error || !pool || pool.length === 0) {
     throw new Error("Nenhuma questão disponível no momento.");
@@ -152,27 +155,31 @@ export async function startAttempt(input: StartInput): Promise<PmmaStartResult> 
     statement: string;
     difficulty: string;
     correct_answer: boolean;
+    sort_order: number;
   };
   const rowsPool: PoolRow[] = pool;
 
-  const seen = new Set(input.seenQuestionCodes ?? []);
-  const byDiscipline = new Map<string, PoolRow[]>();
-  for (const q of rowsPool) {
-    const list = byDiscipline.get(q.discipline) ?? [];
-    list.push(q);
-    byDiscipline.set(q.discipline, list);
-  }
-
-  // Aplica TODAS as questões ativas da campanha, intercalando as disciplinas
-  const orderedByDiscipline = shuffle([...byDiscipline.entries()]).map(([, list]) => shuffle(list));
   const questions: PoolRow[] = [];
-  const maxLen = Math.max(0, ...orderedByDiscipline.map((l) => l.length));
-  for (let i = 0; i < maxLen; i++) {
-    for (const list of orderedByDiscipline) {
-      const item = list[i];
-      if (item) questions.push(item);
+  if (campaign.isPaid) {
+    // Provas comentadas preservam a numeração original (1..120).
+    questions.push(...rowsPool);
+  } else {
+    const byDiscipline = new Map<string, PoolRow[]>();
+    for (const q of rowsPool) {
+      const list = byDiscipline.get(q.discipline) ?? [];
+      list.push(q);
+      byDiscipline.set(q.discipline, list);
+    }
+    const orderedByDiscipline = shuffle([...byDiscipline.entries()]).map(([, list]) => shuffle(list));
+    const maxLen = Math.max(0, ...orderedByDiscipline.map((l) => l.length));
+    for (let i = 0; i < maxLen; i++) {
+      for (const list of orderedByDiscipline) {
+        const item = list[i];
+        if (item) questions.push(item);
+      }
     }
   }
+
 
   const bonus: PoolRow | null = null;
 

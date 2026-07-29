@@ -120,8 +120,9 @@ export function PmmaLeadForm({
         {serverError ? <p className="text-sm text-destructive">{serverError}</p> : null}
 
         <Button type="submit" size="lg" className="w-full" disabled={submitting}>
-          {submitting ? "SALVANDO..." : "SALVAR E CONTINUAR"}
+          {submitting ? "ENVIANDO..." : "ENVIAR"}
         </Button>
+
         <p className="text-center text-xs text-muted-foreground">
           Sem senha, sem login e sem cobrança.
         </p>

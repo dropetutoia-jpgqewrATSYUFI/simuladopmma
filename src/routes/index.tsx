@@ -19,7 +19,7 @@ const TITLE = "Desafio PMMA — Mini Simulado Gratuito | Edital360";
 const DESCRIPTION =
   "Teste seus conhecimentos em questões de Certo ou Errado no estilo do concurso de Soldado da PMMA. Correção explicada na hora e diagnóstico personalizado.";
 
-export const Route = createFileRoute("/simulado-pmma")({
+export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: TITLE },

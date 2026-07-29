@@ -86,12 +86,25 @@ export async function listSimulados(
 
   const ownedIds = new Set<string>();
   if (userId) {
-    const { data: owned } = await client
+    // Garante que todo usuário cadastrado tenha os simulados pagos com situação "bloqueado".
+    await ensureSimuladoAccess(userId);
+
+    const { data: approved } = await client
       .from("purchases")
       .select("campaign_id")
       .eq("user_id", userId)
       .eq("status", "approved");
-    for (const p of owned ?? []) ownedIds.add(p.campaign_id);
+    for (const p of approved ?? []) {
+      ownedIds.add(p.campaign_id);
+      await releaseSimuladoAccess(userId, p.campaign_id);
+    }
+
+    const { data: access } = await client
+      .from("simulado_access")
+      .select("campaign_id, status")
+      .eq("user_id", userId)
+      .eq("status", "released");
+    for (const a of access ?? []) ownedIds.add(a.campaign_id);
   }
 
   const counts = await Promise.all(

@@ -47,9 +47,9 @@ type Persisted = {
 
 const MILESTONES: Record<number, string> = {
   4: "Você concluiu a primeira etapa",
-  7: "Metade do desafio concluída",
-  10: "Faltam poucas questões",
-  12: "Seu diagnóstico está quase pronto",
+  8: "Metade do desafio concluída",
+  12: "Faltam poucas questões",
+  14: "Seu diagnóstico está quase pronto",
 };
 
 function randomId() {

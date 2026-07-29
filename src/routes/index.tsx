@@ -103,7 +103,7 @@ function HomePage() {
 
   return (
     <div className="pmma-theme min-h-[100dvh] w-full">
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-4 py-5 sm:px-8 sm:py-6 lg:py-10">
+      <div className="mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col px-4 py-4 sm:px-8 sm:py-5 lg:py-8">
         <header className="pmma-rise grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
           <PmmaBrandMark />
           <span className="hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground sm:inline">

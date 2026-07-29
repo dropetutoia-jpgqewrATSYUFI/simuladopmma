@@ -44,7 +44,7 @@ const BANDS = [
     key: "avancado",
     label: "DESEMPENHO AVANÇADO",
     max: 100,
-    text: "Você apresentou ótimo domínio neste mini simulado. Continue treinando para manter a precisão e identificar detalhes que podem provocar erros na prova.",
+    text: "Você apresentou ótimo domínio neste simulado. Continue treinando para manter a precisão e identificar detalhes que podem provocar erros na prova.",
   },
 ];
 

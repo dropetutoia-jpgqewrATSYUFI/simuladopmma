@@ -267,10 +267,31 @@ export function PmmaResultView({
           </Button>
         ) : null}
 
-        <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={onRetake}>
-          <RotateCcw className="mr-1 size-4" aria-hidden />
-          Refazer o desafio
-        </Button>
+        {canRetake ? (
+          <Button variant="ghost" size="sm" className="mt-3 w-full" onClick={onRetake}>
+            <RotateCcw className="mr-1 size-4" aria-hidden />
+            Refazer o desafio
+          </Button>
+        ) : (
+          <>
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="mt-3 w-full rounded-xl border-white/15 bg-white/5"
+            >
+              <Link to={backHref}>
+                <Home className="mr-1 size-4" aria-hidden />
+                VOLTAR AO INÍCIO
+              </Link>
+            </Button>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              O simulado gratuito é liberado uma única vez. Para refazer, apoie o projeto com uma
+              doação de qualquer valor a partir de R$ 5.
+            </p>
+          </>
+        )}
+
       </Card>
     </div>
   );

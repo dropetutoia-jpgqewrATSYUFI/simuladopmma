@@ -199,6 +199,7 @@ export async function createPixDonation(input: {
   sessionId: string;
   amount: number;
   email: string | null;
+  userId?: string | null;
 }): Promise<DonationRecord> {
   const amount = normalizeAmount(input.amount);
   const token = await getMercadoPagoToken();
@@ -214,7 +215,9 @@ export async function createPixDonation(input: {
     .from("donations")
     .insert({
       session_id: input.sessionId,
+      user_id: input.userId ?? null,
       device_fingerprint: fingerprint,
+
       amount,
       payer_email: input.email,
       status: "pending",

@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SimuladoSlugRouteImport } from './routes/simulado.$slug'
 import { Route as AuthenticatedPainelRouteImport } from './routes/_authenticated/painel'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicTmpExportRouteImport } from './routes/api/public/tmp-export'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -45,6 +46,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicTmpExportRoute = ApiPublicTmpExportRouteImport.update({
+  id: '/api/public/tmp-export',
+  path: '/api/public/tmp-export',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/simulado/$slug': typeof SimuladoSlugRoute
+  '/api/public/tmp-export': typeof ApiPublicTmpExportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/painel': typeof AuthenticatedPainelRoute
   '/simulado/$slug': typeof SimuladoSlugRoute
+  '/api/public/tmp-export': typeof ApiPublicTmpExportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +76,25 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/painel': typeof AuthenticatedPainelRoute
   '/simulado/$slug': typeof SimuladoSlugRoute
+  '/api/public/tmp-export': typeof ApiPublicTmpExportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/admin' | '/painel' | '/simulado/$slug'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/painel'
+    | '/simulado/$slug'
+    | '/api/public/tmp-export'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin' | '/painel' | '/simulado/$slug'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/painel'
+    | '/simulado/$slug'
+    | '/api/public/tmp-export'
   id:
     | '__root__'
     | '/'
@@ -82,6 +103,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/painel'
     | '/simulado/$slug'
+    | '/api/public/tmp-export'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -89,6 +111,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   SimuladoSlugRoute: typeof SimuladoSlugRoute
+  ApiPublicTmpExportRoute: typeof ApiPublicTmpExportRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -135,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/tmp-export': {
+      id: '/api/public/tmp-export'
+      path: '/api/public/tmp-export'
+      fullPath: '/api/public/tmp-export'
+      preLoaderRoute: typeof ApiPublicTmpExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -156,6 +186,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   SimuladoSlugRoute: SimuladoSlugRoute,
+  ApiPublicTmpExportRoute: ApiPublicTmpExportRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

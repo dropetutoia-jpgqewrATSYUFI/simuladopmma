@@ -1,9 +1,0 @@
-Options -Indexes
-
-<FilesMatch "\.(sql|json|lock)$">
-  Require all denied
-</FilesMatch>
-
-<Files "config.php">
-  Require all denied
-</Files>
